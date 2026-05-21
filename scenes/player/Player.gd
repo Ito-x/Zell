@@ -71,7 +71,7 @@ func _process_horizontal(delta: float) -> void:
 	if direction != 0.0:
 		velocity.x = move_toward(velocity.x, direction * SPEED, ACCELERATION * delta)
 		# Retourne le sprite selon la direction du mouvement
-		$Body.scale.x = sign(direction)
+		$ZellVisual.scale.x = sign(direction)
 	else:
 		# Friction : ralentissement progressif jusqu'à l'arrêt
 		velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
