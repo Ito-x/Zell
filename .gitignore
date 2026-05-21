@@ -1,0 +1,17 @@
+# Godot 4 - fichiers generes automatiquement
+.godot/
+*.import
+
+# Claude Code (memoire locale, non partageable)
+.claude/
+
+# Fichiers d'export
+export_presets.cfg
+
+# Fichiers de traduction compiles
+*.translation
+
+# Mono / C#
+.mono/
+data_*/
+mono_crash.*.json
