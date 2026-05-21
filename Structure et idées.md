@@ -126,3 +126,78 @@ La bouche, les oreilles et les zones de chair ne sont pas desservies par ce rés
 
 ## PNJ
 À définir — noms, raisons d'être là, quêtes potentielles, amitiés. L'idée de "peuples" s'occupant des fonctions du cerveau est sur la table. Système de map à définir, différent de Hollow Knight.
+
+---
+
+## Cinématique d'ouverture
+
+### Concept
+Écran noir total. La conscience de Veilae (Zell) naît progressivement dans le silence de son esprit. Aucun texte, aucune explication — juste les sons et la lumière.
+
+### Séquence
+```
+Sirène de ambulance        → fade out progressif
+Bip respiratoire hôpital   → fade out progressif  
+Silence total              → 3 secondes 30
+Zell s'allume              → apparition douce, comme une flamme dans le noir
+Fondu musique              → la musique de Les Yeux monte doucement
+```
+
+### Sons à trouver
+- Sirène d'ambulance (lointaine, étouffée)
+- Bip régulier d'appareil respiratoire (très doux, presque imperceptible)
+- Source : **freesound.org** (sons libres de droits)
+
+### Structure technique (Godot)
+- Scène dédiée : `scenes/world/Intro.tscn`
+- Enchaîne vers `scenes/world/LesYeux.tscn` à la fin
+- `AnimationPlayer` orchestre toute la séquence
+- 2 `AudioStreamPlayer` (sirène + bip)
+- 1 `AudioStreamPlayer` pour la musique de zone (fade in en fin de cinématique)
+
+---
+
+## Zone tutorielle — Les Yeux
+
+### Concept visuel
+Les yeux de Veilae sont fermés. On est dans l'obscurité de ses paupières. Les **Rosas** — formes circulaires géométriques violettes, dorées, roses et bordeaux — font référence aux **phosphènes** : ces formes lumineuses qu'on perçoit naturellement les yeux fermés.
+
+### Structure de la map
+Labyrinthique — le joueur peut explorer librement mais ne peut pas progresser sans les bons fragments. Chaque fragment débloque une capacité qui ouvre de nouveaux passages.
+
+### Ordre des fragments et déblocages
+| Ordre | Fragment | Capacité | Ce que ça débloque |
+|---|---|---|---|
+| 1 | Souvenir de frapper | Épée d'énergie | Ennemis bloquant des passages |
+| 2 | Souvenir de marche | Dash / sprint | Fossés et gaps |
+| 3 | Souvenir de tomber | Double saut | Zones en hauteur |
+| 4 | Souvenir d'atteindre | Grimper | Salle finale / sortie |
+
+### Taille
+Moyenne — assez grande pour que les 4 fragments + le mini-boss prennent du temps à trouver, assez resserrée pour pouvoir remplir la zone de pièges et d'ennemis de façon cohérente. Objectif : 1h-2h de jeu pour un joueur qui explore.
+
+### Point de départ — L'Iris
+Zell apparaît au centre de la zone après la cinématique, dans une grande salle circulaire appelée **l'Iris**. C'est le hub central. 4 couloirs partent dans 4 directions, rapidement bloqués. La caméra recule doucement pour révéler l'environnement.
+
+### Architecture en 5 zones
+```
+         [Zone 4 — Le Cristallin]
+         ★ Fragment Grimper + Épée d'énergie
+              ↑ (double saut requis)
+         [Zone 3 — La Paupière]
+         ★ Fragment Double Saut
+              ↑ (dash requis)
+    ←─────────────────────────────→
+[Zone 2]   [IRIS — HUB CENTRAL]   [Zone 1]
+★ Dash     ● Zell apparaît ici    ★ Mini-boss → Épée
+ (gaps)    4 chemins partent ici   (après épée : accès Zone 2)
+```
+
+### Mini-boss
+Présent à la fin de la Zone 1. Le joueur le trouve avant l'épée d'énergie — ou juste après, à définir. C'est le dernier obstacle de la zone tutorielle.
+
+### Les Rosas comme repères
+Dans les couloirs sombres, les Rosas (grandes formes circulaires géométriques lumineuses) servent de repères visuels. Le joueur retient naturellement "la grande Rosa violette = bas-gauche".
+
+### Zone de transition (post-Les Yeux)
+Entre Les Yeux et le reste du monde (Oreilles, Cerveau...) existe une **zone sobre de transition**, style Dirtmouth dans Hollow Knight — calme, neutre, point de passage entre les zones principales. Son identité visuelle et son nom sont à définir.
