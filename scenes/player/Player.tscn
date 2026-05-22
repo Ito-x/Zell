@@ -1,8 +1,10 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=22 format=3]
 
 [ext_resource type="Script" path="res://scenes/player/Player.gd" id="1_player"]
 [ext_resource type="AudioStream" path="res://assets/audio/player/Jump.wav" id="2_jump"]
 [ext_resource type="AudioStream" path="res://assets/audio/player/Atterrissage.wav" id="3_land"]
+[ext_resource type="Script" path="res://scenes/player/PlayerCamera.gd" id="4_camera"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/test 2 marche.wav" id="5_walk"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_player"]
 radius = 14.0
@@ -79,6 +81,25 @@ colors = PackedColorArray(0.85, 0.55, 0.28, 0.90, 0.65, 0.30, 0.10, 0.55, 0.32, 
 gradient = SubResource("Gradient_land")
 width = 128
 
+[sub_resource type="Gradient" id="Gradient_ember"]
+offsets = PackedFloat32Array(0.0, 0.3, 1.0)
+colors = PackedColorArray(1.0, 0.95, 0.45, 1.0, 1.0, 0.55, 0.08, 0.85, 0.6, 0.15, 0.0, 0.0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ember"]
+gradient = SubResource("Gradient_ember")
+width = 128
+
+[sub_resource type="ParticleProcessMaterial" id="PPM_ember"]
+emission_shape = 0
+direction = Vector3(0, -1, 0)
+spread = 20.0
+gravity = Vector3(0, -15, 0)
+initial_velocity_min = 4.0
+initial_velocity_max = 10.0
+scale_min = 0.35
+scale_max = 0.85
+color_ramp = SubResource("GradientTexture1D_ember")
+
 [sub_resource type="ParticleProcessMaterial" id="PPM_land"]
 emission_shape = 3
 emission_ring_axis = Vector3(0, 0, 1)
@@ -104,6 +125,7 @@ texture = SubResource("GradientTexture2D_body")
 scale = Vector2(0.20, 0.20)
 
 [node name="Aura" type="GPUParticles2D" parent="ZellVisual"]
+visible = false
 material = SubResource("CanvasItemMaterial_add")
 amount = 16
 lifetime = 0.7
@@ -141,6 +163,10 @@ shape = SubResource("CircleShape2D_player")
 [node name="Camera2D" type="Camera2D" parent="."]
 position_smoothing_enabled = true
 position_smoothing_speed = 5.0
+drag_vertical_enabled = true
+drag_top_margin = 0.25
+drag_bottom_margin = 0.25
+script = ExtResource("4_camera")
 
 [node name="JumpSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("2_jump")
@@ -148,3 +174,54 @@ volume_db = -6.0
 
 [node name="LandSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_land")
+
+[node name="WalkSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_walk")
+volume_db = 0.0
+
+[node name="HealthDisplay" type="Node2D" parent="."]
+
+[node name="Satellite1" type="GPUParticles2D" parent="HealthDisplay"]
+position = Vector2(45, 0)
+material = SubResource("CanvasItemMaterial_add")
+amount = 8
+lifetime = 0.3
+local_coords = false
+process_material = SubResource("PPM_ember")
+texture = SubResource("GradientTexture2D_soft")
+
+[node name="Satellite2" type="GPUParticles2D" parent="HealthDisplay"]
+position = Vector2(13.9, -42.8)
+material = SubResource("CanvasItemMaterial_add")
+amount = 8
+lifetime = 0.3
+local_coords = false
+process_material = SubResource("PPM_ember")
+texture = SubResource("GradientTexture2D_soft")
+
+[node name="Satellite3" type="GPUParticles2D" parent="HealthDisplay"]
+position = Vector2(-36.4, -26.45)
+material = SubResource("CanvasItemMaterial_add")
+amount = 8
+lifetime = 0.3
+local_coords = false
+process_material = SubResource("PPM_ember")
+texture = SubResource("GradientTexture2D_soft")
+
+[node name="Satellite4" type="GPUParticles2D" parent="HealthDisplay"]
+position = Vector2(-36.4, 26.45)
+material = SubResource("CanvasItemMaterial_add")
+amount = 8
+lifetime = 0.3
+local_coords = false
+process_material = SubResource("PPM_ember")
+texture = SubResource("GradientTexture2D_soft")
+
+[node name="Satellite5" type="GPUParticles2D" parent="HealthDisplay"]
+position = Vector2(13.9, 42.8)
+material = SubResource("CanvasItemMaterial_add")
+amount = 8
+lifetime = 0.3
+local_coords = false
+process_material = SubResource("PPM_ember")
+texture = SubResource("GradientTexture2D_soft")

@@ -69,9 +69,9 @@ La caméra doit se faire oublier. Elle anticipe légèrement les intentions du j
 Zell est pure conscience. Sa santé est sa **cohérence**. Plus elle est blessée, plus elle se désintègre visuellement. Pas de barre de vie criarde — l'information vit dans le sprite.
 
 ## Comportement
-- PV par paliers visibles (4 ou 5 paliers à définir au prototypage)
-- À chaque coup pris : iframes courtes (0.5-0.8s) avec clignotement
-- HP de base augmentables via upgrades dans le jeu
+- **5 PV de base** (5 paliers visibles)
+- À chaque coup pris : iframes courtes (0.7s) avec clignotement du sprite
+- HP de base augmentables via upgrades dans le jeu : chaque upgrade ajoute **un satellite supplémentaire** (1 satellite = 1 PV, lecture toujours nette)
 
 ## Graphismes — l'état du sprite EST l'UI
 | Santé | Apparence de Zell |
@@ -87,8 +87,12 @@ Zell est pure conscience. Sa santé est sa **cohérence**. Plus elle est blessé
 - État critique : un souffle bas et continu se superpose à la musique
 - Soin / récupération : tintement cristallin doux
 
-## Indicateur d'appoint (à valider)
-- Un petit indicateur ultra-discret peut compléter le sprite — uniquement si les tests montrent que le sprite seul ne suffit pas
+## Indicateur — Satellites en orbite (décision tranchée)
+- 5 petites **flammèches ambrées** gravitent autour de Zell, à courte distance (hors de son aura)
+- Chaque flammèche = 1 PV. À chaque coup pris, la dernière s'éteint et se dissipe
+- Lecture immédiate et non-criarde, cohérente avec "Zell = conscience tenue ensemble par son énergie"
+- Quand une flammèche passe DEVANT Zell (sens du déplacement), sa traînée se réduit pour ne pas empiéter sur le chara design ; elle reprend sa traînée normale dès qu'elle revient derrière
+- En Phase 2 (Zell humanoïde) : les flammèches continuent d'orbiter autour de sa nouvelle forme — pas de refonte visuelle
 
 ---
 
