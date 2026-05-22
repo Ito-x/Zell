@@ -128,6 +128,10 @@ Le sprite change selon la santé. Aucune barre de vie dans l'espace de jeu.
 | 25% | Centre minuscule, presque entièrement particules |
 | Critique | Tremblante, presque invisible, tenue par un fil |
 
+**Satellites de cohérence (décision tranchée mai 2026)** : en complément de la dégradation du sprite, 5 petites **flammèches ambrées** gravitent autour de Zell, à courte distance (hors de son aura). Chaque flammèche = 1 PV ; à chaque coup pris, la dernière s'éteint. Permet une lecture instantanée du nombre de PV restants sans casser l'esthétique "pas d'UI criarde". Sens d'orbite suit le regard (horaire à droite, antihoraire à gauche). Les upgrades HP ajoutent des flammèches (6, 7, 8…), pas un palier visuel séparé. En Phase 2, elles continuent d'orbiter autour de la forme humanoïde — pas de refonte.
+
+**L'épée d'énergie est aussi un élément constant** (décision tranchée mai 2026) : elle reste visible en permanence à côté de Zell, reliée à son centre par un **fil d'énergie ambré** (le "bras de lumière"). À l'attaque, elle s'élance vers la direction du coup et un slash arc blanc-or matérialise la zone touchée façon Hollow Knight.
+
 Même logique pour les fragments : chaque souvenir absorbé est une micro-cinématique de 3-4 secondes où la partie du corps se matérialise. La fin de Phase 1 est une transformation progressive, pas un changement brutal.
 
 ---
@@ -245,10 +249,10 @@ Contre-mesure principale contre la Grosse Boule (zone tuto). Inutile contre les 
 Comme l'Impulsion ne sert qu'à percevoir, le tuto doit **semer des pièges, des fausses parois et des salles cachées** pour qu'elle ait une utilité immédiate.
 
 ### Dash (2e fragment, en deux parties)
-- **Horizontal** : débloqué dans le tuto, 2e fragment. Trajet quasi-instantané sur une distance fixe, iframes possibles.
+- **Horizontal** : débloqué dans le tuto, 2e fragment. **Mini-téléportation électrique instantanée** sur une distance fixe (point A → point B), iframes pendant l'opération.
 - **Vertical** : débloqué en **Phase 1**, ouvre la verticalité du monde et remplace définitivement l'ancienne idée du double saut. Permet le retour vers les zones du tuto laissées de côté.
 
-À retravailler côté ressenti : mini-téléportation ou dash classique — décision pendant le prototypage.
+**Ressenti tranché (mai 2026)** : mini-téléportation, pas un dash glissé. Signature visuelle façon **Radagon (Elden Ring)** — un rayon vertical de foudre s'abat au point de départ, Zell disparaît dedans, un second rayon frappe au point d'arrivée et elle réapparaît. Burst électrique + afterimage 0.35s au point A (utilisable pour le Sillage de Conscience). Distance courte, cooldown court, pas conçu pour traverser des grandes zones.
 
 ### L'épée d'énergie
 Récupérée dans Les Yeux, plantée dans un rocher de chair, libérée lors de l'épreuve du **Chevalier Cristallin**. Sert uniquement au combat. **Améliorable 5 fois** :
@@ -729,7 +733,7 @@ Ces points ne bloquent pas la production. Ils seront tranchés plus tard, ou lai
 - **Système de menu / codex** détaillé
 - **Système de nage** (pour les zones inondées comme la sous-zone Tristesse)
 - **Détail du système d'upgrades** au-delà de l'épée
-- **Dash ou mini-téléportation** — choix final à faire pendant le prototypage
+- ~~Dash ou mini-téléportation~~ → **Mini-téléportation électrique tranchée** (cf. section Dash)
 - **Sort de La Peau** — idée gardée, scope incertain
 - **L'Oubli** — forme exacte non tranchée
 - **Sous-zones de La Mémoire** — peuvent exister, à concevoir
