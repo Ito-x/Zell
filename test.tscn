@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_37kl0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
-size = Vector2(800, 20)
+size = Vector2(1668, 20)
 
 [node name="test" type="Node2D" unique_id=1174418191]
 
@@ -14,4 +14,5 @@ position = Vector2(1, 36)
 position = Vector2(0, 100)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=1430694486]
+position = Vector2(434, 0)
 shape = SubResource("RectangleShape2D_floor")

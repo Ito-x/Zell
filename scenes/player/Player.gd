@@ -11,6 +11,9 @@ const FALL_GRAVITY_MULT   := 1.8      # Chute plus rapide qu'ascension (feel nat
 
 const COYOTE_TIME         := 0.12     # Secondes de grâce après le bord d'une plateforme
 const JUMP_BUFFER_TIME    := 0.10     # Secondes pendant lesquelles le saut est mémorisé
+const AIR_CONTROL_MULT    := 0.65     # Accélération en l'air = AIR_CONTROL_MULT × accélération au sol (entre Mario et Hollow Knight)
+
+const JUMP_SOUND_DURATION := 0.25     # Durée max du son de saut (coupe le clic en fin de .wav)
 
 # ---- Variables internes ----
 var coyote_timer      := 0.0
@@ -42,6 +45,12 @@ func _update_coyote_time(delta: float) -> void:
 		coyote_timer = 0.0
 	else:
 		coyote_timer = maxf(coyote_timer - delta, 0.0)
+
+	# Détection d'atterrissage : on était en l'air, on touche le sol
+	if not was_on_floor and is_on_floor():
+		$LandBurst.restart()
+		$LandSound.play()
+
 	was_on_floor = is_on_floor()
 
 
@@ -60,6 +69,13 @@ func _process_jump() -> void:
 		velocity.y    = JUMP_VELOCITY
 		coyote_timer  = 0.0
 		jump_buffer_timer = 0.0
+		_play_jump_sound()
+
+
+func _play_jump_sound() -> void:
+	$JumpSound.play()
+	await get_tree().create_timer(JUMP_SOUND_DURATION).timeout
+	$JumpSound.stop()
 
 	# Saut court : si on relâche pendant la montée, on coupe l'élan
 	if Input.is_action_just_released("jump") and velocity.y < 0.0:
@@ -67,11 +83,16 @@ func _process_jump() -> void:
 
 
 func _process_horizontal(delta: float) -> void:
+	# En l'air : accélération et friction réduites (contrôle moins direct qu'au sol)
+	var control_mult := 1.0 if is_on_floor() else AIR_CONTROL_MULT
 	var direction := Input.get_axis("move_left", "move_right")
 	if direction != 0.0:
-		velocity.x = move_toward(velocity.x, direction * SPEED, ACCELERATION * delta)
+		velocity.x = move_toward(velocity.x, direction * SPEED, ACCELERATION * control_mult * delta)
 		# Retourne le sprite selon la direction du mouvement
 		$ZellVisual.scale.x = sign(direction)
 	else:
-		# Friction : ralentissement progressif jusqu'à l'arrêt
-		velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
+		# Friction : ralentissement progressif jusqu'à l'arrêt (réduite en l'air)
+		velocity.x = move_toward(velocity.x, 0.0, FRICTION * control_mult * delta)
+
+	# Trainée de marche : uniquement au sol, quand on bouge réellement
+	$ZellVisual/Trail.emitting = is_on_floor() and absf(velocity.x) > 20.0
