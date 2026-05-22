@@ -61,14 +61,20 @@ Des indices sur le vrai nom sont semés tout au long du jeu — voix distordues,
 
 Zell commence comme **pure conscience**. Elle ne trouve pas des membres physiques — elle absorbe des fragments de souvenirs qui *prennent la forme* de membres d'énergie lumineuse. Mécaniquement, c'est un système de powerups. Visuellement, c'est cohérent : son corps se reconstruit à mesure que sa mémoire se reconstitue.
 
-### Les 4 fragments des Yeux (zone tutoriel)
+### Les fragments des Yeux (zone tutoriel)
 
-| Souvenir | Manifestation visuelle | Capacité débloquée |
+Zell s'éveille avec une seule capacité innée : le **Refroidissement**. Elle ne récupère ensuite que **deux fragments** dans le tuto, plus l'épée via le boss.
+
+| Étape | Manifestation | Capacité débloquée |
 |---|---|---|
-| Souvenir de frapper | Bras droit doré | Épée d'énergie |
-| Souvenir de marche | Jambes de lumière | Dash / mini-téléportation |
-| Souvenir de tomber | Jambes consolidées | Double saut |
-| Souvenir d'atteindre | Bras gauche | Grimper / interagir |
+| Éveil | Glow chaud baissable en froid bleu-violet | **Refroidissement** (inné, invisibilité à la vue) |
+| 1er fragment | Onde de perception | **Impulsion** (perception pure) |
+| 2e fragment | Trait de lumière horizontal | **Dash horizontal** |
+| Épreuve du Chevalier | Bras armé, lame d'énergie | **Épée d'énergie** |
+
+La **partie verticale du Dash** se débloque plus tard, en Phase 1 — elle remplace définitivement l'idée du double saut et ouvre la verticalité. Tant qu'on ne l'a pas, **certaines zones du tuto restent inaccessibles** (backtracking optionnel, ne bloque jamais la progression).
+
+**Capacités abandonnées** : double saut, saut mural, plané, 3e spell un temps envisagé.
 
 ### Souvenirs au-delà du tutoriel
 
@@ -131,7 +137,18 @@ Même logique pour les fragments : chaque souvenir absorbé est une micro-ciném
 ### Phase 1
 
 **Les Yeux** — zone tutorielle.
-Endroit sombre, décoré de **Rosas** (formes circulaires géométriques violettes, dorées, roses, bordeaux). Référence aux phosphènes : ces formes lumineuses qu'on perçoit les yeux fermés. C'est ici que Zell récupère l'épée d'énergie et les 4 premiers fragments. Musique douce, piano et flûte. Le mini-boss est une **version géante et altérée d'un Aveugle**, plus forte, avec des features en plus.
+Endroit sombre, décoré de **Rosas** (formes circulaires géométriques violettes, dorées, roses, bordeaux). Référence aux phosphènes : ces formes lumineuses qu'on perçoit les yeux fermés. C'est ici que Zell s'éveille, récupère ses deux fragments (Impulsion puis Dash horizontal), traverse des phases de furtivité opposée, puis affronte le **Chevalier Cristallin** pour gagner l'épée. Musique douce, piano et flûte.
+
+**Déroulé complet du tuto** :
+1. Éveil de Zell avec le seul **Refroidissement** (capacité innée)
+2. 1er fragment → **Impulsion** (perception pure)
+3. 2e fragment → **Dash horizontal**
+4. Phases de furtivité opposée : Grosse Boule au Refroidissement, Aveugles en meute à l'immobilité
+5. Épreuve du **Chevalier Cristallin** : retrait d'Excalibur du rocher de chair, puis duel à l'épée
+6. Retour au spawn, l'épée sert de clé pour ouvrir la porte scellée vers la Phase 1
+7. **Plus tard en Phase 1** : déblocage du **dash vertical**, qui ouvre la verticalité et le retour vers les zones du tuto laissées de côté (backtracking optionnel, ne bloque jamais la progression)
+
+Le tuto doit **semer pièges, fausses parois et salles cachées** pour donner une utilité immédiate à l'Impulsion (qui n'a pas d'usage offensif).
 
 **Les Sinus** — zone de transition.
 Rôle de Dirtmouth dans Hollow Knight. Sas calme entre Les Yeux et le reste du monde. Au moins **un marchand de base** y vit, vendant fragments de carte et objets de soin. Atmosphère sobre, ni triste ni joyeuse. Un seuil.
@@ -206,8 +223,35 @@ D'autres zones peuvent s'ajouter pendant la production si des idées émergent �
 
 ## Skills et capacités
 
+**Côté tuto (Les Yeux), Zell sort avec trois spells max : Refroidissement (inné), Impulsion (1er fragment), Dash (2e fragment, en deux parties)** — plus l'épée du Chevalier Cristallin. D'autres capacités viendront plus tard (Coup de Jus, Fusion du Métal, Réseau Neuronal, etc.) au fil des Phases 1 et 2 — les sections plus bas couvrent l'ensemble du jeu.
+
+### Refroidissement (inné)
+Disponible dès l'éveil. Zell baisse son émission : son glow chaud (ambre/blanc) passe à une transparence bleu-violet froide. Les créatures qui la pistent **à la vue** la perdent.
+
+Géré par une **jauge** qui se vide quand l'invisibilité est active et **se recharge à l'arrêt**. Pas une furtivité totale — un compromis : on devient invisible mais on consomme.
+
+Contre-mesure principale contre la Grosse Boule (zone tuto). Inutile contre les Aveugles (qui pistent au son).
+
+### Impulsion (1er fragment)
+**Perception pure, zéro dégât.** Zell se concentre, émet une impulsion électrique, une onde radiale se propage et révèle pendant quelques secondes :
+- Ennemis cachés ou invisibles
+- Fausses parois, salles secrètes
+- Pièges
+- Collectibles
+- Le vrai chemin dans les zones d'illusion
+
+**3 charges**, rechargées **aux neurones** et **en méditant** (zone paisible). Un usage offensif reste envisageable plus tard mais n'est pas prévu.
+
+Comme l'Impulsion ne sert qu'à percevoir, le tuto doit **semer des pièges, des fausses parois et des salles cachées** pour qu'elle ait une utilité immédiate.
+
+### Dash (2e fragment, en deux parties)
+- **Horizontal** : débloqué dans le tuto, 2e fragment. Trajet quasi-instantané sur une distance fixe, iframes possibles.
+- **Vertical** : débloqué en **Phase 1**, ouvre la verticalité du monde et remplace définitivement l'ancienne idée du double saut. Permet le retour vers les zones du tuto laissées de côté.
+
+À retravailler côté ressenti : mini-téléportation ou dash classique — décision pendant le prototypage.
+
 ### L'épée d'énergie
-Récupérée dans Les Yeux, plantée dans un rocher de chair. Sert uniquement au combat. **Améliorable 5 fois** :
+Récupérée dans Les Yeux, plantée dans un rocher de chair, libérée lors de l'épreuve du **Chevalier Cristallin**. Sert uniquement au combat. **Améliorable 5 fois** :
 - Upgrades 1-4 : portée (×2 niveaux), dégâts (×2 niveaux), ordre libre choisi par le joueur
 - **Upgrade 5 — paralysie** : déblocable **uniquement à la toute fin**, quand toutes les autres upgrades sont prises. Stun/paralysie des ennemis, durée très courte, consommation d'énergie énorme.
 
@@ -239,32 +283,33 @@ Permet le fast travel entre neurones. **Déblocage en deux temps** :
 
 Pas une récompense d'exploration totale comme initialement imaginé — c'est un mini-boss d'abord, puis l'exploration ouvre le réseau.
 
-### Impulsion
-**Disponible dès le début.** Pas d'amélioration prévue dans la progression.
-
-Brève onde d'énergie concentrée. Usages :
-- Révèle les passages secrets
-- Stun bref sur les ennemis proches
-- Active certains mécanismes
-- Révèle les ennemis invisibles (Effacés, Vide)
-
-**3 charges**, rechargées à chaque neurone activé. Visuellement : anneau de lumière dorée qui s'expand depuis Zell.
-
-### Dash / mini-téléportation
-**À retravailler.** L'idée d'un dash classique n'est pas figée. Ce sera peut-être plutôt une **mini-téléportation** — Zell se dématérialise et réapparaît un peu plus loin, sensation d'instantané. À décider pendant le prototypage.
-
 ---
 
 ## Boss — Design complet
 
-### Mini-boss des Yeux — L'Aveugle Géant
-Une **version géante et altérée** d'un Aveugle ordinaire, avec des features supplémentaires.
+### Boss des Yeux — Le Chevalier Cristallin
+*Nom à confirmer, mais ça part là-dessus.* C'est le **premier vrai combat du jeu** et le **tuto de maniement de l'épée** (attaques + esquive au dash).
 
-Apparence : créature phosphène translucide, sans yeux, mais bien plus grande que les Aveugles standards. Anneaux blancs élargis, vibrations qu'elle émet visibles à l'œil. Probablement plus rapide quand elle détecte Zell, capable d'attaques de zone qu'un Aveugle normal ne fait pas.
+**Ce n'est pas un combat qu'on gagne désarmé** : c'est une **épreuve de valeur** qui arme Zell, puis un duel.
 
-Arène : grande salle circulaire, Rosas pulsant sur les murs en sync avec lui.
+**Mise en scène** :
+- Le joueur entre dans la salle. **Excalibur** est plantée dans un **rocher de chair** au centre.
+- Le Chevalier est assis sur un **trône à droite**.
+- Il invite Zell à tenter de retirer l'épée. Elle y parvient (seule une porteuse digne le peut).
+- Il reconnaît sa valeur, se lève, et la combat **loyalement**.
+- On gagne. L'épée devient pleinement sienne — petite aura propre, animation d'obtention.
+- Le Chevalier s'incline ou se dissout.
 
-Sa défaite laisse le Souvenir de frapper suspendu en son centre — Zell récupère l'épée. La musique revient à sa version douce un instant.
+**Identité visuelle** : le **cristal** le démarque nettement des autres mobs du tuto, organiques et difformes. Il pourrait être :
+- un ancien porteur cristallisé,
+- une sentinelle du seuil,
+- ou un fragment de Zell qui se teste elle-même.
+
+→ **Point encore à trancher.**
+
+**L'épée comme clé du tuto** : après le combat, on rapporte l'épée au spawn et on l'insère dans la **porte scellée**, qui s'ouvre — accès à la Phase 1. **Pas de clé séparée, l'arme et la clé sont une seule et même chose.**
+
+**Note** : le talk-no-jutsu (boss qu'on bat en lui parlant) est mis de côté pour un boss de Phase 1, pas pour le tuto.
 
 ### Boss de La Mémoire — L'Oubli Voulu
 Manifestation du désir de Veilae d'oublier ce qui fait mal. Silhouette faite de chaînes entrelacées. Lent. Presque doux. Pas un monstre — quelqu'un d'épuisé.
@@ -387,16 +432,23 @@ Tous les ennemis ont une **origine narrative** — un lore. Ils ne sont pas là 
 
 **Ennemis exclusifs à leur zone** par défaut (à confirmer pendant le développement).
 
-### Les Yeux
+### Les Yeux (zone tuto)
 
-**Les Aveugles**
-Créatures phosphènes translucides sans yeux — juste des anneaux blancs. Naviguent par vibration. Standing still = invisibles pour eux. Courir vite = ils agressent. Encouragent le joueur à se déplacer prudemment dès le début. Le mini-boss de la zone est une version géante d'un Aveugle.
+Deux archétypes pensés **en contraste de sens** : devant l'un on se cache, devant l'autre on se fige. C'est le cœur du tuto — apprendre à lire l'ennemi avant de réagir.
 
-**Les Formes**
-Rosas corrompues, asymétriques, glitchantes. Flottent lentement. Au contact : légère distorsion visuelle de l'écran. Fragiles (2 coups d'épée). Cercles géométriques fissurés, violet avec craquelures dorées.
+**La Grosse Boule** — *voit mais n'entend pas*
+Gros mob lent, **énormes yeux**, bouche béante, sourd. Détecte uniquement à la vue. Le bruit ne l'alerte jamais.
+→ **Contrée au Refroidissement** : Zell baisse son glow, la Grosse Boule la perd.
+→ Le déplacement reste libre tant qu'on est invisible.
+
+**Les Aveugles** — *entendent mais ne voient pas*
+Petits, ailés. Un métissage de **chauve-souris (façon Zubat)** et de **fantôme**. Yeux troués, **oreilles exagérément grandes**. Pistent au son et à la vibration. Arrivent **en meute**.
+→ **Contrés en restant immobile ou en se déplaçant lentement.** Le Refroidissement ne sert à rien contre eux.
+
+**Intérêt design** : les deux ennemis demandent des **réponses opposées**. La Grosse Boule : cache-toi (sois invisible, marche). Les Aveugles : fige-toi (reste visible mais silencieuse).
 
 **Les Filaments**
-S'étirent en travers des couloirs comme des fils de lumière. Ralentissent Zell si touchés sans être coupés. Tranchables à l'épée ou traversables en dash.
+Simple obstacle de traversée. Fils de lumière à couper à l'épée ou à franchir au dash.
 
 ### Les Émotions (Phase 2)
 

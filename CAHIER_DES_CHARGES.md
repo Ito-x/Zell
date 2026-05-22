@@ -19,7 +19,7 @@ Léger, flottant, mais réactif. Zell n'est pas une masse — elle est une boule
 - Déplacement horizontal (clavier flèches ou ZQSD / stick gauche manette)
 - Saut (touche dédiée)
 - Saut maintenu = saut plus haut
-- Re-tap rapide en l'air = double saut (une fois la capacité débloquée)
+- **Pas de double saut** (idée abandonnée). La verticalité supplémentaire passe par le **dash vertical** débloqué en Phase 1 (cf. Objectif 7).
 - Le déplacement reste **toujours** disponible, même en combat, même en chargeant une attaque
 
 ## Comportement physique
@@ -34,7 +34,7 @@ Léger, flottant, mais réactif. Zell n'est pas une masse — elle est une boule
 - Sprite animé en boucle (la boule d'énergie n'est jamais immobile, elle vibre, palpite)
 - Trainée de particules très discrète à la marche / sprint
 - À l'atterrissage : petit éclat de particules au point de contact
-- Au double saut : un anneau d'énergie marque l'impulsion
+- Au dash : signature visuelle dédiée (cf. Objectif 7)
 
 ## Son
 - Pas de bruit de pas — Zell n'a pas de pieds
@@ -165,29 +165,71 @@ Le Coup de Jus est l'arme de contournement. Quand un ennemi devient trop dangere
 
 ---
 
-# OBJECTIF 6 — Impulsion (capacité de départ)
+# OBJECTIF 5 bis — Refroidissement (capacité innée)
 
 ## Ressenti joueur
-Une expiration de lumière. Zell peut, n'importe quand, libérer une onde brève autour d'elle. C'est une mécanique multifonction — révéler des passages, stunner les ennemis proches, activer des mécanismes, révéler les ennemis invisibles. Le joueur l'utilise par réflexe d'exploration, comme un sonar.
+Zell n'a pas besoin de chercher cette capacité — elle naît avec. **Baisser son émission**, devenir froide et discrète. Le joueur doit sentir que c'est un **compromis** : on disparaît à la vue, mais on consomme une ressource limitée. Pas une furtivité gratuite.
+
+## Déblocage
+- **Innée.** Disponible dès l'éveil de Zell, avant même le premier fragment.
+
+## Contrôles
+- Touche dédiée (toggle ou maintien — à trancher pendant le prototypage)
+- Tant que le Refroidissement est actif, une **jauge** se vide progressivement
+- À l'arrêt complet, la jauge se recharge
+
+## Comportement
+- Zell baisse son glow chaud (ambre / blanc) → transparence bleu-violet froide
+- **Les créatures qui pistent à la vue la perdent.** (Ex. : la Grosse Boule, voir Objectif 12.)
+- **Inutile contre les créatures qui pistent au son** (ex. les Aveugles) : la furtivité visuelle n'a aucun effet sur elles.
+- Pas d'usage offensif, pas d'interaction avec l'environnement (purement défensif / d'évasion)
+- Le déplacement reste disponible pendant l'invisibilité (mais consomme la jauge)
+
+## Graphismes
+- Transition fluide du glow chaud (ambre/or/blanc) vers une transparence bleu-violet froide
+- Le sprite reste visible pour le joueur (semi-transparent) — c'est juste les ennemis qui ne le voient plus
+- Légère vibration / pulsation froide autour de Zell
+
+## Son
+- Activation : souffle froid, descendant
+- Boucle d'ambiance discrète tant qu'actif (drone froid très doux)
+- Désactivation / vidage de jauge : remontée du son chaud habituel
+
+---
+
+# OBJECTIF 6 — Impulsion (1er fragment du tuto)
+
+## Ressenti joueur
+Une expiration de lumière. Zell se concentre, émet une impulsion électrique, et une onde radiale **révèle** ce qu'on ne voyait pas. **Perception pure, zéro dégât.** Le joueur l'utilise comme un sonar — par réflexe d'exploration, jamais comme attaque. Un usage offensif reste envisageable plus tard, mais n'est pas prévu.
+
+## Déblocage
+- **1er fragment de souvenir** récupéré dans Les Yeux (zone tuto). Pas innée.
 
 ## Contrôles
 - Touche dédiée
-- 3 charges disponibles, visibles très discrètement
-- Les charges se rechargent en touchant un neurone-checkpoint
+- **3 charges** disponibles, visibles très discrètement
+- Les charges se rechargent :
+  - En touchant un neurone-checkpoint
+  - En **méditant** (rester immobile quelques secondes, notamment en Zone Paisible — cf. Objectif 23 / mécanique de méditation)
 
 ## Comportement
 - Onde circulaire qui s'expand sur ~1.5s puis se dissipe
-- Effets :
-  - Révèle les passages cachés (les murs qui cachent quelque chose réagissent visuellement)
-  - Stun bref (~0.5s) sur les ennemis dans le rayon
-  - Active certains mécanismes (interrupteurs lumineux, plateformes inertes)
-  - **Révèle les ennemis invisibles** : Effacés (La Mémoire) et Le Vide (boss de L'Oubli) ne sont visibles que pendant l'onde
+- **Aucun dégât, aucun stun.** Effets exclusivement de révélation :
+  - Ennemis cachés ou invisibles (Effacés de La Mémoire, Vide de L'Oubli, etc.)
+  - Fausses parois, salles secrètes
+  - Pièges
+  - Collectibles cachés
+  - Vrai chemin dans les zones d'illusion (Zone de Rêve)
+- Peut activer certains mécanismes contextuels (interrupteurs lumineux qui réagissent à l'onde, à confirmer au cas par cas)
 - Pas d'amélioration prévue dans la progression : capacité stable de bout en bout
 
+## Implication design tuto
+- Le tuto (Les Yeux) doit **semer pièges, fausses parois et salles cachées** pour donner une utilité immédiate à l'Impulsion. Sans contenu à révéler, elle n'a aucun usage.
+
 ## Graphismes
-- Anneau doré qui s'élargit en perdant en opacité
+- Anneau bleu-doré qui s'élargit en perdant en opacité
 - Effet de léger ralenti visuel autour de Zell pendant la fraction de seconde du tir
-- Sur les murs cachés : les pierres / la matière réagissent par un scintillement subtil
+- Sur les murs cachés / pièges / passages : la matière réagit par un scintillement subtil le temps de l'onde
 
 ## Son
 - Pulse profond, comme un gong étouffé
@@ -196,21 +238,27 @@ Une expiration de lumière. Zell peut, n'importe quand, libérer une onde brève
 
 ---
 
-# OBJECTIF 7 — Dash / mini-téléportation
+# OBJECTIF 7 — Dash (2e fragment, en deux parties)
 
 ## Ressenti joueur
-À retravailler. L'idée n'est pas un dash classique. Plutôt une **mini-téléportation** : Zell se dématérialise sur un éclair, réapparaît un peu plus loin. Sensation d'instantané, pas de mouvement linéaire. Le joueur doit avoir l'impression de **sauter dans le temps** plutôt que dans l'espace.
+À retravailler côté ressenti — dash classique ou mini-téléportation ? À trancher au prototypage. Dans tous les cas : sensation d'instantané, pas de glissé.
+
+**Le Dash remplace définitivement l'ancienne idée du double saut.** Il se déverrouille en **deux parties** :
+- **Partie horizontale** : 2e fragment du tuto (Les Yeux)
+- **Partie verticale** : déblocage en **Phase 1**, ouvre la verticalité du monde
+
+Conséquence : tant que le joueur n'a pas la verticale, **certaines zones du tuto restent inaccessibles**. Le backtracking est optionnel et ne bloque jamais la progression.
 
 ## Contrôles
 - Touche dédiée
-- Direction : sens du déplacement par défaut, ou 8 directions (à tester pendant le prototypage)
+- Direction : sens du déplacement horizontal par défaut, ajout de la direction verticale une fois l'upgrade obtenue
 - Cooldown court
 
 ## Comportement
 - Trajet quasi-instantané sur une distance fixe
-- iframes pendant le téléport (à valider)
+- iframes pendant le dash (à valider)
 - Ne permet pas de traverser les murs solides — uniquement les hitbox d'ennemis ou de projectiles
-- Débloqué via le **Souvenir de marche** dans Les Yeux
+- Sert aussi à **traverser les Filaments** (ennemi-obstacle des Yeux)
 
 ## Graphismes
 - Au départ : Zell se désagrège en particules sur ~0.05s
@@ -386,6 +434,18 @@ Chaque ennemi a un comportement lisible. Le joueur doit pouvoir le comprendre en
 ## Effets de contact spécifiques
 - Certains ennemis ne font pas que des dégâts directs : ils ralentissent (Filaments, Larmes), distordent l'écran (Formes), effacent temporairement la carte (Effacés)
 
+## Ennemis du tuto — pédagogie par opposition
+Les deux archétypes principaux de la zone tuto (Les Yeux) sont conçus en **contraste de sens** : ils enseignent au joueur à lire la détection avant de réagir.
+
+- **La Grosse Boule** — gros mob lent, énormes yeux, bouche béante, **sourd**. Détecte exclusivement à la **vue**. Le bruit ne l'alerte jamais.
+  → **Contrée par le Refroidissement** (cf. Objectif 5 bis) : Zell devient invisible à la vue, peut traverser librement.
+- **Les Aveugles** — petits, ailés, métissage chauve-souris (façon Zubat) / fantôme. Yeux troués, **oreilles exagérément grandes**. Pistent au **son et à la vibration**. **Arrivent en meute.**
+  → **Contrés par l'immobilité ou le déplacement lent.** Le Refroidissement est sans effet sur eux.
+
+Implication design : les deux demandent des **réponses opposées** (devant l'un on se cache, devant l'autre on se fige). Toute salle qui mélange les deux devient un puzzle de gestion de présence.
+
+**Les Filaments** (toujours dans Les Yeux) restent un simple obstacle de traversée — fils de lumière à couper à l'épée ou à franchir au dash.
+
 ---
 
 # OBJECTIF 13 — Système de boss
@@ -428,6 +488,25 @@ Chaque boss est un moment. Un boss n'est jamais un sac à PV — il a des phases
 - Musique dédiée par boss (ou par phase)
 - Sons d'attaque distincts pour chaque pattern
 - Silence absolu sur certains moments-clés (Phase 2 du Cœur — l'Arrêt)
+
+## Boss du tuto — Le Chevalier Cristallin
+*Nom à confirmer. Premier vrai combat du jeu et tuto de maniement de l'épée (attaques + esquive au dash).*
+
+**Ce n'est pas un combat qu'on gagne désarmé.** C'est une **épreuve de valeur** qui arme Zell, puis un duel loyal. Détails narratifs et mise en scène dans `Structure_et_idées.md`.
+
+**Spécification système** :
+- L'arène contient au centre une **Excalibur** plantée dans un rocher de chair (objet interactif), et à droite un **Chevalier sur un trône** (NPC inactif au démarrage).
+- À l'entrée du joueur : déclenche un dialogue / mise en scène où le Chevalier invite Zell à tenter de retirer l'épée.
+- Quand le joueur interagit avec l'épée : animation d'extraction, l'épée devient disponible dans l'inventaire d'arme.
+- Cela déclenche la transition du Chevalier de NPC à boss : il se lève, la musique change, le combat commence.
+- Trois patterns minimum pour entraîner aux fondamentaux : attaques que le joueur doit **bloquer ou esquiver au dash**, et fenêtres claires pour contre-attaquer.
+- **Pas de talk-no-jutsu sur ce boss** (cette mécanique est reportée à un boss de Phase 1).
+
+**Drop / récompense** :
+- L'épée d'énergie est déjà obtenue avant le combat. La récompense est le combat lui-même + une **aura propre** ajoutée à l'épée après la victoire (signature visuelle distinctive).
+- Animation d'obtention finale : le Chevalier s'incline ou se dissout.
+
+**Clé du tuto** : l'épée du Chevalier sert ensuite de **clé** pour la porte scellée du spawn. Pas de clé séparée — l'arme et la clé sont une seule et même chose. L'ouverture de cette porte donne accès à la Phase 1.
 
 ---
 
@@ -503,9 +582,19 @@ Chaque spell change la façon dont le joueur **lit la map**. Un spell n'est jama
 - Ajouter un spell = créer un nouveau module, sans toucher au reste
 
 ## Spells prévus
+
+**Tuto (Les Yeux)** — Zell sort de la zone tuto avec **3 capacités max** :
+- **Refroidissement** (inné, cf. Objectif 5 bis) — invisibilité à la vue, jauge qui se vide / se recharge à l'arrêt.
+- **Impulsion** (1er fragment, cf. Objectif 6) — perception pure, zéro dégât.
+- **Dash** (2e fragment, cf. Objectif 7) — partie horizontale au tuto, partie verticale en Phase 1.
+
+**Phase 1 et au-delà** — d'autres capacités viennent enrichir le moveset :
 - **Fusion du Métal** : détruit chaînes, cadenas, obstacles métalliques. Droppé par le boss de La Mémoire. Donne accès à la Salle des Souvenirs.
-- **Réseau Neuronal** : fast travel entre neurones (cf. Objectif 17)
-- Autres spells à ajouter au fil du développement si des idées émergent
+- **Réseau Neuronal** : fast travel entre neurones (cf. Objectif 17).
+- **Coup de Jus** (cf. Objectif 5) — disponible quand l'épée est obtenue, monté en jauge par les coups portés.
+- Autres spells à ajouter au fil du développement si des idées émergent.
+
+**Capacités abandonnées** : double saut, saut mural, plané, 3e spell un temps envisagé (le dash vertical reprend ce rôle de verticalité supplémentaire).
 
 ## Contrôles
 - Touche de spell dédiée (ou roue de sélection si plusieurs spells, à voir)
