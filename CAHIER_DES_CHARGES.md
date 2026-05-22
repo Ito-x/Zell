@@ -31,7 +31,7 @@ Léger, flottant, mais réactif. Zell n'est pas une masse — elle est une boule
 - Gravité asymétrique : tombe légèrement plus vite qu'elle ne monte (sensation de poids)
 
 ## Graphismes
-- Sprite animé en boucle (la boule d'énergie n'est jamais immobile, elle vibre, palpite)
+- Sprite stable, pas de vibration / palpitation d'idle (décision prise — l'effet n'est pas voulu)
 - Trainée de particules très discrète à la marche / sprint
 - À l'atterrissage : petit éclat de particules au point de contact
 - Au dash : signature visuelle dédiée (cf. Objectif 7)
