@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://e5ufq5pj5uuk"]
+[gd_scene load_steps=3 format=3 uid="uid://e5ufq5pj5uuk"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_37kl0"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/Dummy.tscn" id="2_dummy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(1668, 20)
@@ -11,8 +12,16 @@ size = Vector2(1668, 20)
 position = Vector2(1, 36)
 
 [node name="Floor" type="StaticBody2D" parent="." unique_id=1100402132]
+z_index = -10
 position = Vector2(0, 100)
+
+[node name="FloorVisual" type="Polygon2D" parent="Floor"]
+color = Color(0.30, 0.30, 0.38, 1.0)
+polygon = PackedVector2Array(-400, -10, 1268, -10, 1268, 10, -400, 10)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=1430694486]
 position = Vector2(434, 0)
 shape = SubResource("RectangleShape2D_floor")
+
+[node name="Dummy" parent="." instance=ExtResource("2_dummy")]
+position = Vector2(300, 60)

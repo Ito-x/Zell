@@ -104,27 +104,33 @@ Zell est pure conscience. Sa santé est sa **cohérence**. Plus elle est blessé
 
 # OBJECTIF 4 — Système de combat à l'épée
 
+> **État : ✅ prototype implémenté** (attaque, slash arc visible, pogo, contact = dégâts + knockback). L'épée définitive (Excalibur après le Chevalier Cristallin) et les upgrades visuels viendront avec les sprites finaux. Sons d'épée à brancher quand les assets seront prêts.
+
 ## Ressenti joueur
 Chaque coup d'épée doit "claquer". Pas un balayage mou. C'est une décharge d'énergie qui sort de Zell, brève et nette. Le rythme du combat est lent au début (1-2 coups, repli), s'intensifie avec les upgrades.
 
 ## Contrôles
-- Touche d'attaque dédiée
+- **Clic gauche** = attaque
 - Attaque possible à l'arrêt, en marche, en saut, en chute
-- Direction de l'attaque : par défaut dans le sens du regard ; possibilité de frapper en haut ou en bas avec une combinaison touche directionnelle + attaque
-- **Pas de combo enchaîné préfabriqué** : chaque attaque est indépendante, avec un petit cooldown anti-spam (~0.25s)
+- Direction de l'attaque : par défaut dans le sens du regard ; **W** = frappe en haut, **S** = frappe en bas (maintenu pendant le clic)
+- **Pas de combo enchaîné préfabriqué** : chaque attaque est indépendante, avec un cooldown anti-spam (0.25s)
 - Le mouvement reste libre pendant l'attaque (pas de root)
 
 ## Comportement
-- L'épée est une hitbox active pendant ~0.15s
-- Knockback léger sur les petits ennemis touchés
-- **Pogo** : knockback de Zell vers le haut quand elle frappe vers le bas en l'air (rebond sur ennemi) — à valider lors du prototypage
+- L'épée est une hitbox active pendant 0.15s
+- Knockback léger sur les petits ennemis touchés (recul visuel + retour amorti)
+- **Pogo** : tout coup vers le bas qui touche un ennemi rebondit Zell vers le haut. Fonctionne sans contrainte d'altitude (en l'air ou au ras du sol)
+- Une **fenêtre de protection** (0.35s) suit le pogo et le knockback : la gravité boostée + le jump cut sont désactivés pendant ce temps pour préserver l'élan
+- **Contact avec un ennemi = Zell prend 1 dégât** + knockback dans la direction opposée (cf. Objectif 3)
 - PV ennemi visible par leur état visuel (cf. Objectif 12), pas via barre de vie
 
-## Graphismes
-- Lame courte au début, blanc-or, légèrement translucide
-- Sillage de lumière qui se dissipe en 0.2s après le swing
+## Graphismes — épée toujours visible (décision tranchée)
+- L'épée est **présente en permanence** près de Zell, reliée à son centre par un **fil d'énergie ambré** (Line2D)
+- Pose idle : l'épée flotte légèrement à droite (ou à gauche si Zell regarde à gauche), inclinée vers le bas comme un bras de lumière
+- À l'attaque : l'épée se replace au centre de Zell et balaye via un tween cubique vers la direction du coup. Un **slash arc** (croissant blanc-or) apparaît brièvement pendant le swing pour matérialiser la zone touchée (façon Hollow Knight)
+- Lame **type Guts-light** au démarrage : large, droite, peu pointue → hitbox généreuse, lecture claire
+- Impact : flash **rouge** très bref sur l'ennemi + petits éclats blancs qui retombent (pas de gerbe énergie/feu) + knockback visuel
 - À chaque upgrade, l'épée évolue visuellement (cf. Objectif 14)
-- Impact : flash blanc bref sur l'ennemi touché + particules dorées
 - Le swing change de direction proprement (haut, bas, côté)
 
 ## Son

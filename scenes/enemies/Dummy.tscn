@@ -1,0 +1,86 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scenes/enemies/Dummy.gd" id="1_dummy"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dummy"]
+size = Vector2(32, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body_damage"]
+size = Vector2(44, 76)
+
+[sub_resource type="Gradient" id="Gradient_dummy"]
+offsets = PackedFloat32Array(0.0, 0.5, 1.0)
+colors = PackedColorArray(0.65, 0.55, 0.85, 1.0, 0.45, 0.35, 0.65, 1.0, 0.20, 0.15, 0.30, 1.0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_dummy"]
+gradient = SubResource("Gradient_dummy")
+width = 64
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1.0, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_hit"]
+offsets = PackedFloat32Array(0.0, 0.6, 1.0)
+colors = PackedColorArray(1.0, 1.0, 1.0, 0.95, 0.85, 0.85, 0.95, 0.55, 0.6, 0.55, 0.7, 0.0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_hit"]
+gradient = SubResource("Gradient_hit")
+width = 128
+
+[sub_resource type="Gradient" id="Gradient_hit_particle"]
+offsets = PackedFloat32Array(0.0, 1.0)
+colors = PackedColorArray(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_hit_particle"]
+gradient = SubResource("Gradient_hit_particle")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1.0, 0.5)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_add"]
+blend_mode = 1
+
+[sub_resource type="ParticleProcessMaterial" id="PPM_hit"]
+emission_shape = 0
+direction = Vector3(0, -0.3, 0)
+spread = 55.0
+gravity = Vector3(0, 320, 0)
+initial_velocity_min = 50.0
+initial_velocity_max = 110.0
+scale_min = 0.25
+scale_max = 0.55
+color_ramp = SubResource("GradientTexture1D_hit")
+
+[node name="Dummy" type="StaticBody2D"]
+script = ExtResource("1_dummy")
+
+[node name="Sprite" type="Polygon2D" parent="."]
+color = Color(0.70, 0.45, 0.90, 1.0)
+polygon = PackedVector2Array(-16, -32, 16, -32, 16, 32, -16, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_dummy")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("RectangleShape2D_dummy")
+
+[node name="BodyDamage" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BodyDamage"]
+shape = SubResource("RectangleShape2D_body_damage")
+
+[node name="HitParticles" type="GPUParticles2D" parent="."]
+emitting = false
+one_shot = true
+explosiveness = 1.0
+amount = 6
+lifetime = 0.35
+local_coords = false
+material = SubResource("CanvasItemMaterial_add")
+process_material = SubResource("PPM_hit")
+texture = SubResource("GradientTexture2D_hit_particle")
