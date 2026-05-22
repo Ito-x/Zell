@@ -12,7 +12,7 @@ Metroidvania 2D onirique sur Godot 4. Le joueur incarne **Zell**, une conscience
 
 # OBJECTIF 1 — Système de mouvement de Zell
 
-> **État : ✅ implémenté** (manque uniquement le bourdonnement continu en mouvement, à brancher quand l'asset sera trouvé)
+> **État : ✅ implémenté** (mouvement, sauts, sons de marche / saut / atterrissage branchés)
 
 ## Ressenti joueur
 Léger, flottant, mais réactif. Zell n'est pas une masse — elle est une boule d'énergie. Le déplacement doit donner l'impression d'une bougie animée par sa propre volonté, pas d'un sac à patate qui tombe. Le saut doit être *satisfaisant à répéter* : on doit avoir envie de sauter pour rien.
