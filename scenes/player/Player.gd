@@ -36,6 +36,21 @@ var was_on_floor      := false
 
 var current_hp        := MAX_HP
 var iframe_timer      := 0.0
+var respawn_position: Vector2 = Vector2.ZERO   # Mis à jour par les Neurones activés
+var has_respawn_point := false
+var initial_spawn     := Vector2.ZERO
+var is_dead           := false
+
+const DEATH_PAUSE     := 1.5    # Secondes avant la réapparition
+
+# ---- Paramètres de dash (mini-téléportation) ----
+const DASH_DISTANCE   := 140.0
+const DASH_COOLDOWN   := 0.45
+const DASH_IFRAMES    := 0.25      # iframes brèves après la téléportation
+const AFTERIMAGE_TIME := 0.35      # Durée pendant laquelle la silhouette résiduelle reste visible
+
+var dash_cooldown_timer    := 0.0
+var afterimage_tween: Tween
 
 var facing_dir            := 1        # 1 = droite, -1 = gauche (dernière direction visible)
 var attack_cooldown_timer := 0.0
@@ -51,6 +66,7 @@ func _ready() -> void:
 	if $WalkSound.stream is AudioStreamWAV:
 		$WalkSound.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 	_update_health_display()
+	initial_spawn = global_position
 
 
 func _process(delta: float) -> void:
@@ -85,6 +101,14 @@ func _update_satellite_trails() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if is_dead:
+		return
+	# Cooldown du dash s'écoule en permanence
+	if dash_cooldown_timer > 0.0:
+		dash_cooldown_timer = maxf(dash_cooldown_timer - delta, 0.0)
+	# Déclenchement du dash (téléportation instantanée)
+	if Input.is_action_just_pressed("dash"):
+		_try_dash()
 	_apply_gravity(delta)
 	_update_coyote_time(delta)
 	_update_jump_buffer(delta)
@@ -96,6 +120,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_dead:
+		return
 	# Debug : F1 = subir 1 dégât, F2 = soigner 1 PV
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_F1:
@@ -242,9 +268,109 @@ func _update_health_display() -> void:
 		satellite.emitting = i < current_hp
 
 
+# ============================================================
+# DASH
+# ============================================================
+
+func _try_dash() -> void:
+	if dash_cooldown_timer > 0.0:
+		return
+	dash_cooldown_timer = DASH_COOLDOWN
+	var start_pos: Vector2 = global_position
+	var motion := Vector2(float(facing_dir) * DASH_DISTANCE, 0.0)
+
+	# Effet Radagon : rayon vertical de foudre qui s'abat sur le point de départ
+	_strike_lightning($LightningStart, start_pos)
+	# Silhouette résiduelle qui marque la position de départ
+	_spawn_afterimage(start_pos)
+	# Petit burst électrique en bonus
+	$DashBurst.global_position = start_pos
+	$DashBurst.restart()
+	# Téléportation effective : move_and_collide clamp si on percute un mur
+	move_and_collide(motion)
+	# Snap la caméra pour éviter un lerp sur la distance dashée
+	($Camera2D as Camera2D).reset_smoothing()
+	# Vitesse verticale réinitialisée : on n'emporte pas l'élan de chute
+	velocity.y = 0.0
+	# Second rayon au point d'arrivée
+	_strike_lightning($LightningEnd, global_position)
+	# iframes brèves
+	iframe_timer = maxf(iframe_timer, DASH_IFRAMES)
+
+
+func _strike_lightning(bolt: Sprite2D, pos: Vector2) -> void:
+	bolt.global_position = pos
+	bolt.visible = true
+	bolt.modulate = Color(0.85, 0.95, 1.0, 1.0)
+	var tw := create_tween()
+	tw.tween_property(bolt, "modulate:a", 0.0, 0.22)
+	tw.tween_callback(func() -> void: bolt.visible = false)
+
+
+func _spawn_afterimage(pos: Vector2) -> void:
+	var ghost: Sprite2D = $AfterimageSprite
+	ghost.global_position = pos
+	ghost.visible = true
+	ghost.modulate = Color(0.85, 0.95, 1.0, 0.55)
+	if afterimage_tween:
+		afterimage_tween.kill()
+	afterimage_tween = create_tween()
+	afterimage_tween.tween_property(ghost, "modulate:a", 0.0, AFTERIMAGE_TIME)
+	afterimage_tween.tween_callback(func() -> void: ghost.visible = false)
+
+
+func trigger_death() -> void:
+	# Appelée par les sources externes (DeathZone, etc.)
+	if not is_dead:
+		_die()
+
+
 func _die() -> void:
-	# Provisoire : on respawn à plein PV (système de mort propre = Objectif 8)
+	is_dead = true
+	velocity = Vector2.ZERO
+	# Dispersion : on cache toutes les couches visuelles de Zell
+	$ZellVisual.visible = false
+	$HealthDisplay.visible = false
+	$AttackPivot.visible = false
+	$EnergyThread.visible = false
+	if $WalkSound.playing:
+		$WalkSound.stop()
+	# Burst de particules au point de mort (reste en place via local_coords=false)
+	$DeathParticles.restart()
+	# Pause cinématique puis respawn
+	await get_tree().create_timer(DEATH_PAUSE).timeout
+	_respawn()
+
+
+func _respawn() -> void:
+	var target: Vector2 = respawn_position if has_respawn_point else initial_spawn
+	global_position = target
+	velocity = Vector2.ZERO
 	current_hp = MAX_HP
+	iframe_timer = 0.0
+	_update_health_display()
+	# Snap la caméra pour éviter un lerp sur 800px
+	($Camera2D as Camera2D).reset_smoothing()
+	$ZellVisual.visible = true
+	$HealthDisplay.visible = true
+	$AttackPivot.visible = true
+	$EnergyThread.visible = true
+	is_dead = false
+
+
+# ============================================================
+# INTERACTION AVEC LES NEURONES (checkpoints)
+# ============================================================
+
+func set_respawn_point(world_pos: Vector2) -> void:
+	respawn_position = world_pos
+	has_respawn_point = true
+
+
+func rest_at_neurone() -> void:
+	# Recharge PV au max + reset iframes
+	current_hp = MAX_HP
+	iframe_timer = 0.0
 	_update_health_display()
 
 
@@ -311,9 +437,10 @@ func _scan_sword_hits() -> void:
 		if target == self or attack_hit_targets.has(target):
 			continue
 		attack_hit_targets.append(target)
-		if target.has_method("take_damage"):
-			target.take_damage(ATTACK_DAMAGE, global_position)
-		# Pogo : si on a frappé vers le bas, on rebondit (qu'on soit en l'air ou pas)
+		if not target.has_method("take_damage"):
+			continue   # Cible non-attaquable (ex: zone d'interaction d'un neurone) → ignore
+		target.take_damage(ATTACK_DAMAGE, global_position)
+		# Pogo uniquement sur les ennemis (cibles qui prennent des dégâts)
 		if current_attack_dir == Vector2.DOWN:
 			velocity.y = POGO_VELOCITY
 			pogo_protection_timer = POGO_PROTECTION
