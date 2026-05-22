@@ -1020,9 +1020,69 @@ Règle empirique : le polish prend autant de temps que la production initiale. N
 
 ## ✅ Décisions tranchées
 
-*Cette section reste vide jusqu'à ce qu'on tranche explicitement. Chaque décision validée descend ici depuis "Décisions bloquantes". Ça permet de voir d'un coup d'œil l'avancement réel des fondations.*
+*Session de tranchage — mai 2026. Tout ce qui n'apparaît pas ici reste à débattre ou part en polissage.*
 
-- *(rien encore)*
+### Identité
+
+- **Nom du jeu** : **Zell**
+- **Personnage** : Veilae (nom provisoire), surnom **Zell**, ~18 ans, enfant unique
+- **Accident** : voiture, involontaire, traité de façon **floue** (le jeu ne s'explique pas)
+- **Voix finale "Veilae..."** : un membre de la **famille proche**
+- **Chambre d'hôpital** : plusieurs personnes au fil des jours, **peu impactant pour le gameplay**
+- **Monde extérieur** : jamais visible directement
+- **Temps de coma au début** : pas important narrativement
+- **Souvenirs collectés** : moments variés de la vie de Veilae (heureux/non, simples/complexes). **Pas forcément liés à l'accident** — c'est sur sa vie à elle, mystérieux.
+- **Fin** : une seule fin pour tous, délibérément mystérieuse. Rien n'est définitivement perdu.
+- **Leitmotiv musical** : pas prévu pour l'instant.
+
+### Carte & zones
+
+- **Géographie logique anatomique** : oreilles sur les côtés, nez en bas, cerveau en haut, cœur au centre (P3 uniquement)
+- **Zone tutorielle** : **Les Yeux** (on commence par ça)
+- **Zone de transition (Dirtmouth-like)** : **Les Sinus** — possède au moins un marchand (cartes, etc.)
+- **Le Nez** : zone optionnelle
+- **La Mémoire** : peut avoir des sous-zones
+- **Le Cœur** : accessible uniquement en Phase 3
+- **Phase 2** : toutes les zones P1 sont modifiées visuellement
+- **Zone de Rêve** : psychédélique et perturbante, façon rainbow / ivre (pas féerique mignon)
+- **La Peau** : idée gardée en réserve, pas tranchée
+- **L'Oubli** : pas tranché
+- **Autres zones** : on en ajoutera au fil du code si des idées émergent
+- **Noms de zones définitifs** : reportés au polissage, sauf idées qui viennent en chemin
+
+### PNJ & ennemis
+
+- **PNJ** : connaissent Veilae sans le lui dire, mystérieux, certains agissent comme des amis de longue date
+- **PNJ non tuables** sauf cas scripté dans le lore
+- **Ennemis** : ont une origine narrative / lore défini
+- **Ennemis exclusifs à leur zone** (à voir)
+- **Pacification d'ennemis** : non — comportements prédéfinis. Si une amitié est possible avec un ennemi, c'est scripté à l'avance.
+- **Mini-boss des Yeux** : version géante et plus forte des **Aveugles**, avec features supplémentaires
+
+### Combat & capacités
+
+- **Coup de Jus** : **jauge** qui se remplit en frappant les ennemis (façon ultimatum), pas un cooldown simple
+- **Paralysie de l'épée** : déblocable uniquement à la **5ᵉ et dernière** upgrade
+- **Dash** : à retravailler — possiblement remplacé par une mini-téléportation
+- **Impulsion** : pas d'amélioration prévue
+- **HP** : augmentables
+- **Pas d'amélioration prévue pour l'Impulsion**
+
+### Progression & mort
+
+- **Fast travel** : se débloque d'abord en battant un **mini-boss**, puis devient utilisable via l'exploration
+- **Mort** : pas de limite de morts, pas de pénalité permanente
+- **Boss principaux** : droppent souvenirs (importance variable selon le boss), certains débloquent des capacités
+
+### Production
+
+- **Plateformes cibles** : **PC + console**
+- **Graphiques** : faits **à la main**, avec aide IA
+- **Priorités CDC immédiates côté Paul** :
+  1. Boucle de combat (à détailler)
+  2. Système de transitions entre zones
+  3. Système de mort
+- **Reste à voir** (non bloquant) : système de carte, menu/codex, système de nage, système d'upgrades en détail, progression fine.
 
 ---
 
