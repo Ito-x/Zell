@@ -12,6 +12,8 @@ Metroidvania 2D onirique sur Godot 4. Le joueur incarne **Zell**, une conscience
 
 # OBJECTIF 1 — Système de mouvement de Zell
 
+> **État : ✅ implémenté** (manque uniquement le bourdonnement continu en mouvement, à brancher quand l'asset sera trouvé)
+
 ## Ressenti joueur
 Léger, flottant, mais réactif. Zell n'est pas une masse — elle est une boule d'énergie. Le déplacement doit donner l'impression d'une bougie animée par sa propre volonté, pas d'un sac à patate qui tombe. Le saut doit être *satisfaisant à répéter* : on doit avoir envie de sauter pour rien.
 
@@ -46,6 +48,8 @@ Léger, flottant, mais réactif. Zell n'est pas une masse — elle est une boule
 
 # OBJECTIF 2 — Caméra
 
+> **État : ✅ implémenté** côté logique (suivi lissé, look-ahead horizontal, zone morte verticale, méthode `shake()` prête). La parallaxe attend les assets de zone.
+
 ## Ressenti joueur
 La caméra doit se faire oublier. Elle anticipe légèrement les intentions du joueur sans jamais le surprendre. Elle donne de l'espace en plateforme, et resserre en combat / cinématique.
 
@@ -64,6 +68,8 @@ La caméra doit se faire oublier. Elle anticipe légèrement les intentions du j
 ---
 
 # OBJECTIF 3 — Système de vie et de cohérence
+
+> **État : ✅ implémenté** (5 flammèches orbitales, iframes 0.7s avec clignotement, debug F1/F2). Les sons attendent les assets audio. La dégradation détaillée du sprite (table ci-dessous) est représentée pour l'instant uniquement par la perte de flammèches — les états visuels du Core viendront avec les sprites finaux faits main.
 
 ## Ressenti joueur
 Zell est pure conscience. Sa santé est sa **cohérence**. Plus elle est blessée, plus elle se désintègre visuellement. Pas de barre de vie criarde — l'information vit dans le sprite.
