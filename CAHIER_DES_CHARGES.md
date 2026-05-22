@@ -10,6 +10,38 @@ Metroidvania 2D onirique sur Godot 4. Le joueur incarne **Zell**, une conscience
 
 ---
 
+# ➜ PROCHAINE SESSION — Apprentissage design & carte du monde
+
+Bascule du code à la production visuelle. Les systèmes prototypes (1-4, 7, 8, 10) sont en place ; il faut maintenant commencer à fabriquer les assets, en démarrant par la **carte du monde** (Objectif 25 — scan cérébral).
+
+## Outils à installer / tester
+- **Krita** (gratuit) ou **Affinity Photo/Designer** (one-time) pour les visuels peints / scans
+- **Aseprite** (~20€) si exploration pixel art / sprites
+- **Tiled** (gratuit) pour les tilesets de zones — utile une fois les premiers sprites prêts
+
+## Workflow IA-assisté
+1. **Griffonner à la main** (tablette ou papier) la forme générale de la map : anatomie cérébrale stylisée, emplacements des zones (cf. géographie ci-dessous)
+2. Utiliser l'IA (**Midjourney**, **Stable Diffusion**, **Nano Banana**) pour explorer des **directions stylistiques** à partir des croquis
+3. **Retoucher manuellement** dans Krita / Affinity avant import Godot
+
+## Carte du monde — point de départ
+- Référence à mater : la carte de **Hollow Knight** (lignes lumineuses, nœuds, minimalisme), et des **IRM cérébrales** stylisées
+- Géographie déjà tranchée dans le CDC (cf. Objectif 25) :
+  - Oreilles → côtés gauche / droit
+  - Nez → en bas (zone optionnelle)
+  - Cerveau / Mémoire → en haut
+  - Cœur → centre, accessible uniquement en Phase 3
+  - Les Sinus → centre-bas, hub de transition
+  - Zone de Rêve → très haut
+- Style : "imagerie médicale poétique" — lignes lumineuses, fond très sombre, légers reflets, nœuds qui pulsent, lignes qui respirent
+
+## Première étape concrète demain
+1. Ouvrir un canvas vide dans Krita (ou autre outil choisi)
+2. Tracer un **rough** de la carte : positions approximatives des zones, connexions
+3. Ne pas chercher la propreté — juste poser la **structure spatiale**
+
+---
+
 # OBJECTIF 1 — Système de mouvement de Zell
 
 > **État : ✅ implémenté** (mouvement, sauts, sons de marche / saut / atterrissage branchés)
