@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://e5ufq5pj5uuk"]
+
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_37kl0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(800, 20)
+
+[node name="test" type="Node2D" unique_id=1174418191]
+
+[node name="Player" parent="." unique_id=567711681 instance=ExtResource("1_37kl0")]
+position = Vector2(1, 36)
+
+[node name="Floor" type="StaticBody2D" parent="." unique_id=1100402132]
+position = Vector2(0, 100)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=1430694486]
+shape = SubResource("RectangleShape2D_floor")
