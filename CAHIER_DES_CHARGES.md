@@ -256,8 +256,10 @@ Une expiration de lumière. Zell se concentre, émet une impulsion électrique, 
 
 # OBJECTIF 7 — Dash (2e fragment, en deux parties)
 
+> **État : ✅ prototype implémenté** (téléportation instantanée horizontale, deux rayons de foudre, afterimage, iframes). Le vertical attend l'unlock de Phase 1. Les sons + le sillage en pointillés viendront avec le polish.
+
 ## Ressenti joueur
-À retravailler côté ressenti — dash classique ou mini-téléportation ? À trancher au prototypage. Dans tous les cas : sensation d'instantané, pas de glissé.
+**Mini-téléportation électrique** (décision tranchée pendant le prototypage). Pas un dash glissé — un point A → un point B instantané, façon Radagon (Elden Ring) : un rayon de foudre vertical s'abat au point de départ, Zell disparaît dedans, un second rayon frappe au point d'arrivée et elle réapparaît dedans. Lecture immédiate, signature électrique forte.
 
 **Le Dash remplace définitivement l'ancienne idée du double saut.** Il se déverrouille en **deux parties** :
 - **Partie horizontale** : 2e fragment du tuto (Les Yeux)
@@ -266,21 +268,23 @@ Une expiration de lumière. Zell se concentre, émet une impulsion électrique, 
 Conséquence : tant que le joueur n'a pas la verticale, **certaines zones du tuto restent inaccessibles**. Le backtracking est optionnel et ne bloque jamais la progression.
 
 ## Contrôles
-- Touche dédiée
-- Direction : sens du déplacement horizontal par défaut, ajout de la direction verticale une fois l'upgrade obtenue
-- Cooldown court
+- **Clic droit** = dash (mini-téléportation)
+- Direction : sens du regard par défaut. Direction verticale ajoutée plus tard (Phase 1)
+- Cooldown 0.45s
 
 ## Comportement
-- Trajet quasi-instantané sur une distance fixe
-- iframes pendant le dash (à valider)
-- Ne permet pas de traverser les murs solides — uniquement les hitbox d'ennemis ou de projectiles
+- Téléportation **instantanée** sur 140px (distance fixe paramétrable)
+- iframes 0.25s pendant la téléportation → traversée sûre des projectiles / ennemis
+- `move_and_collide` clamp la position si un mur solide est sur le trajet → Zell s'arrête au mur, pas de traversée
+- Les hitbox d'ennemis / projectiles ne bloquent pas → traversée libre
 - Sert aussi à **traverser les Filaments** (ennemi-obstacle des Yeux)
 
-## Graphismes
-- Au départ : Zell se désagrège en particules sur ~0.05s
-- Sillage en pointillés lumineux entre point de départ et point d'arrivée
-- À l'arrivée : recomposition en flash bref
-- L'afterimage (silhouette résiduelle) reste 0.3s au point de départ — utilisable pour des puzzles (cf. Objectif 23, Sillage de Conscience)
+## Graphismes (effet Radagon)
+- Deux **rayons verticaux de foudre** apparaissent simultanément : un au point A, un au point B
+- Chaque rayon est une colonne lumineuse blanc-bleu qui s'étend vers le haut, fade en ~0.22s
+- **Afterimage** : silhouette résiduelle de Zell reste 0.35s au point de départ — utilisable pour des puzzles (cf. Objectif 23, Sillage de Conscience)
+- Petit burst électrique en bonus au point A
+- La caméra ne lerp pas la distance dashée (snap propre)
 
 ## Son
 - Bzzt court et net au départ
@@ -289,6 +293,8 @@ Conséquence : tant que le joueur n'a pas la verticale, **certaines zones du tut
 ---
 
 # OBJECTIF 8 — Système de mort et de respawn
+
+> **État : ✅ prototype implémenté** (dispersion, pause 1.5s, respawn au dernier neurone activé ou au spawn). Les Synapses, l'Écho de Mort et le filet 10% attendent leurs systèmes respectifs. DeathZone fonctionnelle (chute dans le vide = mort).
 
 ## Ressenti joueur
 La mort n'est pas punitive — elle est narrative. Zell se disperse, se laisse aller, se reforme. Le joueur perd des Synapses au point de mort, peut les récupérer. Pas de Game Over écran rouge, pas d'humiliation. Juste un moment de pause et un nouveau départ.
@@ -346,6 +352,8 @@ Les Synapses sont les connexions du cerveau. Les ramasser est satisfaisant — c
 ---
 
 # OBJECTIF 10 — Neurones (checkpoints et sauvegarde)
+
+> **État : ✅ prototype implémenté** (visuel pulsant, interaction E, soin + définition du point de respawn, repos répétable). Le design final (interface de repos, services, neurones endommagés) sera repris plus tard.
 
 ## Ressenti joueur
 Un point de calme. Un endroit où Zell peut respirer. S'asseoir près d'un neurone, c'est s'ancrer dans un lieu — comme une grâce dans Elden Ring, un banc dans Hollow Knight. La musique change légèrement à proximité, l'écran s'éclaire un peu plus.
