@@ -17,6 +17,9 @@
 [ext_resource type="Shader" path="res://assets/shaders/chair_platform.gdshader" id="15_platform"]
 [ext_resource type="Texture2D" path="res://assets/textures/chair/chair_bourrelets.jpg" id="16_bourrelets"]
 [ext_resource type="Script" path="res://scenes/world/ParallaxFollow.gd" id="17_parallax"]
+[ext_resource type="Shader" path="res://assets/shaders/chair_far_background.gdshader" id="18_far_bg"]
+[ext_resource type="Shader" path="res://assets/shaders/chair_putrefaction.gdshader" id="19_putre"]
+[ext_resource type="Texture2D" path="res://assets/textures/chair/chair_diffuse_rouge.jpg" id="20_red"]
 
 [sub_resource type="Environment" id="Environment_yeux"]
 background_mode = 1
@@ -133,37 +136,70 @@ shader_parameter/breath_speed = 0.22
 shader_parameter/breath_amount = 0.06
 shader_parameter/impact_intensity = 0.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_darkfog"]
-render_mode = "blend_mix"
-code = "shader_type canvas_item;
-uniform vec4 fog_color : source_color = vec4(0.0, 0.0, 0.0, 0.55);
-varying vec2 local_pos;
-void vertex() { local_pos = VERTEX; }
-void fragment() {
-\tfloat top_fade = smoothstep(-800.0, -400.0, local_pos.y);
-\tfloat bottom_fade = 1.0 - smoothstep(200.0, 500.0, local_pos.y);
-\tfloat a = fog_color.a * top_fade * bottom_fade;
-\tCOLOR = vec4(fog_color.rgb, a);
-}"
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_far_bg"]
+shader = ExtResource("18_far_bg")
+shader_parameter/source_tex = ExtResource("20_red")
+shader_parameter/tex_scale = 0.00055
+shader_parameter/tint = Color(0.20, 0.04, 0.04, 1)
+shader_parameter/darkness = 0.14
+shader_parameter/contrast = 2.4
+shader_parameter/breath_speed = 0.14
+shader_parameter/breath_amount = 0.05
+shader_parameter/distortion_strength = 0.004
+shader_parameter/distortion_speed = 0.04
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sol_putre"]
+shader = ExtResource("19_putre")
+shader_parameter/source_tex = ExtResource("16_bourrelets")
+shader_parameter/tex_scale = 0.0009
+shader_parameter/shadow_color = Color(0.005, 0.002, 0.0, 1)
+shader_parameter/highlight_color = Color(0.42, 0.30, 0.22, 1)
+shader_parameter/darkness = 0.55
+shader_parameter/contrast = 2.4
+shader_parameter/normal_strength = 2.0
+shader_parameter/auto_normal_kernel = 2.0
+shader_parameter/depth_contrast = 2.2
+shader_parameter/cavity_blackness = 0.80
+shader_parameter/impact_intensity = 0.0
+shader_parameter/impact_radius = 240.0
+shader_parameter/impact_falloff = 2.6
+shader_parameter/vibration_speed = 9.0
+shader_parameter/wave_frequency = 0.028
+shader_parameter/breath_speed = 0.20
+shader_parameter/breath_amount = 0.04
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_plafond_putre"]
+shader = ExtResource("19_putre")
+shader_parameter/source_tex = ExtResource("16_bourrelets")
+shader_parameter/tex_scale = 0.0010
+shader_parameter/shadow_color = Color(0.003, 0.001, 0.0, 1)
+shader_parameter/highlight_color = Color(0.30, 0.22, 0.16, 1)
+shader_parameter/darkness = 0.45
+shader_parameter/contrast = 2.6
+shader_parameter/normal_strength = 1.8
+shader_parameter/auto_normal_kernel = 2.5
+shader_parameter/depth_contrast = 2.4
+shader_parameter/cavity_blackness = 0.85
+shader_parameter/impact_intensity = 0.0
+shader_parameter/breath_speed = 0.15
+shader_parameter/breath_amount = 0.035
 
 [node name="LesYeux" type="Node2D" unique_id=1616122588]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=915583576]
 environment = SubResource("Environment_yeux")
 
+[node name="FarBackground" type="Polygon2D" parent="."]
+z_index = -150
+material = SubResource("ShaderMaterial_far_bg")
+polygon = PackedVector2Array(-3000, -800, 3000, -800, 3000, 500, -3000, 500)
+script = ExtResource("17_parallax")
+scroll_scale = Vector2(0.15, 0.15)
+
 [node name="Background" type="Polygon2D" parent="." unique_id=1928646053]
 z_index = -100
 material = SubResource("ShaderMaterial_bg")
 polygon = PackedVector2Array(-3000, -800, 3000, -800, 3000, 500, -3000, 500)
-script = ExtResource("17_parallax")
-scroll_scale = Vector2(0.25, 0.4)
-
-[node name="DarkFog" type="Polygon2D" parent="."]
-z_index = -90
-material = SubResource("ShaderMaterial_darkfog")
-polygon = PackedVector2Array(-3000, -800, 3000, -800, 3000, 500, -3000, 500)
-script = ExtResource("17_parallax")
-scroll_scale = Vector2(0.25, 0.4)
 
 [node name="Decor" type="Node2D" parent="." unique_id=1740979370]
 
@@ -468,9 +504,7 @@ position = Vector2(0, 340)
 shape = SubResource("RectangleShape2D_sol")
 
 [node name="Visual" type="Polygon2D" parent="SolProvisoire" unique_id=1075183896]
-material = SubResource("ShaderMaterial_sol_platform")
-texture = SubResource("CanvasTexture_chair_sol")
-texture_scale = Vector2(0.0008, 0.0008)
+material = SubResource("ShaderMaterial_sol_putre")
 polygon = PackedVector2Array(-2000, -16, 2000, -16, 2000, 500, -2000, 500)
 
 [node name="Plafond" type="StaticBody2D" parent="." unique_id=233600284]
@@ -481,9 +515,7 @@ position = Vector2(0, -400)
 shape = SubResource("RectangleShape2D_plafond")
 
 [node name="Visual" type="Polygon2D" parent="Plafond" unique_id=1831895319]
-material = SubResource("ShaderMaterial_plafond_platform")
-texture = SubResource("CanvasTexture_chair_plafond")
-texture_scale = Vector2(0.0009, 0.0009)
+material = SubResource("ShaderMaterial_plafond_putre")
 polygon = PackedVector2Array(-2000, -280, 2000, -280, 2000, 16, -2000, 16)
 
 [node name="Player" parent="." unique_id=1252304022 instance=ExtResource("1_player")]
