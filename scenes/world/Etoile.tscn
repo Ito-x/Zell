@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://b8etoilerosa01"]
+[gd_scene format=3 uid="uid://bovvhmrh3de41"]
 
 [ext_resource type="Script" path="res://scenes/world/EtoileRosas.gd" id="1_etoile"]
 
