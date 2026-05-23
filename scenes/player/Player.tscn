@@ -290,6 +290,7 @@ position = Vector2(22, 0)
 shape = SubResource("RectangleShape2D_sword")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -180)
 position_smoothing_enabled = true
 position_smoothing_speed = 5.0
 drag_vertical_enabled = true
