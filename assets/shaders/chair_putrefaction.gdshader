@@ -1,25 +1,26 @@
-// Shader B — Sol & plafond : texture bourrelets/nodules très assombrie,
-// avec auto-normal map depuis luminance pour interaction Light2D et relief.
-// Les creux sont poussés au noir, les sommets gardent leur définition.
+// Shader B — Sol & plafond : assombrit l'image source SANS la recolorer entièrement.
+// La structure et les highlights des bourrelets restent reconnaissables.
 shader_type canvas_item;
 
 uniform sampler2D source_tex : filter_linear_mipmap, repeat_enable;
-uniform float tex_scale = 0.00085;
+uniform float tex_scale = 0.0018;
 
-// Recoloration en deux pôles : shadow (creux/cavités) et highlight (sommets éclairés)
-uniform vec3 shadow_color : source_color = vec3(0.005, 0.002, 0.0);
-uniform vec3 highlight_color : source_color = vec3(0.42, 0.30, 0.22);
-
+// Tint multiplicateur sur la couleur originale (garde la teinte de la texture)
+uniform vec3 tint : source_color = vec3(0.85, 0.70, 0.55);
 uniform float darkness : hint_range(0.0, 1.5) = 0.55;
-uniform float contrast : hint_range(0.5, 5.0) = 2.4;
 
-// Self-shadowing via normale calculée depuis la luminance
-uniform float normal_strength : hint_range(0.0, 4.0) = 2.0;
-uniform float auto_normal_kernel : hint_range(0.5, 6.0) = 2.0;
-uniform float depth_contrast : hint_range(0.5, 4.0) = 2.2;
-uniform float cavity_blackness : hint_range(0.0, 0.95) = 0.80;
+// Boost contrast around mid-gray pour faire ressortir les bumps
+uniform float contrast : hint_range(0.5, 4.0) = 1.5;
+// Push final : courbe gamma pour pousser légèrement vers le noir tout en gardant highlights
+uniform float gamma : hint_range(0.5, 3.0) = 1.2;
 
-// Squash & stretch lorsque le joueur impacte le sol
+// Auto-normal depuis la luminance pour Light2D + self-shadow
+uniform float normal_strength : hint_range(0.0, 4.0) = 1.8;
+uniform float auto_normal_kernel : hint_range(0.5, 6.0) = 1.5;
+uniform float depth_contrast : hint_range(0.5, 4.0) = 1.6;
+uniform float cavity_blackness : hint_range(0.0, 0.95) = 0.45;
+
+// Impact (squash & stretch)
 uniform vec2 impact_position = vec2(0.0, 0.0);
 uniform float impact_intensity : hint_range(0.0, 30.0) = 0.0;
 uniform float impact_radius : hint_range(20.0, 600.0) = 240.0;
@@ -27,7 +28,7 @@ uniform float impact_falloff : hint_range(1.0, 6.0) = 2.6;
 uniform float vibration_speed : hint_range(2.0, 30.0) = 9.0;
 uniform float wave_frequency : hint_range(0.005, 0.10) = 0.028;
 
-// Pulse organique discret
+// Pulse organique très discret
 uniform float breath_speed : hint_range(0.0, 2.0) = 0.18;
 uniform float breath_amount : hint_range(0.0, 0.2) = 0.04;
 
@@ -68,19 +69,26 @@ void fragment() {
 	vec2 uv = world_pos * tex_scale + offset * tex_scale;
 
 	vec4 src = texture(source_tex, uv);
+	vec3 col = src.rgb;
+
+	// Contraste autour de 0.5 (étire la dynamique → bumps mieux marqués)
+	col = (col - 0.5) * contrast + 0.5;
+	col = clamp(col, 0.0, 1.0);
+
+	// Tint multiplicatif : conserve les variations de couleur de l'image
+	col *= tint;
+
+	// Self-shadow par normale Z : creux entre bourrelets enfoncés
 	vec3 n = normal_from_luminance(uv, auto_normal_kernel);
-
-	// Recoloration agressive : pow sur luminance pour pousser les sombres vers shadow_color
-	float lum = luminance(src.rgb);
-	float lum_c = pow(lum, contrast);
-	vec3 col = mix(shadow_color, highlight_color, lum_c);
-
-	// Self-shadow par normale Z : creux deviennent quasi-noirs
 	float cavity = pow(clamp(n.z, 0.0, 1.0), depth_contrast);
 	col *= mix(1.0 - cavity_blackness, 1.0, cavity);
 
+	// Gamma final → pousse les sombres vers le noir, garde les highlights
+	col = pow(col, vec3(gamma));
+
 	col *= darkness;
 
+	// Pulse discret
 	if (breath_speed > 0.001) {
 		float p = 0.5 + 0.5 * sin(TIME * breath_speed);
 		float pulse = p * p * (3.0 - 2.0 * p);
