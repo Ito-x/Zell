@@ -1,8 +1,16 @@
-[gd_scene format=3 uid="uid://bovvhmrh3de41"]
+[gd_scene load_steps=4 format=3 uid="uid://bovvhmrh3de41"]
 
 [ext_resource type="Script" path="res://scenes/world/EtoileRosas.gd" id="1_etoile"]
+[ext_resource type="Shader" path="res://assets/shaders/rosa.gdshader" id="2_rosa"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rosa"]
+shader = ExtResource("2_rosa")
+shader_parameter/line_width = 0.018
+shader_parameter/petals = 8.0
+shader_parameter/inner_petals = 12.0
 
 [node name="Etoile" type="Polygon2D"]
-color = Color(1, 0.9, 0.6, 1)
-polygon = PackedVector2Array(27, 0, 22.25, 4.42, 13.91, 5.76, 11.25, 7.52, 14.14, 14.14, 14.69, 21.99, 9.55, 23.04, 3.39, 16.99, 0, 13, -3.39, 16.99, -9.55, 23.04, -14.69, 21.99, -14.14, 14.14, -11.25, 7.52, -13.91, 5.76, -22.25, 4.42, -27, 0, -22.25, -4.42, -13.91, -5.76, -11.25, -7.52, -14.14, -14.14, -14.69, -21.99, -9.55, -23.04, -3.39, -16.99, 0, -13, 3.39, -16.99, 9.55, -23.04, 14.69, -21.99, 14.14, -14.14, 11.25, -7.52, 13.91, -5.76, 22.25, -4.42)
+material = SubResource("ShaderMaterial_rosa")
+color = Color(1, 1, 1, 1)
+polygon = PackedVector2Array(-30, -30, 30, -30, 30, 30, -30, 30)
 script = ExtResource("1_etoile")
