@@ -20,6 +20,7 @@
 [ext_resource type="Shader" path="res://assets/shaders/chair_far_background.gdshader" id="18_far_bg"]
 [ext_resource type="Shader" path="res://assets/shaders/chair_putrefaction.gdshader" id="19_putre"]
 [ext_resource type="Texture2D" path="res://assets/textures/chair/chair_diffuse_rouge.jpg" id="20_red"]
+[ext_resource type="Shader" path="res://assets/shaders/blood_lightning.gdshader" id="21_blood"]
 
 [sub_resource type="Environment" id="Environment_yeux"]
 background_mode = 1
@@ -136,6 +137,18 @@ shader_parameter/breath_speed = 0.22
 shader_parameter/breath_amount = 0.06
 shader_parameter/impact_intensity = 0.0
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_blood"]
+shader = ExtResource("21_blood")
+shader_parameter/bolt_color = Color(1.7, 0.18, 0.12, 1)
+shader_parameter/scale = 0.0010
+shader_parameter/bolt_width = 0.022
+shader_parameter/branch_strength = 0.7
+shader_parameter/density = 0.18
+shader_parameter/pulse_speed = 0.65
+shader_parameter/pulse_sharpness = 7.0
+shader_parameter/warp_speed = 0.04
+shader_parameter/warp_amount = 0.25
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_far_bg"]
 shader = ExtResource("18_far_bg")
 shader_parameter/source_tex = ExtResource("20_red")
@@ -195,6 +208,13 @@ material = SubResource("ShaderMaterial_far_bg")
 polygon = PackedVector2Array(-3000, -800, 3000, -800, 3000, 500, -3000, 500)
 script = ExtResource("17_parallax")
 scroll_scale = Vector2(0.18, 0.18)
+
+[node name="BloodLightning" type="Polygon2D" parent="."]
+z_index = -140
+material = SubResource("ShaderMaterial_blood")
+polygon = PackedVector2Array(-3000, -800, 3000, -800, 3000, 500, -3000, 500)
+script = ExtResource("17_parallax")
+scroll_scale = Vector2(0.22, 0.22)
 
 [node name="Decor" type="Node2D" parent="." unique_id=1740979370]
 
