@@ -49,7 +49,7 @@ float luminance(vec3 c) {
 }
 
 vec3 normal_from_luminance(vec2 uv) {
-	vec2 px = TEXTURE_PIXEL_SIZE * auto_normal_kernel;
+	vec2 px = (1.0 / vec2(textureSize(TEXTURE, 0))) * auto_normal_kernel;
 	float h_l = luminance(texture(TEXTURE, uv - vec2(px.x, 0.0)).rgb);
 	float h_r = luminance(texture(TEXTURE, uv + vec2(px.x, 0.0)).rgb);
 	float h_d = luminance(texture(TEXTURE, uv - vec2(0.0, px.y)).rgb);
@@ -62,7 +62,7 @@ vec3 normal_from_luminance(vec2 uv) {
 
 void fragment() {
 	vec2 offset_world = squash_uv_offset();
-	vec2 uv = UV + offset_world * TEXTURE_PIXEL_SIZE;
+	vec2 uv = UV + offset_world * (1.0 / vec2(textureSize(TEXTURE, 0)));
 
 	vec4 albedo = texture(TEXTURE, uv) * tint;
 	albedo.rgb *= overall_brightness;
