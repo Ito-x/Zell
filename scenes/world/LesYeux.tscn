@@ -8,26 +8,27 @@
 background_mode = 1
 background_color = Color(0.005, 0.003, 0.012, 1)
 glow_enabled = true
-glow_levels/1 = 0.4
-glow_levels/2 = 0.3
-glow_levels/3 = 0.2
-glow_intensity = 1.1
-glow_strength = 1.3
-glow_bloom = 0.2
-glow_blend_mode = 2
+glow_levels/1 = 0.3
+glow_levels/2 = 0.2
+glow_intensity = 0.5
+glow_strength = 1.0
+glow_bloom = 0.0
+glow_blend_mode = 1
+glow_hdr_threshold = 1.0
+glow_hdr_scale = 1.5
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sol"]
 size = Vector2(4000, 32)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_flesh"]
 shader = ExtResource("2_flesh")
-shader_parameter/base_color = Color(0.32, 0.25, 0.16, 1)
-shader_parameter/deep_color = Color(0.08, 0.06, 0.04, 1)
-shader_parameter/vein_color = Color(0.48, 0.38, 0.22, 1)
-shader_parameter/scale = 0.02
-shader_parameter/pulse_speed = 0.3
-shader_parameter/pulse_amount = 0.04
-shader_parameter/wetness = 0.2
+shader_parameter/base_color = Color(0.22, 0.19, 0.15, 1)
+shader_parameter/deep_color = Color(0.06, 0.05, 0.04, 1)
+shader_parameter/vein_color = Color(0.32, 0.28, 0.22, 1)
+shader_parameter/scale = 0.025
+shader_parameter/pulse_speed = 0.25
+shader_parameter/pulse_amount = 0.03
+shader_parameter/wetness = 0.0
 
 [node name="LesYeux" type="Node2D" unique_id=657330787]
 
@@ -39,123 +40,93 @@ environment = SubResource("Environment_yeux")
 [node name="CoucheArriere" type="ParallaxLayer" parent="ParallaxBackground" unique_id=1282829390]
 motion_scale = Vector2(0.1, 0.1)
 
-[node name="Etoile1" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(-420, -180)
-scale = Vector2(2.2, 2.2)
-color = Color(1.5, 1.4, 0.7, 1)
+[node name="Rosa1" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(-420, -210)
+scale = Vector2(1.6, 1.6)
+color = Color(1.05, 0.95, 0.55, 1)
 
-[node name="Etoile2" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(-380, -150)
+[node name="Rosa2" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(-360, -170)
+scale = Vector2(0.9, 0.9)
+color = Color(0.85, 0.55, 1.05, 1)
+
+[node name="Rosa3" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(-280, -290)
 scale = Vector2(1.3, 1.3)
-color = Color(1.2, 0.7, 1.5, 1)
+color = Color(1.0, 0.9, 0.55, 1)
 
-[node name="Etoile3" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(-300, -260)
-scale = Vector2(1.7, 1.7)
-color = Color(1.5, 1.3, 0.8, 1)
+[node name="Rosa4" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(-150, -240)
+scale = Vector2(1.0, 1.0)
+color = Color(1.05, 0.65, 0.85, 1)
 
-[node name="Etoile4" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(-200, -100)
-scale = Vector2(1.2, 1.2)
-color = Color(1, 0.7, 1.5, 1)
+[node name="Rosa5" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(-100, -210)
+scale = Vector2(0.7, 0.7)
+color = Color(0.95, 0.85, 0.5, 1)
 
-[node name="Etoile5" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(-100, -220)
-scale = Vector2(2, 2)
-color = Color(1.5, 1.3, 0.7, 1)
+[node name="Rosa6" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(20, -280)
+scale = Vector2(1.4, 1.4)
+color = Color(0.8, 0.55, 1.05, 1)
 
-[node name="Etoile6" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(-60, -190)
+[node name="Rosa7" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(140, -190)
 scale = Vector2(1.1, 1.1)
-color = Color(1.4, 0.9, 1.2, 1)
+color = Color(1.05, 0.95, 0.55, 1)
 
-[node name="Etoile7" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(30, -120)
-scale = Vector2(1.5, 1.5)
-color = Color(1.5, 1.4, 0.8, 1)
+[node name="Rosa8" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(185, -160)
+scale = Vector2(0.65, 0.65)
+color = Color(1.0, 0.7, 0.9, 1)
 
-[node name="Etoile8" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(110, -270)
-scale = Vector2(1.9, 1.9)
-color = Color(1.1, 0.7, 1.5, 1)
-
-[node name="Etoile9" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(150, -240)
+[node name="Rosa9" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(280, -250)
 scale = Vector2(1.2, 1.2)
-color = Color(1.5, 1.3, 0.75, 1)
+color = Color(0.95, 0.85, 0.5, 1)
 
-[node name="Etoile10" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(240, -180)
-scale = Vector2(1.4, 1.4)
-color = Color(1.4, 0.85, 1.3, 1)
+[node name="Rosa10" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(380, -200)
+scale = Vector2(0.9, 0.9)
+color = Color(0.85, 0.6, 1.05, 1)
 
-[node name="Etoile11" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(330, -110)
-scale = Vector2(1.6, 1.6)
-color = Color(1.5, 1.4, 0.8, 1)
-
-[node name="Etoile12" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(410, -230)
-scale = Vector2(2, 2)
-color = Color(1, 0.7, 1.5, 1)
-
-[node name="Etoile13" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(450, -200)
-scale = Vector2(1, 1)
-color = Color(1.5, 1.3, 0.75, 1)
-
-[node name="Etoile14" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(-480, -50)
-scale = Vector2(1.4, 1.4)
-color = Color(1.3, 0.8, 1.4, 1)
-
-[node name="Etoile15" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(530, -40)
-scale = Vector2(1.5, 1.5)
-color = Color(1.5, 1.4, 0.85, 1)
-
-[node name="Etoile16" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(-30, -300)
+[node name="Rosa11" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(440, -280)
 scale = Vector2(1.3, 1.3)
-color = Color(1.2, 0.75, 1.5, 1)
+color = Color(1.05, 0.95, 0.6, 1)
 
-[node name="Etoile17" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(-560, -280)
-scale = Vector2(1.6, 1.6)
-color = Color(1.5, 1.35, 0.8, 1)
+[node name="Rosa12" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(-540, -310)
+scale = Vector2(1.0, 1.0)
+color = Color(1.0, 0.7, 0.9, 1)
 
-[node name="Etoile18" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(580, -250)
-scale = Vector2(1.4, 1.4)
-color = Color(1.4, 0.9, 1.3, 1)
+[node name="Rosa13" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(560, -310)
+scale = Vector2(1.1, 1.1)
+color = Color(0.9, 0.6, 1.05, 1)
 
-[node name="Etoile19" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(620, -220)
-scale = Vector2(1, 1)
-color = Color(1.5, 1.3, 0.8, 1)
+[node name="Rosa14" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(-30, -340)
+scale = Vector2(0.85, 0.85)
+color = Color(1.0, 0.9, 0.55, 1)
 
-[node name="Etoile20" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
-position = Vector2(-620, -20)
-scale = Vector2(1.2, 1.2)
-color = Color(1.1, 0.7, 1.5, 1)
+[node name="Rosa15" parent="ParallaxBackground/CoucheArriere" instance=ExtResource("3_etoile")]
+position = Vector2(620, -250)
+scale = Vector2(0.75, 0.75)
+color = Color(1.0, 0.65, 0.85, 1)
 
 [node name="CoucheMilieu" type="ParallaxLayer" parent="ParallaxBackground" unique_id=1957711183]
 motion_scale = Vector2(0.3, 0.3)
 
-[node name="EtoileM1" parent="ParallaxBackground/CoucheMilieu" instance=ExtResource("3_etoile")]
-position = Vector2(-260, -80)
-scale = Vector2(0.9, 0.9)
-color = Color(1.4, 1.2, 0.7, 1)
+[node name="RosaM1" parent="ParallaxBackground/CoucheMilieu" instance=ExtResource("3_etoile")]
+position = Vector2(-320, -300)
+scale = Vector2(0.6, 0.6)
+color = Color(0.95, 0.85, 0.5, 1)
 
-[node name="EtoileM2" parent="ParallaxBackground/CoucheMilieu" instance=ExtResource("3_etoile")]
-position = Vector2(180, -160)
-scale = Vector2(1.1, 1.1)
-color = Color(1.1, 0.7, 1.4, 1)
-
-[node name="EtoileM3" parent="ParallaxBackground/CoucheMilieu" instance=ExtResource("3_etoile")]
-position = Vector2(-50, -40)
-scale = Vector2(0.8, 0.8)
-color = Color(1.4, 0.9, 1.2, 1)
+[node name="RosaM2" parent="ParallaxBackground/CoucheMilieu" instance=ExtResource("3_etoile")]
+position = Vector2(280, -340)
+scale = Vector2(0.7, 0.7)
+color = Color(0.85, 0.6, 1.0, 1)
 
 [node name="CoucheAvant" type="ParallaxLayer" parent="ParallaxBackground" unique_id=1423398706]
 motion_scale = Vector2(0.65, 0.65)
