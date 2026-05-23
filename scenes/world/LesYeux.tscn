@@ -13,6 +13,7 @@
 [ext_resource type="Shader" path="res://assets/shaders/background_gradient.gdshader" id="11_bg"]
 [ext_resource type="Shader" path="res://assets/shaders/fog.gdshader" id="12_fog"]
 [ext_resource type="Shader" path="res://assets/shaders/sparkles.gdshader" id="13_sparkles"]
+[ext_resource type="Shader" path="res://assets/shaders/chair_organic.gdshader" id="14_chair"]
 
 [sub_resource type="Environment" id="Environment_yeux"]
 background_mode = 1
@@ -64,20 +65,34 @@ size = Vector2(4001, 32)
 size = Vector2(4001, 32)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sol"]
-shader = ExtResource("2_stones")
-shader_parameter/source_tex = ExtResource("10_tex")
-shader_parameter/stone_tint = Color(0.45, 0.42, 0.38, 1)
-shader_parameter/vine_tint = Color(0.30, 0.28, 0.25, 1)
-shader_parameter/texture_scale = 0.0011
-shader_parameter/brightness = 0.55
+shader = ExtResource("14_chair")
+shader_parameter/deep_color = Color(0.018, 0.006, 0.012, 1)
+shader_parameter/mid_color = Color(0.06, 0.018, 0.022, 1)
+shader_parameter/ridge_color = Color(0.16, 0.045, 0.05, 1)
+shader_parameter/vein_color = Color(0.003, 0.0, 0.001, 1)
+shader_parameter/scale = 0.0045
+shader_parameter/cell_density = 2.4
+shader_parameter/vein_width = 0.10
+shader_parameter/breath_speed = 0.30
+shader_parameter/breath_amount = 0.10
+shader_parameter/distortion_amount = 0.45
+shader_parameter/distortion_speed = 0.06
+shader_parameter/overall_brightness = 1.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_plafond"]
-shader = ExtResource("2_stones")
-shader_parameter/source_tex = ExtResource("10_tex")
-shader_parameter/stone_tint = Color(0.45, 0.42, 0.38, 1)
-shader_parameter/vine_tint = Color(0.30, 0.28, 0.25, 1)
-shader_parameter/texture_scale = 0.0022
-shader_parameter/brightness = 0.5
+shader = ExtResource("14_chair")
+shader_parameter/deep_color = Color(0.008, 0.003, 0.006, 1)
+shader_parameter/mid_color = Color(0.030, 0.010, 0.015, 1)
+shader_parameter/ridge_color = Color(0.10, 0.03, 0.035, 1)
+shader_parameter/vein_color = Color(0.002, 0.0, 0.001, 1)
+shader_parameter/scale = 0.0055
+shader_parameter/cell_density = 2.6
+shader_parameter/vein_width = 0.12
+shader_parameter/breath_speed = 0.22
+shader_parameter/breath_amount = 0.08
+shader_parameter/distortion_amount = 0.55
+shader_parameter/distortion_speed = 0.05
+shader_parameter/overall_brightness = 0.75
 
 [node name="LesYeux" type="Node2D"]
 
