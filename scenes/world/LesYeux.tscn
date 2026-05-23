@@ -30,10 +30,10 @@ glow_levels/1 = 0.3
 glow_levels/2 = 0.25
 glow_levels/3 = 0.2
 glow_levels/4 = 0.15
-glow_intensity = 1.1
-glow_strength = 1.2
-glow_bloom = 0.08
-glow_hdr_scale = 1.6
+glow_intensity = 0.6
+glow_strength = 1.0
+glow_bloom = 0.02
+glow_hdr_scale = 1.25
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
 shader = ExtResource("11_bg")
@@ -160,6 +160,15 @@ shader_parameter/breath_speed = 0.14
 shader_parameter/breath_amount = 0.06
 shader_parameter/distortion_strength = 0.004
 shader_parameter/distortion_speed = 0.04
+shader_parameter/blood_color = Color(2.4, 0.30, 0.20, 1)
+shader_parameter/blood_scale = 0.0010
+shader_parameter/blood_bolt_width = 0.022
+shader_parameter/blood_branch_strength = 0.7
+shader_parameter/blood_density = 0.22
+shader_parameter/blood_pulse_speed = 0.65
+shader_parameter/blood_pulse_sharpness = 7.0
+shader_parameter/blood_warp_amount = 0.25
+shader_parameter/blood_warp_speed = 0.04
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sol_putre"]
 shader = ExtResource("19_putre")
@@ -208,13 +217,6 @@ material = SubResource("ShaderMaterial_far_bg")
 polygon = PackedVector2Array(-3000, -800, 3000, -800, 3000, 500, -3000, 500)
 script = ExtResource("17_parallax")
 scroll_scale = Vector2(0.18, 0.18)
-
-[node name="BloodLightning" type="Polygon2D" parent="."]
-z_index = -140
-material = SubResource("ShaderMaterial_blood")
-polygon = PackedVector2Array(-3000, -800, 3000, -800, 3000, 500, -3000, 500)
-script = ExtResource("17_parallax")
-scroll_scale = Vector2(0.22, 0.22)
 
 [node name="Decor" type="Node2D" parent="." unique_id=1740979370]
 
