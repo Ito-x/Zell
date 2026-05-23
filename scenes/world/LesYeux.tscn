@@ -139,12 +139,12 @@ shader_parameter/impact_intensity = 0.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_far_bg"]
 shader = ExtResource("18_far_bg")
 shader_parameter/source_tex = ExtResource("20_red")
-shader_parameter/tex_scale = 0.00055
-shader_parameter/tint = Color(0.20, 0.04, 0.04, 1)
-shader_parameter/darkness = 0.14
-shader_parameter/contrast = 2.4
+shader_parameter/tex_scale = 0.0007
+shader_parameter/tint = Color(0.42, 0.10, 0.10, 1)
+shader_parameter/darkness = 0.55
+shader_parameter/contrast = 1.6
 shader_parameter/breath_speed = 0.14
-shader_parameter/breath_amount = 0.05
+shader_parameter/breath_amount = 0.06
 shader_parameter/distortion_strength = 0.004
 shader_parameter/distortion_speed = 0.04
 
@@ -194,12 +194,7 @@ z_index = -150
 material = SubResource("ShaderMaterial_far_bg")
 polygon = PackedVector2Array(-3000, -800, 3000, -800, 3000, 500, -3000, 500)
 script = ExtResource("17_parallax")
-scroll_scale = Vector2(0.15, 0.15)
-
-[node name="Background" type="Polygon2D" parent="." unique_id=1928646053]
-z_index = -100
-material = SubResource("ShaderMaterial_bg")
-polygon = PackedVector2Array(-3000, -800, 3000, -800, 3000, 500, -3000, 500)
+scroll_scale = Vector2(0.18, 0.18)
 
 [node name="Decor" type="Node2D" parent="." unique_id=1740979370]
 
