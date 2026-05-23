@@ -1,10 +1,10 @@
-// Sol / plateforme chair-tapis avec bourrelets.
-// Mode 1 : utilise un CanvasTexture (diffuse + normal_texture) → NORMAL automatique
-// Mode 2 (auto) : génère la normal map depuis le gradient de luminance du diffuse,
-//                 utile quand on n'a qu'une seule texture albedo
+// Sol / plateforme chair-tapis avec bourrelets (variante avec sampler explicite).
+// Pour la version utilisée par les trapèzes perspective, voir chair_putrefaction_uv.gdshader.
 shader_type canvas_item;
 
-// --- Aspect du relief ---
+uniform sampler2D albedo_tex : filter_linear_mipmap, repeat_enable;
+uniform sampler2D normal_tex : hint_normal, filter_linear_mipmap, repeat_enable;
+
 uniform float normal_strength : hint_range(0.0, 4.0) = 1.4;
 uniform float depth_contrast : hint_range(0.3, 4.0) = 1.6;
 uniform float cavity_darkness : hint_range(0.0, 0.95) = 0.55;
@@ -12,11 +12,9 @@ uniform float roughness : hint_range(0.0, 1.5) = 0.4;
 uniform vec4 tint : source_color = vec4(1.0, 0.92, 0.85, 1.0);
 uniform float overall_brightness : hint_range(0.0, 2.0) = 1.0;
 
-// Mode normal map
 uniform bool use_auto_normal = true;
 uniform float auto_normal_kernel : hint_range(1.0, 6.0) = 2.0;
 
-// --- Squash & stretch ---
 uniform vec2 impact_position = vec2(0.0, 0.0);
 uniform float impact_intensity : hint_range(0.0, 30.0) = 0.0;
 uniform float impact_radius : hint_range(20.0, 600.0) = 220.0;
@@ -24,7 +22,6 @@ uniform float impact_falloff : hint_range(1.0, 6.0) = 2.6;
 uniform float vibration_speed : hint_range(2.0, 30.0) = 9.0;
 uniform float wave_frequency : hint_range(0.005, 0.10) = 0.028;
 
-// Pulse subtile (idem chair_organic, optionnel)
 uniform float breath_speed : hint_range(0.0, 2.0) = 0.0;
 uniform float breath_amount : hint_range(0.0, 0.3) = 0.06;
 
@@ -49,11 +46,11 @@ float luminance(vec3 c) {
 }
 
 vec3 normal_from_luminance(vec2 uv) {
-	vec2 px = (1.0 / vec2(textureSize(TEXTURE, 0))) * auto_normal_kernel;
-	float h_l = luminance(texture(TEXTURE, uv - vec2(px.x, 0.0)).rgb);
-	float h_r = luminance(texture(TEXTURE, uv + vec2(px.x, 0.0)).rgb);
-	float h_d = luminance(texture(TEXTURE, uv - vec2(0.0, px.y)).rgb);
-	float h_u = luminance(texture(TEXTURE, uv + vec2(0.0, px.y)).rgb);
+	vec2 px = (1.0 / vec2(textureSize(albedo_tex, 0))) * auto_normal_kernel;
+	float h_l = luminance(texture(albedo_tex, uv - vec2(px.x, 0.0)).rgb);
+	float h_r = luminance(texture(albedo_tex, uv + vec2(px.x, 0.0)).rgb);
+	float h_d = luminance(texture(albedo_tex, uv - vec2(0.0, px.y)).rgb);
+	float h_u = luminance(texture(albedo_tex, uv + vec2(0.0, px.y)).rgb);
 	vec3 n = vec3((h_r - h_l) * normal_strength * 3.0,
 				  (h_d - h_u) * normal_strength * 3.0,
 				  1.0);
@@ -62,16 +59,16 @@ vec3 normal_from_luminance(vec2 uv) {
 
 void fragment() {
 	vec2 offset_world = squash_uv_offset();
-	vec2 uv = UV + offset_world * (1.0 / vec2(textureSize(TEXTURE, 0)));
+	vec2 uv = UV + offset_world * (1.0 / vec2(textureSize(albedo_tex, 0)));
 
-	vec4 albedo = texture(TEXTURE, uv) * tint;
+	vec4 albedo = texture(albedo_tex, uv) * tint;
 	albedo.rgb *= overall_brightness;
 
 	vec3 n;
 	if (use_auto_normal) {
 		n = normal_from_luminance(uv);
 	} else {
-		vec3 n_sample = texture(NORMAL_TEXTURE, uv).rgb;
+		vec3 n_sample = texture(normal_tex, uv).rgb;
 		n = n_sample * 2.0 - 1.0;
 		n.xy *= normal_strength;
 		n = normalize(n);
@@ -80,7 +77,7 @@ void fragment() {
 	float cavity = pow(clamp(n.z, 0.0, 1.0), depth_contrast);
 	albedo.rgb *= mix(cavity_darkness, 1.0, cavity);
 
-	float lum = luminance(texture(TEXTURE, uv).rgb);
+	float lum = luminance(texture(albedo_tex, uv).rgb);
 	albedo.rgb *= 1.0 + (lum - 0.5) * roughness * 0.5;
 
 	if (breath_speed > 0.001) {

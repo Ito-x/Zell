@@ -69,5 +69,10 @@ void fragment() {
 	float dither = fract(sin(dot(world_pos, vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
 	col.rgb += dither * dither_strength;
 
-	COLOR = col;
+	// Alpha basé sur la luminosité : les zones noires deviennent transparentes
+	// pour laisser passer la couche de chair rouge derrière.
+	float vis = max(col.r, max(col.g, col.b));
+	float alpha = smoothstep(0.005, 0.10, vis);
+
+	COLOR = vec4(col.rgb, alpha);
 }

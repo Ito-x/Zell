@@ -96,16 +96,14 @@ void fragment() {
 	float branch_dist = abs(field2 - 0.5);
 	float branch = smoothstep(blood_bolt_width * 0.55, 0.0, branch_dist) * blood_branch_strength;
 
-	vec2 zone = floor(world_pos * 0.003);
+	vec2 zone = floor(world_pos * 0.0011);
 	float bphase = hash(zone) * 6.2831;
 	float bspeed = 0.5 + 0.8 * hash(zone + 7.3);
 	float bp = sin(TIME * blood_pulse_speed * bspeed + bphase) * 0.5 + 0.5;
 	float bpulse = pow(bp, blood_pulse_sharpness);
 	float bactive = step(1.0 - blood_density, hash(zone + 31.0));
 
-	// Base d'intensité constante + pulse → éclairs toujours un peu visibles
-	float base = 0.25;
-	float bolt_intensity = (bolt + branch) * (base + (1.0 - base) * bpulse) * bactive;
+	float bolt_intensity = (bolt + branch) * bpulse * bactive;
 	col += blood_color * bolt_intensity;
 
 	COLOR = vec4(col, 1.0);
