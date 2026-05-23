@@ -160,15 +160,15 @@ shader_parameter/breath_speed = 0.14
 shader_parameter/breath_amount = 0.06
 shader_parameter/distortion_strength = 0.004
 shader_parameter/distortion_speed = 0.04
-shader_parameter/blood_color = Color(2.4, 0.30, 0.20, 1)
-shader_parameter/blood_scale = 0.0010
-shader_parameter/blood_bolt_width = 0.022
-shader_parameter/blood_branch_strength = 0.7
-shader_parameter/blood_density = 0.22
-shader_parameter/blood_pulse_speed = 0.65
-shader_parameter/blood_pulse_sharpness = 7.0
-shader_parameter/blood_warp_amount = 0.25
-shader_parameter/blood_warp_speed = 0.04
+shader_parameter/blood_color = Color(3.5, 0.4, 0.25, 1)
+shader_parameter/blood_scale = 0.0014
+shader_parameter/blood_bolt_width = 0.038
+shader_parameter/blood_branch_strength = 0.85
+shader_parameter/blood_density = 0.6
+shader_parameter/blood_pulse_speed = 0.55
+shader_parameter/blood_pulse_sharpness = 3.0
+shader_parameter/blood_warp_amount = 0.30
+shader_parameter/blood_warp_speed = 0.05
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sol_putre"]
 shader = ExtResource("19_putre")
