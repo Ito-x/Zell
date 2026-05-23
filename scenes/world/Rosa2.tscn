@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://brosab1lesyeux"]
+[gd_scene format=3 uid="uid://bghxnbm4hc000"]
 
 [ext_resource type="Script" path="res://scenes/world/EtoileRosas.gd" id="1_script"]
 [ext_resource type="Shader" path="res://assets/shaders/rosa.gdshader" id="2_rosa"]
