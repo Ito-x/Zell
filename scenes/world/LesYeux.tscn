@@ -1,9 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://de2yq6uqt4q41"]
+[gd_scene load_steps=12 format=3 uid="uid://de2yq6uqt4q41"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_player"]
 [ext_resource type="Texture2D" path="res://assets/raw_art/prem_graph.png" id="2_art"]
 [ext_resource type="Shader" path="res://assets/shaders/flesh_breathing.gdshader" id="3_breath"]
 [ext_resource type="PackedScene" path="res://scenes/world/Neurone.tscn" id="4_neurone"]
+[ext_resource type="Shader" path="res://assets/shaders/vignette.gdshader" id="5_vignette"]
+[ext_resource type="Script" path="res://scenes/world/BackgroundFlesh.gd" id="6_bgflesh"]
 
 [sub_resource type="Environment" id="Environment_yeux"]
 background_mode = 0
@@ -14,11 +16,24 @@ glow_hdr_threshold = 1.1
 
 [sub_resource type="ShaderMaterial" id="Mat_breath"]
 shader = ExtResource("3_breath")
-shader_parameter/breath_speed = 0.25
-shader_parameter/uv_amount = 0.012
-shader_parameter/bright_amount = 0.1
+shader_parameter/breath_speed = 0.8
+shader_parameter/uv_amount = 0.035
+shader_parameter/bright_amount = 0.2
 shader_parameter/flesh_threshold = 0.06
 shader_parameter/flesh_softness = 0.08
+shader_parameter/player_pos = Vector2(-1, -1)
+shader_parameter/wake_radius = 0.1
+shader_parameter/wake_strength = 0.03
+shader_parameter/sway_speed = 1.2
+shader_parameter/sway_amount = 0.004
+
+[sub_resource type="ShaderMaterial" id="Mat_vignette"]
+shader = ExtResource("5_vignette")
+shader_parameter/fog_color = Color(0.015, 0.008, 0.025, 1)
+shader_parameter/strength = 0.4
+shader_parameter/inner = 0.45
+shader_parameter/outer = 1.15
+shader_parameter/pulse_speed = 0.05
 
 [sub_resource type="RectangleShape2D" id="Shape_sol"]
 size = Vector2(6000, 200)
@@ -37,21 +52,34 @@ texture = ExtResource("2_art")
 material = SubResource("Mat_breath")
 position = Vector2(0, 25)
 scale = Vector2(0.85, 0.85)
+script = ExtResource("6_bgflesh")
+player_path = NodePath("../Player")
 
 [node name="Sol" type="StaticBody2D" parent="."]
-position = Vector2(0, 451)
+position = Vector2(0, 485)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sol"]
 shape = SubResource("Shape_sol")
 
 [node name="Plafond" type="StaticBody2D" parent="."]
-position = Vector2(0, -452)
+position = Vector2(0, -485)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Plafond"]
 shape = SubResource("Shape_plafond")
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
-position = Vector2(0, 320)
+position = Vector2(0, 360)
 
 [node name="Neurone" parent="." instance=ExtResource("4_neurone")]
-position = Vector2(270, 322)
+position = Vector2(270, 372)
+
+[node name="FogLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Vignette" type="ColorRect" parent="FogLayer"]
+material = SubResource("Mat_vignette")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
