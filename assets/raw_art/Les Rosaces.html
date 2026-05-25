@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Les Rosaces — Motifs de Fond / Zell</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0c0a14;
+    --paper:#e7dccb;
+    --bone:#f1e6cf;
+    --bg-0:#07040f;
+    --bg-1:#0e0818;
+    --bg-2:#15092a;
+    --rule:rgba(231,220,203,.16);
+
+    /* neon palette */
+    --amber:#ffb347;
+    --amber-2:#ffe28a;
+    --cyan:#5ee7ff;
+    --violet:#b48bff;
+    --magenta:#ff7adf;
+    --opal:#fff1ff;
+    --emerald:#3effb4;
+    --mint:#9affe4;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg-0);color:var(--paper);font-family:"EB Garamond",serif}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(1400px 1000px at 15% -5%, rgba(80,30,120,.22), transparent 60%),
+      radial-gradient(1100px 900px at 95% 110%, rgba(20,40,80,.20), transparent 60%),
+      radial-gradient(700px 500px at 50% 50%, rgba(40,20,70,.12), transparent 70%),
+      linear-gradient(180deg, #0e0820 0%, #06030f 100%);
+    padding:48px 56px 80px;
+    overflow-x:hidden;
+  }
+  body::before{
+    /* faint star dust */
+    content:"";position:fixed;inset:0;pointer-events:none;
+    background-image:
+      radial-gradient(1px 1px at 23% 17%, rgba(255,255,255,.5), transparent 60%),
+      radial-gradient(1px 1px at 67% 31%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(1px 1px at 12% 73%, rgba(255,255,255,.4), transparent 60%),
+      radial-gradient(1px 1px at 82% 88%, rgba(255,255,255,.3), transparent 60%),
+      radial-gradient(1px 1px at 44% 54%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(1px 1px at 91% 12%, rgba(255,255,255,.4), transparent 60%),
+      radial-gradient(1px 1px at 7% 41%, rgba(255,255,255,.3), transparent 60%),
+      radial-gradient(1px 1px at 55% 89%, rgba(255,255,255,.35), transparent 60%);
+    opacity:.55;
+  }
+
+  /* ── header ───────────────────────────── */
+  .sheet-header{
+    display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;
+    padding-bottom:18px;border-bottom:1px solid var(--rule);margin-bottom:40px;
+    position:relative;z-index:1;
+  }
+  .h-title{
+    font-family:"EB Garamond",serif;font-weight:500;font-size:64px;line-height:.95;
+    letter-spacing:.02em;color:var(--bone);margin:0;
+  }
+  .h-title em{font-style:italic;color:var(--amber-2);font-weight:400}
+  .h-sub{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;color:rgba(231,220,203,.55);margin-top:10px;
+  }
+  .h-meta{
+    font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:rgba(231,220,203,.5);text-align:right;line-height:1.9;
+  }
+  .h-meta b{color:var(--bone);font-weight:500}
+
+  /* ── grid of style plates ─────────────── */
+  .styles{
+    display:grid;grid-template-columns:repeat(2, 1fr);gap:28px;
+    position:relative;z-index:1;
+  }
+  .style{
+    position:relative;
+    border:1px solid var(--rule);
+    border-radius:2px;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,.025), transparent 60%),
+      linear-gradient(180deg, rgba(255,255,255,.012), rgba(0,0,0,.25));
+    overflow:hidden;
+    min-height:520px;
+    display:grid;grid-template-rows:auto 1fr auto;
+  }
+  .style-head{
+    display:flex;align-items:center;justify-content:space-between;gap:18px;
+    padding:18px 22px 14px;
+    border-bottom:1px solid var(--rule);
+  }
+  .num{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.28em;
+    text-transform:uppercase;color:rgba(231,220,203,.45);
+  }
+  .num .dot{display:inline-block;width:6px;height:6px;border-radius:50%;
+    margin-right:8px;vertical-align:middle;box-shadow:0 0 8px currentColor}
+  .style-title{
+    font-family:"EB Garamond",serif;font-size:22px;font-weight:500;
+    color:var(--bone);margin:6px 0 2px;line-height:1.1;
+  }
+  .style-title em{font-style:italic;font-weight:400}
+  .style-fr{
+    font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:rgba(231,220,203,.4);
+  }
+  .style-stage{
+    position:relative;width:100%;aspect-ratio:1/1;display:block;
+  }
+  .style-stage svg{width:100%;height:100%;display:block}
+  .style-foot{
+    display:grid;grid-template-columns:1fr 1fr;gap:18px;
+    padding:16px 22px 18px;border-top:1px solid var(--rule);
+    font-family:"JetBrains Mono",monospace;font-size:10px;line-height:1.55;
+    letter-spacing:.04em;color:rgba(231,220,203,.62);
+  }
+  .style-foot b{
+    display:block;font-family:"EB Garamond",serif;font-style:italic;font-weight:500;
+    font-size:13px;letter-spacing:0;color:var(--bone);margin-bottom:4px;text-transform:none;
+  }
+  .swatch{display:inline-flex;gap:4px;margin-top:6px}
+  .swatch span{width:14px;height:14px;border-radius:50%;box-shadow:0 0 8px currentColor}
+
+  /* ── Atelier (full-bleed combo) ───────── */
+  .atelier{
+    margin-top:48px;border:1px solid var(--rule);border-radius:2px;
+    position:relative;overflow:hidden;min-height:680px;
+    background:
+      radial-gradient(900px 700px at 50% 50%, rgba(80,30,120,.18), transparent 70%),
+      linear-gradient(180deg, #0a0420 0%, #05020c 100%);
+  }
+  .atelier-head{
+    position:absolute;inset:22px 22px auto 22px;
+    display:flex;justify-content:space-between;align-items:flex-start;gap:24px;
+    z-index:3;pointer-events:none;
+  }
+  .atelier-title{
+    font-family:"EB Garamond",serif;font-size:32px;font-weight:500;color:var(--bone);
+    margin:0;line-height:1;
+  }
+  .atelier-title em{font-style:italic;color:var(--amber-2);font-weight:400}
+  .atelier-sub{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.22em;
+    text-transform:uppercase;color:rgba(231,220,203,.45);margin-top:8px;
+  }
+  .atelier-meta{
+    font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:rgba(231,220,203,.4);text-align:right;line-height:1.9;
+  }
+  .atelier-stage{position:absolute;inset:0;z-index:1}
+  .atelier-stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+  .legend{
+    position:absolute;left:24px;bottom:22px;z-index:3;
+    display:flex;gap:22px;flex-wrap:wrap;
+    font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:rgba(231,220,203,.55);
+  }
+  .legend i{font-style:normal;display:inline-block;width:9px;height:9px;border-radius:50%;
+    margin-right:8px;vertical-align:middle;box-shadow:0 0 8px currentColor}
+
+  /* ── neon util classes ────────────────── */
+  .neon-amber  {color:var(--amber);   filter: drop-shadow(0 0 1px var(--amber))   drop-shadow(0 0 6px var(--amber))   drop-shadow(0 0 16px rgba(255,179,71,.45))}
+  .neon-amber-2{color:var(--amber-2); filter: drop-shadow(0 0 1px var(--amber-2)) drop-shadow(0 0 5px var(--amber))   drop-shadow(0 0 14px rgba(255,179,71,.35))}
+  .neon-cyan   {color:var(--cyan);    filter: drop-shadow(0 0 1px var(--cyan))    drop-shadow(0 0 6px var(--cyan))    drop-shadow(0 0 16px rgba(94,231,255,.4))}
+  .neon-violet {color:var(--violet);  filter: drop-shadow(0 0 1px var(--violet))  drop-shadow(0 0 6px var(--violet))  drop-shadow(0 0 16px rgba(180,139,255,.4))}
+  .neon-magenta{color:var(--magenta); filter: drop-shadow(0 0 1px var(--magenta)) drop-shadow(0 0 6px var(--magenta)) drop-shadow(0 0 18px rgba(255,122,223,.4))}
+  .neon-opal   {color:var(--opal);    filter: drop-shadow(0 0 1px var(--opal))    drop-shadow(0 0 4px var(--magenta)) drop-shadow(0 0 12px rgba(255,241,255,.35))}
+  .neon-emerald{color:var(--emerald); filter: drop-shadow(0 0 1px var(--emerald)) drop-shadow(0 0 6px var(--emerald)) drop-shadow(0 0 16px rgba(62,255,180,.35))}
+  .neon-mint   {color:var(--mint);    filter: drop-shadow(0 0 1px var(--mint))    drop-shadow(0 0 5px var(--emerald)) drop-shadow(0 0 14px rgba(154,255,228,.35))}
+
+  /* default stroke */
+  svg [data-thin]{stroke:currentColor;fill:none;vector-effect:non-scaling-stroke}
+
+  /* ── animations ───────────────────────── */
+  @keyframes spin-cw  {to{transform:rotate(360deg)}}
+  @keyframes spin-ccw {to{transform:rotate(-360deg)}}
+  @keyframes pulse-core{
+    0%,100%{opacity:.65;transform:scale(1)}
+    50%    {opacity:1;  transform:scale(1.12)}
+  }
+  @keyframes drift-y {
+    0%,100%{transform:translateY(0)}
+    50%    {transform:translateY(-14px)}
+  }
+  @keyframes drift-x {
+    0%,100%{transform:translateX(0)}
+    50%    {transform:translateX(10px)}
+  }
+  @keyframes orbit {to{transform:rotate(360deg)}}
+  @keyframes shimmer{
+    0%,100%{opacity:.55}
+    50%    {opacity:1}
+  }
+
+  .spin-cw  { transform-box:fill-box;transform-origin:center; animation: spin-cw  var(--dur,40s) linear infinite }
+  .spin-ccw { transform-box:fill-box;transform-origin:center; animation: spin-ccw var(--dur,40s) linear infinite }
+  .pulse    { transform-box:fill-box;transform-origin:center; animation: pulse-core 3.6s ease-in-out infinite }
+  .drift-y  { animation: drift-y 9s ease-in-out infinite }
+  .drift-x  { animation: drift-x 11s ease-in-out infinite }
+  .orbit    { transform-box:fill-box;transform-origin:center; animation: orbit var(--dur,30s) linear infinite }
+  .shimmer  { animation: shimmer 4s ease-in-out infinite }
+
+  /* footer */
+  .footer{
+    margin-top:36px;display:flex;justify-content:space-between;gap:24px;
+    font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:rgba(231,220,203,.4);
+    border-top:1px solid var(--rule);padding-top:16px;
+    position:relative;z-index:1;
+  }
+
+  @media (max-width:980px){
+    body{padding:32px 24px 56px}
+    .styles{grid-template-columns:1fr}
+    .h-title{font-size:44px}
+  }
+</style>
+</head>
+<body>
+
+<header class="sheet-header">
+  <div>
+    <h1 class="h-title">Les <em>Rosaces</em></h1>
+    <div class="h-sub">Bestiaire Zell · Motifs de fond · Étude lumineuse n° iv</div>
+  </div>
+  <div class="h-meta">
+    <div>Planche · <b>R-001 → R-004</b></div>
+    <div>Tracé · <b>Néon, 0.6 px</b></div>
+    <div>Centre · <b>Transparent</b></div>
+  </div>
+</header>
+
+<section class="styles">
+
+  <!-- ─────────── STYLE 1 · Horlogerie du Rêve ─────────── -->
+  <article class="style" id="style-1">
+    <div class="style-head">
+      <div>
+        <div class="num"><span class="dot" style="color:var(--amber)"></span>R-001 · Style i</div>
+        <h2 class="style-title"><em>Horlogerie du Rêve</em></h2>
+        <div class="style-fr">Engrenages sacrés · ambre &amp; or</div>
+      </div>
+      <div class="swatch"><span style="color:var(--amber)"></span><span style="color:var(--amber-2)"></span></div>
+    </div>
+
+    <div class="style-stage">
+      <svg viewBox="-100 -100 200 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true" id="horlogerie-svg">
+        <defs>
+          <!-- Big gear: 36 teeth, pitch radius 60, module = 60·2/36 = 3.33 -->
+          <g id="gear-big">
+            <circle data-thin r="60" stroke-width=".6"/>
+            <circle data-thin r="54" stroke-width=".35" opacity=".6"/>
+            <g id="teeth-big"></g>
+            <g id="hands-big"></g>
+            <circle data-thin r="14" stroke-width=".5"/>
+            <circle data-thin r="6"  stroke-width=".4" opacity=".8"/>
+            <circle r="1.4" fill="currentColor" opacity=".95"/>
+          </g>
+
+          <!-- Med gear: 12 teeth, pitch radius 20, same module (3.33) -->
+          <g id="gear-med">
+            <circle data-thin r="20" stroke-width=".5"/>
+            <circle data-thin r="15" stroke-width=".35" opacity=".6"/>
+            <g id="teeth-med"></g>
+            <g id="hands-med"></g>
+            <circle data-thin r="4" stroke-width=".4"/>
+            <circle r="1" fill="currentColor" opacity=".95"/>
+          </g>
+
+          <!-- Tiny gear: 9 teeth, pitch radius 15, same module -->
+          <g id="gear-tiny">
+            <circle data-thin r="15" stroke-width=".45"/>
+            <circle data-thin r="11" stroke-width=".3" opacity=".6"/>
+            <g id="teeth-tiny"></g>
+            <g id="hands-tiny"></g>
+            <circle data-thin r="3" stroke-width=".4"/>
+            <circle r="0.9" fill="currentColor" opacity=".95"/>
+          </g>
+        </defs>
+
+        <!-- BIG : center origin, CW, 60s/turn -->
+        <g class="neon-amber">
+          <g class="spin-cw" style="--dur:60s">
+            <use href="#gear-big"/>
+          </g>
+        </g>
+
+        <!-- MED : center at angle -40° from big -->
+        <!-- pitch-tangent distance is 80; add 6u air-gap → 86 → (cos(-40°)*86, sin(-40°)*86) = (65.86, -55.28) -->
+        <!-- speed: 60s × 12/36 = 20s, CCW (ratio kept so they read as engaged) -->
+        <!-- phase: slot at world 140° on med; teeth at i·30°, slots at (i·30+15)°; rotate template by +5° → slot at 140° ✓ -->
+        <g transform="translate(65.86,-55.28)">
+          <g class="neon-amber-2">
+            <g class="spin-ccw" style="--dur:20s">
+              <g transform="rotate(5)">
+                <use href="#gear-med"/>
+              </g>
+            </g>
+          </g>
+        </g>
+
+        <!-- TINY : center at angle 150° from big -->
+        <!-- pitch-tangent distance is 75; add 6u air-gap → 81 → (cos(150°)*81, sin(150°)*81) = (-70.15, 40.50) -->
+        <!-- speed: 60s × 9/36 = 15s, CCW -->
+        <!-- phase: slot at world 330° on tiny; teeth at i·40°, slots at (i·40+20)°; rotate template by -10° → slot at 330° ✓ -->
+        <g transform="translate(-70.15,40.50)">
+          <g class="neon-amber">
+            <g class="spin-ccw" style="--dur:15s">
+              <g transform="rotate(-10)">
+                <use href="#gear-tiny"/>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="style-foot">
+      <div>
+        <b>Description</b>
+        Cercles concentriques aux bords dentés. Aiguilles astrales reliant le centre à la couronne.
+      </div>
+      <div>
+        <b>Comportement</b>
+        Les rosaces s'emboîtent par leurs dents. Quand l'une tourne, sa voisine répond à contresens.
+      </div>
+    </div>
+  </article>
+
+  <!-- ─────────── STYLE 2 · Astrolabe Fractal ─────────── -->
+  <article class="style" id="style-2">
+    <div class="style-head">
+      <div>
+        <div class="num"><span class="dot" style="color:var(--cyan)"></span>R-002 · Style ii</div>
+        <h2 class="style-title"><em>Astrolabe Fractal</em></h2>
+        <div class="style-fr">Constellations · cyan &amp; violet</div>
+      </div>
+      <div class="swatch"><span style="color:var(--cyan)"></span><span style="color:var(--violet)"></span></div>
+    </div>
+
+    <div class="style-stage">
+      <svg viewBox="-100 -100 200 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- main circle + nested triangles -->
+        <g class="neon-cyan">
+          <circle data-thin r="70" stroke-width=".6"/>
+          <circle data-thin r="60" stroke-width=".35" opacity=".55"/>
+          <g class="spin-cw" style="--dur:90s">
+            <polygon data-thin points="0,-58 50.2,29 -50.2,29" stroke-width=".5"/>
+            <polygon data-thin points="0,58 -50.2,-29 50.2,-29" stroke-width=".5" opacity=".75"/>
+          </g>
+          <g class="spin-ccw" style="--dur:60s">
+            <polygon data-thin points="0,-40 34.6,20 -34.6,20" stroke-width=".4" opacity=".6"/>
+            <polygon data-thin points="0,40 -34.6,-20 34.6,-20" stroke-width=".4" opacity=".5"/>
+          </g>
+          <circle data-thin r="22" stroke-width=".4" opacity=".7"/>
+          <circle r="1.8" fill="currentColor"/>
+        </g>
+
+        <!-- orbital ring with mini-circles (orbit clockwise) -->
+        <g class="neon-violet orbit" style="--dur:70s">
+          <g id="satellites-1"></g>
+        </g>
+
+        <!-- second orbital ring (smaller, faster, counter) -->
+        <g class="neon-cyan orbit" style="--dur:45s; transform: rotate(0deg)">
+          <g id="satellites-2"></g>
+        </g>
+
+        <!-- star points -->
+        <g class="neon-violet shimmer" id="starpoints"></g>
+      </svg>
+    </div>
+
+    <div class="style-foot">
+      <div>
+        <b>Description</b>
+        Un grand cercle entouré d'une nuée de satellites. Géométrie sacrée triangulaire, points stellaires suspendus.
+      </div>
+      <div>
+        <b>Comportement</b>
+        Elles flottent en parallaxe à différentes profondeurs, ciel étoilé mathématique.
+      </div>
+    </div>
+  </article>
+
+  <!-- ─────────── STYLE 3 · Fleur de Cils ─────────── -->
+  <article class="style" id="style-3">
+    <div class="style-head">
+      <div>
+        <div class="num"><span class="dot" style="color:var(--magenta)"></span>R-003 · Style iii</div>
+        <h2 class="style-title"><em>Fleur de Cils</em></h2>
+        <div class="style-fr">Onirique cellulaire · magenta &amp; opale</div>
+      </div>
+      <div class="swatch"><span style="color:var(--magenta)"></span><span style="color:var(--opal)"></span></div>
+    </div>
+
+    <div class="style-stage">
+      <svg viewBox="-100 -100 200 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- outer eyelash petals: ellipses rotated around center -->
+        <g class="neon-magenta spin-cw" style="--dur:80s" id="petals-outer"></g>
+        <!-- inner petals -->
+        <g class="neon-opal spin-ccw" style="--dur:55s" id="petals-inner"></g>
+        <!-- mid ring -->
+        <g class="neon-magenta">
+          <circle data-thin r="18" stroke-width=".5"/>
+          <circle data-thin r="11" stroke-width=".35" opacity=".7"/>
+        </g>
+        <!-- pulsing core -->
+        <g class="neon-opal pulse">
+          <circle r="6" fill="currentColor" opacity=".25"/>
+          <circle data-thin r="6" stroke-width=".5"/>
+          <circle r="1.6" fill="currentColor"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="style-foot">
+      <div>
+        <b>Description</b>
+        Hybride rosace et lotus. Pétales en ellipses parfaites superposées, cœur lumineux qui pulse.
+      </div>
+      <div>
+        <b>Comportement</b>
+        Elles se frôlent sans se bloquer — structures cellulaires lumineuses tapissant le vide.
+      </div>
+    </div>
+  </article>
+
+  <!-- ─────────── STYLE 4 · Réseau de Toiles ─────────── -->
+  <article class="style" id="style-4">
+    <div class="style-head">
+      <div>
+        <div class="num"><span class="dot" style="color:var(--emerald)"></span>R-004 · Style iv</div>
+        <h2 class="style-title"><em>Réseau de Toiles</em></h2>
+        <div class="style-fr">Vortex hypnotique · émeraude &amp; menthe</div>
+      </div>
+      <div class="swatch"><span style="color:var(--emerald)"></span><span style="color:var(--mint)"></span></div>
+    </div>
+
+    <div class="style-stage">
+      <svg viewBox="-100 -100 200 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- archimedean spirals -->
+        <g class="neon-emerald spin-cw" style="--dur:60s">
+          <path data-thin id="spiral-1" stroke-width=".5"/>
+          <path data-thin id="spiral-2" stroke-width=".4" opacity=".75"/>
+          <path data-thin id="spiral-3" stroke-width=".4" opacity=".55"/>
+        </g>
+        <!-- radial rays (24) -->
+        <g class="neon-mint" id="rays-4" opacity=".7"></g>
+        <!-- frame circles -->
+        <g class="neon-mint">
+          <circle data-thin r="78" stroke-width=".5"/>
+          <circle data-thin r="36" stroke-width=".35" opacity=".7"/>
+          <circle data-thin r="14" stroke-width=".4"/>
+        </g>
+        <!-- center pulse -->
+        <g class="neon-emerald pulse">
+          <circle r="3" fill="currentColor"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="style-foot">
+      <div>
+        <b>Description</b>
+        Spirales d'Archimède ultra-fines traversées par des rayons droits — toile cosmique, vortex hypnotique.
+      </div>
+      <div>
+        <b>Comportement</b>
+        Elles servent de connecteurs : les autres rosaces viennent se greffer sur leurs lignes de force.
+      </div>
+    </div>
+  </article>
+
+</section>
+
+<!-- ─────────── ATELIER · the four coexisting ─────────── -->
+<section class="atelier" aria-label="Atelier composition">
+  <div class="atelier-head">
+    <div>
+      <h3 class="atelier-title">L'<em>Atelier</em></h3>
+      <div class="atelier-sub">Composition · les quatre rosaces coexistent</div>
+    </div>
+    <div class="atelier-meta">
+      <div>Profondeur · <b>4 plans</b></div>
+      <div>Parallaxe · <b>lente</b></div>
+      <div>Fusion · <b>par engrenages</b></div>
+    </div>
+  </div>
+
+  <div class="atelier-stage">
+    <svg viewBox="0 0 1600 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+
+      <!-- BACK PLANE: gigantic Réseau de Toiles spiral, very faint -->
+      <g transform="translate(1200,420)" opacity=".55" class="drift-x">
+        <g class="neon-emerald spin-cw" style="--dur:140s">
+          <circle data-thin r="520" stroke-width=".4" opacity=".35"/>
+          <circle data-thin r="380" stroke-width=".4" opacity=".5"/>
+          <path data-thin id="atelier-spiral" stroke-width=".5"/>
+        </g>
+        <g class="neon-mint" id="atelier-rays" opacity=".35"></g>
+      </g>
+
+      <!-- MID PLANE: Astrolabe Fractal -->
+      <g transform="translate(420,360)" class="drift-y">
+        <g class="neon-cyan">
+          <circle data-thin r="180" stroke-width=".5"/>
+          <circle data-thin r="150" stroke-width=".35" opacity=".5"/>
+          <g class="spin-cw" style="--dur:110s">
+            <polygon data-thin points="0,-150 130,75 -130,75" stroke-width=".4"/>
+            <polygon data-thin points="0,150 -130,-75 130,-75" stroke-width=".4" opacity=".7"/>
+          </g>
+          <circle data-thin r="60" stroke-width=".4" opacity=".7"/>
+          <circle r="3" fill="currentColor"/>
+        </g>
+        <g class="neon-violet orbit" style="--dur:80s">
+          <g id="atelier-sat"></g>
+        </g>
+        <g class="neon-violet shimmer" id="atelier-stars"></g>
+      </g>
+
+      <!-- MID-FRONT: Horlogerie (same meshing math, scaled 1.4) -->
+      <g transform="translate(1080,180) scale(1.4)">
+        <!-- Big -->
+        <g class="neon-amber">
+          <g class="spin-cw" style="--dur:60s">
+            <use href="#gear-big"/>
+          </g>
+        </g>
+        <!-- Med at (65.86, -55.28), CCW, 20s, phase +5° -->
+        <g transform="translate(65.86,-55.28)">
+          <g class="neon-amber-2">
+            <g class="spin-ccw" style="--dur:20s">
+              <g transform="rotate(5)"><use href="#gear-med"/></g>
+            </g>
+          </g>
+        </g>
+        <!-- Tiny at (-70.15, 40.50), CCW, 15s, phase -10° -->
+        <g transform="translate(-70.15,40.50)">
+          <g class="neon-amber">
+            <g class="spin-ccw" style="--dur:15s">
+              <g transform="rotate(-10)"><use href="#gear-tiny"/></g>
+            </g>
+          </g>
+        </g>
+      </g>
+
+      <!-- FRONT: Fleurs de Cils (a few floating) -->
+      <g transform="translate(220,640)" class="drift-y">
+        <g transform="scale(.85)">
+          <g class="neon-magenta spin-cw" style="--dur:90s" id="atelier-petals-1"></g>
+          <g class="neon-opal pulse">
+            <circle r="6" fill="currentColor" opacity=".3"/>
+            <circle data-thin r="6" stroke-width=".5"/>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(820,680)" class="drift-x">
+        <g transform="scale(.5)">
+          <g class="neon-magenta spin-ccw" style="--dur:60s" id="atelier-petals-2"></g>
+          <g class="neon-opal pulse">
+            <circle r="4" fill="currentColor" opacity=".3"/>
+            <circle data-thin r="5" stroke-width=".4"/>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(1320,720)">
+        <g transform="scale(.35)">
+          <g class="neon-magenta spin-cw" style="--dur:40s" id="atelier-petals-3"></g>
+          <g class="neon-opal pulse">
+            <circle data-thin r="5" stroke-width=".4"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- connector lines: hairline tendrils between rosaces (along the spiral logic) -->
+      <g stroke="rgba(154,255,228,.18)" fill="none" stroke-width=".5">
+        <path d="M 420 360 Q 720 280 1080 180"/>
+        <path d="M 1080 180 Q 1180 420 1200 420"/>
+        <path d="M 420 360 Q 320 540 220 640"/>
+        <path d="M 220 640 Q 520 700 820 680"/>
+        <path d="M 820 680 Q 1060 720 1320 720"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><i style="color:var(--amber)"></i>Horlogerie</span>
+    <span><i style="color:var(--cyan)"></i>Astrolabe</span>
+    <span><i style="color:var(--magenta)"></i>Fleur de Cils</span>
+    <span><i style="color:var(--emerald)"></i>Réseau de Toiles</span>
+  </div>
+</section>
+
+<footer class="footer">
+  <div>Zell · Bestiaire · Motifs &amp; Décors</div>
+  <div>Planche R-001 → R-004 · 25.v.2026</div>
+</footer>
+
+<script>
+  /* ─────────────────────────────────────────────────────────
+   * Procedural generation of the SVG ornaments.
+   * Keeps the markup short and lets us tune counts easily.
+   * ───────────────────────────────────────────────────────── */
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const el = (name, attrs={}) => {
+    const n = document.createElementNS(SVGNS, name);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  };
+
+  /* ── 1 · Gear teeth + astral hands ────────── */
+  function buildGear({teeth, ring, toothLen, holder, hands, handLen}){
+    const t = document.querySelector(`#teeth-${holder}`);
+    for (let i=0;i<teeth;i++){
+      const a = (i/teeth) * Math.PI * 2;
+      const x1 = Math.cos(a) * ring;
+      const y1 = Math.sin(a) * ring;
+      const x2 = Math.cos(a) * (ring + toothLen);
+      const y2 = Math.sin(a) * (ring + toothLen);
+      // triangular tooth
+      const a1 = a - Math.PI/teeth * 0.45;
+      const a2 = a + Math.PI/teeth * 0.45;
+      const xb1 = Math.cos(a1) * ring, yb1 = Math.sin(a1) * ring;
+      const xb2 = Math.cos(a2) * ring, yb2 = Math.sin(a2) * ring;
+      const tri = el("polygon", {
+        "data-thin":"", "stroke-width":".4",
+        points:`${xb1},${yb1} ${x2},${y2} ${xb2},${yb2}`
+      });
+      t.appendChild(tri);
+    }
+    const h = document.querySelector(`#hands-${holder}`);
+    for (let i=0;i<hands;i++){
+      const a = (i/hands) * Math.PI * 2 + Math.PI/hands*0.5;
+      const x = Math.cos(a) * handLen;
+      const y = Math.sin(a) * handLen;
+      const line = el("line",{
+        "data-thin":"","stroke-width":".35","opacity":".75",
+        x1:0,y1:0,x2:x,y2:y
+      });
+      h.appendChild(line);
+    }
+  }
+  // All three gears share the same MODULE so their teeth interlock visually.
+  // module m = 2·pitch / N  →  here m ≈ 3.33 for all three.
+  // tooth tip = pitch + m·0.9  (slightly less than 1 module so neighboring tips don't collide)
+  buildGear({teeth:36, ring:60, toothLen:3,   holder:"big",   hands:12, handLen:50});
+  buildGear({teeth:12, ring:20, toothLen:3,   holder:"med",   hands:6,  handLen:16});
+  buildGear({teeth:9,  ring:15, toothLen:3,   holder:"tiny",  hands:6,  handLen:12});
+
+  /* ── 2 · Astrolabe satellites & star-points ── */
+  function buildSatellites(holderId, count, radius, sizeRange){
+    const g = document.getElementById(holderId);
+    for (let i=0;i<count;i++){
+      const a = (i/count) * Math.PI * 2;
+      const x = Math.cos(a)*radius, y = Math.sin(a)*radius;
+      const r = sizeRange[0] + Math.random() * (sizeRange[1]-sizeRange[0]);
+      g.appendChild(el("circle", {
+        "data-thin":"","stroke-width":".4",
+        cx:x, cy:y, r
+      }));
+      // tiny core dot
+      if (Math.random() > .5){
+        const d = el("circle",{cx:x,cy:y,r:.6,fill:"currentColor",opacity:".9"});
+        g.appendChild(d);
+      }
+    }
+  }
+  buildSatellites("satellites-1", 14, 70, [2.4, 4.6]);
+  buildSatellites("satellites-2", 9,  46, [1.6, 3.2]);
+
+  function buildStarPoints(holderId, count){
+    const g = document.getElementById(holderId);
+    for (let i=0;i<count;i++){
+      const a = Math.random() * Math.PI * 2;
+      const r = 15 + Math.random()*62;
+      const x = Math.cos(a)*r, y = Math.sin(a)*r;
+      const dot = el("circle",{cx:x,cy:y,r:.6 + Math.random()*.8,
+                                fill:"currentColor","opacity":.4 + Math.random()*.5});
+      g.appendChild(dot);
+    }
+  }
+  buildStarPoints("starpoints", 28);
+
+  /* ── 3 · Fleur de Cils petals ───────────── */
+  function buildPetals(holderId, count, rx, ry, ringR){
+    const g = document.getElementById(holderId);
+    for (let i=0;i<count;i++){
+      const angle = (i/count) * 360;
+      // ellipse pushed outward from center
+      const wrap = el("g",{transform:`rotate(${angle}) translate(0 ${-ringR})`});
+      const e = el("ellipse",{
+        "data-thin":"","stroke-width":".45",
+        cx:0, cy:0, rx, ry, opacity:".85"
+      });
+      wrap.appendChild(e);
+      g.appendChild(wrap);
+    }
+  }
+  // outer (large magenta petals)
+  buildPetals("petals-outer", 16, 8, 36, 48);
+  // inner (smaller, offset)
+  buildPetals("petals-inner", 10, 4, 18, 24);
+
+  /* ── 4 · Réseau de Toiles spiral + rays ── */
+  function archimedean(a, b, turns, step=0.05){
+    // r = a + b*theta
+    let d = "";
+    for (let t=0; t<=turns*Math.PI*2; t+=step){
+      const r = a + b*t;
+      const x = Math.cos(t)*r, y = Math.sin(t)*r;
+      d += (t===0 ? "M" : "L") + x.toFixed(2) + " " + y.toFixed(2) + " ";
+    }
+    return d;
+  }
+  document.getElementById("spiral-1").setAttribute("d", archimedean(2, 1.4, 5));
+  document.getElementById("spiral-2").setAttribute("d", archimedean(2, 1.4, 5, 0.05).replace(/M[^L]+/, function(s){return s})); // same spiral, rotated via group
+  document.getElementById("spiral-2").setAttribute("transform","rotate(120)");
+  document.getElementById("spiral-3").setAttribute("d", archimedean(2, 1.4, 5));
+  document.getElementById("spiral-3").setAttribute("transform","rotate(240)");
+
+  // radial rays
+  function buildRays(holderId, count, inner, outer){
+    const g = document.getElementById(holderId);
+    for (let i=0;i<count;i++){
+      const a = (i/count)*Math.PI*2;
+      const x1 = Math.cos(a)*inner, y1 = Math.sin(a)*inner;
+      const x2 = Math.cos(a)*outer, y2 = Math.sin(a)*outer;
+      g.appendChild(el("line",{
+        "data-thin":"","stroke-width":".35","opacity":".6",
+        x1,y1,x2,y2
+      }));
+    }
+  }
+  buildRays("rays-4", 24, 16, 78);
+
+  /* ── ATELIER : reused ornaments at bigger scale ── */
+  document.getElementById("atelier-spiral").setAttribute("d", archimedean(8, 5.5, 6));
+  // big rays for atelier
+  (function(){
+    const g = document.getElementById("atelier-rays");
+    for (let i=0;i<36;i++){
+      const a = (i/36)*Math.PI*2;
+      const x1 = Math.cos(a)*60, y1 = Math.sin(a)*60;
+      const x2 = Math.cos(a)*420, y2 = Math.sin(a)*420;
+      g.appendChild(el("line",{
+        "data-thin":"","stroke-width":".4","opacity":".35",
+        x1,y1,x2,y2
+      }));
+    }
+  })();
+
+  // atelier astrolabe satellites
+  (function(){
+    const g = document.getElementById("atelier-sat");
+    for (let i=0;i<22;i++){
+      const a = (i/22)*Math.PI*2;
+      const x = Math.cos(a)*180, y = Math.sin(a)*180;
+      const r = 5 + Math.random()*9;
+      g.appendChild(el("circle",{"data-thin":"","stroke-width":".4",cx:x,cy:y,r}));
+    }
+  })();
+
+  // atelier stars sprinkled across MID plane
+  (function(){
+    const g = document.getElementById("atelier-stars");
+    for (let i=0;i<60;i++){
+      const a = Math.random()*Math.PI*2;
+      const r = 30 + Math.random()*150;
+      const x = Math.cos(a)*r, y = Math.sin(a)*r;
+      g.appendChild(el("circle",{cx:x,cy:y,r:.7+Math.random()*1.1,
+                                  fill:"currentColor","opacity":.3+Math.random()*.6}));
+    }
+  })();
+
+  // atelier petals (3 flowers, varying count)
+  (function(){
+    function fill(holder, count, rx, ry, ringR){
+      const g = document.getElementById(holder);
+      for (let i=0;i<count;i++){
+        const angle = (i/count)*360;
+        const wrap = el("g",{transform:`rotate(${angle}) translate(0 ${-ringR})`});
+        const e = el("ellipse",{"data-thin":"","stroke-width":".5",
+          cx:0,cy:0,rx,ry,opacity:".8"});
+        wrap.appendChild(e); g.appendChild(wrap);
+      }
+    }
+    fill("atelier-petals-1", 18, 14, 70, 90);
+    fill("atelier-petals-2", 14, 10, 50, 64);
+    fill("atelier-petals-3", 12,  8, 38, 48);
+  })();
+</script>
+
+</body>
+</html>
