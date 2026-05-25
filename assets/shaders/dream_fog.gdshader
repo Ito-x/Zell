@@ -26,10 +26,11 @@ float vnoise(vec2 p) {
 	return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
 }
 float fbm(vec2 p) {
+	// Optimisation : 3 octaves (vs 5) — gain net en fillrate sur GPU intégré.
 	float v = 0.0;
 	float amp = 0.5;
 	mat2 rot = mat2(vec2(0.8, 0.6), vec2(-0.6, 0.8));
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 3; i++) {
 		v += amp * vnoise(p);
 		p = rot * p * 2.0;
 		amp *= 0.5;
