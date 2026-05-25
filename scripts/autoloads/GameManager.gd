@@ -104,8 +104,14 @@ func load_game() -> void:
 	var data: Dictionary = json.get_data()
 	game_phase                = data.get("game_phase", 1)
 	activated_checkpoints     = data.get("activated_checkpoints", [])
-	unlocked_spells           = data.get("unlocked_spells", [])
-	collected_memories        = data.get("collected_memories", [])
+	var raw_spells: Array = data.get("unlocked_spells", [])
+	unlocked_spells.clear()
+	for s in raw_spells:
+		unlocked_spells.append(str(s))
+	var raw_memories: Array = data.get("collected_memories", [])
+	collected_memories.clear()
+	for m in raw_memories:
+		collected_memories.append(str(m))
 	var cp_pos                = data.get("last_checkpoint_position", {"x": 0, "y": 0})
 	last_checkpoint_position  = Vector2(cp_pos["x"], cp_pos["y"])
 

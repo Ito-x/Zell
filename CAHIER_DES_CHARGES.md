@@ -247,6 +247,8 @@ Zell n'a pas besoin de chercher cette capacité — elle naît avec. **Baisser s
 
 # OBJECTIF 6 — Impulsion (1er fragment du tuto)
 
+> **État : ✅ prototype implémenté** (onde radiale 1.5s, 3 charges avec cooldown, composant Revealable contextuel persistent/glimpse/proximity, recharge aux Neurones + respawn, HUD 3 points rouges, debug F3/F4). Les sons (gong, cristallin) et les graphismes définitifs du HUD attendent la phase audio/art. La méditation (recharge par immobilité) attend l'Objectif 23.
+
 ## Ressenti joueur
 Une expiration de lumière. Zell se concentre, émet une impulsion électrique, et une onde radiale **révèle** ce qu'on ne voyait pas. **Perception pure, zéro dégât.** Le joueur l'utilise comme un sonar — par réflexe d'exploration, jamais comme attaque. Un usage offensif reste envisageable plus tard, mais n'est pas prévu.
 
