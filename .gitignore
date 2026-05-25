@@ -12,6 +12,7 @@ export_presets.cfg
 
 # Captures temporaires (skill lancer-godot)
 .capture.png
+.zell_crop.png
 
 # Sources Krita (lourdes) — on partage les PNG exportés, pas les .kra
 *.kra

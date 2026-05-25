@@ -24,8 +24,8 @@ func _ready() -> void:
 		return
 	add_child(packed.instantiate())
 
-	# Laisse rendre quelques frames (caméra, shaders animés, particules…).
-	for _i in 30:
+	# Laisse rendre quelques frames (caméra qui se pose, shaders animés…).
+	for _i in 90:
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 

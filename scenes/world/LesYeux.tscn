@@ -24,9 +24,9 @@ shader_parameter/fog_color = Color(0.01, 0.006, 0.02, 1)
 shader_parameter/fog_density = 0.75
 shader_parameter/fog_scale = 3.0
 shader_parameter/fog_speed = 0.02
-shader_parameter/fog_warp = 1.4
-shader_parameter/fog_contrast_lo = 0.2
-shader_parameter/fog_contrast_hi = 1.0
+shader_parameter/fog_warp = 1.9
+shader_parameter/fog_contrast_lo = 0.1
+shader_parameter/fog_contrast_hi = 0.95
 shader_parameter/flesh_threshold = 0.06
 shader_parameter/flesh_softness = 0.08
 shader_parameter/player_pos = Vector2(-1, -1)
@@ -76,7 +76,14 @@ position = Vector2(0, -485)
 shape = SubResource("Shape_plafond")
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
-position = Vector2(0, 360)
+position = Vector2(0, 357)
+scale = Vector2(2, 2)
+
+[node name="Camera2D" parent="Player"]
+zoom = Vector2(1.15, 1.15)
+limit_top = -420
+limit_bottom = 519
+drag_vertical_enabled = false
 
 [node name="Neurone" parent="." instance=ExtResource("4_neurone")]
 position = Vector2(270, 372)
