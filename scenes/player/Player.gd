@@ -29,6 +29,11 @@ const POGO_VELOCITY       := -650.0   # Rebond vers le haut quand on frappe en b
 const POGO_PROTECTION     := 0.35     # Durée pendant laquelle la gravité reste normale après un pogo
 const KNOCKBACK_FORCE     := 280.0    # Force du recul quand Zell prend un coup
 
+# ---- Paramètres d'Impulsion (sonar de révélation) ----
+const IMPULSION_MAX_CHARGES       := 3
+const IMPULSION_COOLDOWN          := 0.5
+const IMPULSION_VISUAL_SLOWDOWN   := 0.15
+
 # ---- Variables internes ----
 var coyote_timer      := 0.0
 var jump_buffer_timer := 0.0
@@ -59,13 +64,17 @@ var current_attack_dir    := Vector2.RIGHT
 var attack_hit_targets    := []        # Cibles déjà touchées pendant l'attaque en cours
 var attack_tween: Tween
 var pogo_protection_timer := 0.0       # Tant que > 0, la gravité reste normale (protège l'élan du pogo)
+var impulsion_charges        := 0         # Commence à 0, rempli au 1er Neurone après unlock
+var impulsion_cooldown_timer := 0.0
 
 
 func _ready() -> void:
+	add_to_group("player")
 	# Active le loop du son de marche au runtime (le .import n'est pas modifié)
 	if $WalkSound.stream is AudioStreamWAV:
 		$WalkSound.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 	_update_health_display()
+	_update_impulsion_display()
 	initial_spawn = global_position
 
 
@@ -109,6 +118,11 @@ func _physics_process(delta: float) -> void:
 	# Déclenchement du dash (téléportation instantanée)
 	if Input.is_action_just_pressed("dash"):
 		_try_dash()
+	# Cooldown de l'Impulsion
+	if impulsion_cooldown_timer > 0.0:
+		impulsion_cooldown_timer = maxf(impulsion_cooldown_timer - delta, 0.0)
+	if Input.is_action_just_pressed("impulsion"):
+		_try_impulsion()
 	_apply_gravity(delta)
 	_update_coyote_time(delta)
 	_update_jump_buffer(delta)
@@ -128,6 +142,14 @@ func _unhandled_input(event: InputEvent) -> void:
 			take_damage(1)
 		elif event.keycode == KEY_F2:
 			heal(1)
+		elif event.keycode == KEY_F3:
+			GameManager.unlock_spell("impulsion")
+			impulsion_charges = IMPULSION_MAX_CHARGES
+			_update_impulsion_display()
+		elif event.keycode == KEY_F4:
+			if GameManager.has_spell("impulsion"):
+				impulsion_charges = IMPULSION_MAX_CHARGES
+				_update_impulsion_display()
 
 
 func _apply_gravity(delta: float) -> void:
@@ -356,6 +378,9 @@ func _respawn() -> void:
 	$AttackPivot.visible = true
 	$EnergyThread.visible = true
 	is_dead = false
+	if GameManager.has_spell("impulsion"):
+		impulsion_charges = IMPULSION_MAX_CHARGES
+		_update_impulsion_display()
 
 
 # ============================================================
@@ -372,6 +397,9 @@ func rest_at_neurone() -> void:
 	current_hp = MAX_HP
 	iframe_timer = 0.0
 	_update_health_display()
+	if GameManager.has_spell("impulsion"):
+		impulsion_charges = IMPULSION_MAX_CHARGES
+		_update_impulsion_display()
 
 
 # ============================================================
@@ -457,3 +485,40 @@ func _return_sword_to_idle() -> void:
 	attack_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	attack_tween.tween_property(pivot, "position", idle_pos, 0.2)
 	attack_tween.tween_property(pivot, "rotation", idle_rot, 0.2)
+
+
+# ============================================================
+# IMPULSION (sonar de révélation)
+# ============================================================
+
+func _try_impulsion() -> void:
+	if not GameManager.has_spell("impulsion"):
+		return
+	if impulsion_charges <= 0 or impulsion_cooldown_timer > 0.0:
+		return
+	impulsion_charges -= 1
+	impulsion_cooldown_timer = IMPULSION_COOLDOWN
+	_update_impulsion_display()
+	_spawn_impulsion_wave()
+	_impulsion_visual_feedback()
+
+
+func _spawn_impulsion_wave() -> void:
+	var wave_scene := preload("res://scenes/player/ImpulsionWave.tscn")
+	var wave: Area2D = wave_scene.instantiate()
+	wave.global_position = global_position
+	wave.player_position = global_position
+	get_tree().current_scene.add_child(wave)
+
+
+func _impulsion_visual_feedback() -> void:
+	var tw := create_tween()
+	tw.tween_property($ZellVisual, "modulate", Color(0.6, 0.8, 1.2, 1.0), 0.08)
+	tw.tween_property($ZellVisual, "modulate", Color(1, 1, 1, 1), IMPULSION_VISUAL_SLOWDOWN)
+
+
+func _update_impulsion_display() -> void:
+	var dots := $ImpulsionDisplay.get_children()
+	for i in dots.size():
+		var dot: Sprite2D = dots[i]
+		dot.modulate.a = 1.0 if i < impulsion_charges else 0.2
