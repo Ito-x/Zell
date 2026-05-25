@@ -12,17 +12,13 @@
 [ext_resource type="Shader" uid="uid://bufxy8xm0kpiy" path="res://assets/shaders/fog.gdshader" id="12_fog"]
 [ext_resource type="PackedScene" path="res://scenes/world/Neurone.tscn" id="13_k7qnh"]
 [ext_resource type="Shader" uid="uid://bbbqwpbgfu621" path="res://assets/shaders/sparkles.gdshader" id="13_sparkles"]
-[ext_resource type="Shader" uid="uid://c027sa464bcpf" path="res://assets/shaders/chair_organic.gdshader" id="14_chair"]
-[ext_resource type="PackedScene" path="res://scenes/enemies/Dummy.tscn" id="14_y7hj5"]
-[ext_resource type="Shader" path="res://assets/shaders/chair_platform.gdshader" id="15_platform"]
-[ext_resource type="Texture2D" path="res://assets/textures/chair/chair_bourrelets.jpg" id="16_bourrelets"]
-[ext_resource type="Script" path="res://scenes/world/ParallaxFollow.gd" id="17_parallax"]
-[ext_resource type="Shader" path="res://assets/shaders/chair_far_background.gdshader" id="18_far_bg"]
-[ext_resource type="Shader" path="res://assets/shaders/chair_putrefaction.gdshader" id="19_putre"]
-[ext_resource type="Texture2D" path="res://assets/textures/chair/chair_diffuse_rouge.jpg" id="20_red"]
-[ext_resource type="Shader" path="res://assets/shaders/blood_lightning.gdshader" id="21_blood"]
-[ext_resource type="Shader" path="res://assets/shaders/chair_putrefaction_uv.gdshader" id="22_putre_uv"]
-[ext_resource type="Shader" path="res://assets/shaders/grass_silhouette.gdshader" id="23_grass"]
+[ext_resource type="Texture2D" uid="uid://dnyiho3lh82du" path="res://assets/textures/chair/chair_bourrelets.jpg" id="16_bourrelets"]
+[ext_resource type="Script" uid="uid://c1mckpw2kabdt" path="res://scenes/world/ParallaxFollow.gd" id="17_parallax"]
+[ext_resource type="Shader" uid="uid://cbdhocy1k1jbn" path="res://assets/shaders/chair_far_background.gdshader" id="18_far_bg"]
+[ext_resource type="Texture2D" uid="uid://dp1da5634evfm" path="res://assets/textures/chair/chair_diffuse_rouge.jpg" id="20_red"]
+[ext_resource type="Shader" uid="uid://dd1gv8kvgc05i" path="res://assets/shaders/chair_putrefaction_uv.gdshader" id="22_putre_uv"]
+[ext_resource type="Shader" uid="uid://cwbku33hahfgk" path="res://assets/shaders/grass_silhouette.gdshader" id="24_grass"]
+[ext_resource type="Script" path="res://scenes/world/InteractiveGrass.gd" id="25_igrass"]
 
 [sub_resource type="Environment" id="Environment_yeux"]
 background_mode = 1
@@ -33,9 +29,29 @@ glow_levels/2 = 0.25
 glow_levels/3 = 0.2
 glow_levels/4 = 0.15
 glow_intensity = 0.6
-glow_strength = 1.0
 glow_bloom = 0.02
 glow_hdr_scale = 1.25
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_far_bg"]
+shader = ExtResource("18_far_bg")
+shader_parameter/source_tex = ExtResource("20_red")
+shader_parameter/tex_scale = 0.0007
+shader_parameter/tint = Color(0.65, 0.16, 0.14, 1)
+shader_parameter/darkness = 0.85
+shader_parameter/contrast = 1.35
+shader_parameter/breath_speed = 0.14
+shader_parameter/breath_amount = 0.06
+shader_parameter/distortion_strength = 0.004
+shader_parameter/distortion_speed = 0.04
+shader_parameter/blood_color = Color(1.7, 0.22, 0.15, 1)
+shader_parameter/blood_scale = 0.0009
+shader_parameter/blood_bolt_width = 0.012
+shader_parameter/blood_branch_strength = 0.6
+shader_parameter/blood_density = 0.22
+shader_parameter/blood_pulse_speed = 0.45
+shader_parameter/blood_pulse_sharpness = 5.0
+shader_parameter/blood_warp_amount = 0.3
+shader_parameter/blood_warp_speed = 0.04
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
 shader = ExtResource("11_bg")
@@ -60,7 +76,7 @@ shader_parameter/cross_strength = 0.3
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_fog"]
 shader = ExtResource("12_fog")
-shader_parameter/fog_color = Color(0.88, 0.92, 1, 0.10)
+shader_parameter/fog_color = Color(0.88, 0.92, 1, 0.1)
 shader_parameter/density = 0.55
 shader_parameter/scroll_speed = 0.012
 shader_parameter/noise_scale = 0.0011
@@ -68,150 +84,10 @@ shader_parameter/noise_scale = 0.0011
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sol"]
 size = Vector2(4001, 32)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_sol"]
-shader = ExtResource("14_chair")
-shader_parameter/deep_color = Color(0.018, 0.006, 0.012, 1)
-shader_parameter/mid_color = Color(0.06, 0.018, 0.022, 1)
-shader_parameter/ridge_color = Color(0.16, 0.045, 0.05, 1)
-shader_parameter/vein_color = Color(0.003, 0, 0.001, 1)
-shader_parameter/scale = 0.0045
-shader_parameter/cell_density = 2.4
-shader_parameter/vein_width = 0.1
-shader_parameter/breath_speed = 0.3
-shader_parameter/breath_amount = 0.1
-shader_parameter/distortion_amount = 0.45
-shader_parameter/distortion_speed = 0.06
-shader_parameter/overall_brightness = 1.0
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_plafond"]
-size = Vector2(4001, 32)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_plafond"]
-shader = ExtResource("14_chair")
-shader_parameter/deep_color = Color(0.008, 0.003, 0.006, 1)
-shader_parameter/mid_color = Color(0.03, 0.01, 0.015, 1)
-shader_parameter/ridge_color = Color(0.1, 0.03, 0.035, 1)
-shader_parameter/vein_color = Color(0.002, 0, 0.001, 1)
-shader_parameter/scale = 0.0055
-shader_parameter/cell_density = 2.6
-shader_parameter/vein_width = 0.12
-shader_parameter/breath_speed = 0.22
-shader_parameter/breath_amount = 0.08
-shader_parameter/distortion_amount = 0.55
-shader_parameter/distortion_speed = 0.05
-shader_parameter/overall_brightness = 0.75
-
-[sub_resource type="CanvasTexture" id="CanvasTexture_chair_sol"]
-diffuse_texture = ExtResource("16_bourrelets")
-
-[sub_resource type="CanvasTexture" id="CanvasTexture_chair_plafond"]
-diffuse_texture = ExtResource("16_bourrelets")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_sol_platform"]
-shader = ExtResource("15_platform")
-shader_parameter/normal_strength = 1.8
-shader_parameter/depth_contrast = 1.8
-shader_parameter/cavity_darkness = 0.35
-shader_parameter/roughness = 0.5
-shader_parameter/tint = Color(0.55, 0.42, 0.36, 1)
-shader_parameter/overall_brightness = 0.65
-shader_parameter/use_auto_normal = true
-shader_parameter/auto_normal_kernel = 2.0
-shader_parameter/breath_speed = 0.28
-shader_parameter/breath_amount = 0.07
-shader_parameter/impact_intensity = 0.0
-shader_parameter/impact_radius = 240.0
-shader_parameter/impact_falloff = 2.6
-shader_parameter/vibration_speed = 9.0
-shader_parameter/wave_frequency = 0.028
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_plafond_platform"]
-shader = ExtResource("15_platform")
-shader_parameter/normal_strength = 1.6
-shader_parameter/depth_contrast = 2.0
-shader_parameter/cavity_darkness = 0.25
-shader_parameter/roughness = 0.4
-shader_parameter/tint = Color(0.42, 0.32, 0.28, 1)
-shader_parameter/overall_brightness = 0.45
-shader_parameter/use_auto_normal = true
-shader_parameter/auto_normal_kernel = 2.5
-shader_parameter/breath_speed = 0.22
-shader_parameter/breath_amount = 0.06
-shader_parameter/impact_intensity = 0.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_blood"]
-shader = ExtResource("21_blood")
-shader_parameter/bolt_color = Color(1.7, 0.18, 0.12, 1)
-shader_parameter/scale = 0.0010
-shader_parameter/bolt_width = 0.022
-shader_parameter/branch_strength = 0.7
-shader_parameter/density = 0.18
-shader_parameter/pulse_speed = 0.65
-shader_parameter/pulse_sharpness = 7.0
-shader_parameter/warp_speed = 0.04
-shader_parameter/warp_amount = 0.25
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_far_bg"]
-shader = ExtResource("18_far_bg")
-shader_parameter/source_tex = ExtResource("20_red")
-shader_parameter/tex_scale = 0.0007
-shader_parameter/tint = Color(0.65, 0.16, 0.14, 1)
-shader_parameter/darkness = 0.85
-shader_parameter/contrast = 1.35
-shader_parameter/breath_speed = 0.14
-shader_parameter/breath_amount = 0.06
-shader_parameter/distortion_strength = 0.004
-shader_parameter/distortion_speed = 0.04
-shader_parameter/blood_color = Color(1.7, 0.22, 0.15, 1)
-shader_parameter/blood_scale = 0.0009
-shader_parameter/blood_bolt_width = 0.012
-shader_parameter/blood_branch_strength = 0.6
-shader_parameter/blood_density = 0.22
-shader_parameter/blood_pulse_speed = 0.45
-shader_parameter/blood_pulse_sharpness = 5.0
-shader_parameter/blood_warp_amount = 0.30
-shader_parameter/blood_warp_speed = 0.04
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_sol_putre"]
-shader = ExtResource("19_putre")
-shader_parameter/source_tex = ExtResource("16_bourrelets")
-shader_parameter/tex_scale = 0.0019
-shader_parameter/tint = Color(0.85, 0.70, 0.55, 1)
-shader_parameter/darkness = 0.55
-shader_parameter/contrast = 1.5
-shader_parameter/gamma = 1.25
-shader_parameter/normal_strength = 1.8
-shader_parameter/auto_normal_kernel = 1.5
-shader_parameter/depth_contrast = 1.6
-shader_parameter/cavity_blackness = 0.45
-shader_parameter/impact_intensity = 0.0
-shader_parameter/impact_radius = 240.0
-shader_parameter/impact_falloff = 2.6
-shader_parameter/vibration_speed = 9.0
-shader_parameter/wave_frequency = 0.028
-shader_parameter/breath_speed = 0.20
-shader_parameter/breath_amount = 0.04
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_plafond_putre"]
-shader = ExtResource("19_putre")
-shader_parameter/source_tex = ExtResource("16_bourrelets")
-shader_parameter/tex_scale = 0.0022
-shader_parameter/tint = Color(0.65, 0.52, 0.40, 1)
-shader_parameter/darkness = 0.42
-shader_parameter/contrast = 1.6
-shader_parameter/gamma = 1.4
-shader_parameter/normal_strength = 1.6
-shader_parameter/auto_normal_kernel = 2.0
-shader_parameter/depth_contrast = 1.8
-shader_parameter/cavity_blackness = 0.55
-shader_parameter/impact_intensity = 0.0
-shader_parameter/breath_speed = 0.15
-shader_parameter/breath_amount = 0.035
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sol_tunnel"]
 shader = ExtResource("22_putre_uv")
 shader_parameter/source_tex = ExtResource("16_bourrelets")
-shader_parameter/tex_repeat = Vector2(5.0, 4.0)
+shader_parameter/tex_repeat = Vector2(5, 4)
 shader_parameter/tint = Color(0.78, 0.62, 0.48, 1)
 shader_parameter/darkness = 0.55
 shader_parameter/contrast = 1.55
@@ -222,13 +98,16 @@ shader_parameter/depth_contrast = 1.6
 shader_parameter/cavity_blackness = 0.45
 shader_parameter/distance_fade = 0.65
 shader_parameter/fade_curve = 1.6
-shader_parameter/breath_speed = 0.20
+shader_parameter/breath_speed = 0.2
 shader_parameter/breath_amount = 0.04
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plafond"]
+size = Vector2(4001, 32)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_plafond_tunnel"]
 shader = ExtResource("22_putre_uv")
 shader_parameter/source_tex = ExtResource("16_bourrelets")
-shader_parameter/tex_repeat = Vector2(5.0, 4.0)
+shader_parameter/tex_repeat = Vector2(5, 4)
 shader_parameter/tint = Color(0.58, 0.46, 0.36, 1)
 shader_parameter/darkness = 0.42
 shader_parameter/contrast = 1.6
@@ -243,50 +122,58 @@ shader_parameter/breath_speed = 0.15
 shader_parameter/breath_amount = 0.035
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_grass_sol"]
-shader = ExtResource("23_grass")
-shader_parameter/grass_color = Color(0.015, 0.015, 0.022, 1)
-shader_parameter/tip_dir = -1.0
-shader_parameter/zone_height = 150.0
-shader_parameter/wind_speed = 0.45
-shader_parameter/wind_amount = 7.0
-shader_parameter/blade_spacing = 12.0
+shader = ExtResource("24_grass")
+shader_parameter/grass_color = Color(0.018, 0.018, 0.026, 1)
+shader_parameter/tip_dir = 1.0
+shader_parameter/zone_height = 140.0
+shader_parameter/wind_speed = 0.5
+shader_parameter/wind_amount = 8.0
+shader_parameter/blade_spacing = 14.0
 shader_parameter/blade_thickness = 4.5
-shader_parameter/blade_min_height = 0.30
-shader_parameter/blade_max_height = 0.85
-shader_parameter/long_blade_spacing = 70.0
-shader_parameter/long_blade_thickness = 6.5
+shader_parameter/blade_min_height = 0.3
+shader_parameter/blade_max_height = 0.9
+shader_parameter/long_blade_spacing = 80.0
+shader_parameter/long_blade_thickness = 6.0
 shader_parameter/long_blade_min_height = 0.75
 shader_parameter/long_blade_max_height = 1.05
+shader_parameter/player_pos = Vector2(99999, 99999)
+shader_parameter/push_radius = 150.0
+shader_parameter/push_radius_v = 240.0
+shader_parameter/push_strength = 45.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_grass_plafond"]
-shader = ExtResource("23_grass")
-shader_parameter/grass_color = Color(0.012, 0.012, 0.018, 1)
-shader_parameter/tip_dir = 1.0
-shader_parameter/zone_height = 170.0
-shader_parameter/wind_speed = 0.30
-shader_parameter/wind_amount = 5.0
+shader = ExtResource("24_grass")
+shader_parameter/grass_color = Color(0.015, 0.013, 0.022, 1)
+shader_parameter/tip_dir = -1.0
+shader_parameter/zone_height = 130.0
+shader_parameter/wind_speed = 0.38
+shader_parameter/wind_amount = 6.0
 shader_parameter/blade_spacing = 16.0
-shader_parameter/blade_thickness = 5.5
-shader_parameter/blade_min_height = 0.40
-shader_parameter/blade_max_height = 0.95
+shader_parameter/blade_thickness = 4.5
+shader_parameter/blade_min_height = 0.3
+shader_parameter/blade_max_height = 0.85
 shader_parameter/long_blade_spacing = 90.0
-shader_parameter/long_blade_thickness = 8.0
-shader_parameter/long_blade_min_height = 0.80
-shader_parameter/long_blade_max_height = 1.10
+shader_parameter/long_blade_thickness = 6.0
+shader_parameter/long_blade_min_height = 0.7
+shader_parameter/long_blade_max_height = 1.0
+shader_parameter/player_pos = Vector2(99999, 99999)
+shader_parameter/push_radius = 150.0
+shader_parameter/push_radius_v = 240.0
+shader_parameter/push_strength = 38.0
 
 [node name="LesYeux" type="Node2D" unique_id=1616122588]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=915583576]
 environment = SubResource("Environment_yeux")
 
-[node name="FarBackground" type="Polygon2D" parent="."]
+[node name="FarBackground" type="Polygon2D" parent="." unique_id=1008356807]
 z_index = -150
 material = SubResource("ShaderMaterial_far_bg")
 polygon = PackedVector2Array(-3000, -800, 3000, -800, 3000, 500, -3000, 500)
 script = ExtResource("17_parallax")
 scroll_scale = Vector2(0.18, 0.18)
 
-[node name="Background" type="Polygon2D" parent="."]
+[node name="Background" type="Polygon2D" parent="." unique_id=1542029047]
 z_index = -100
 material = SubResource("ShaderMaterial_bg")
 polygon = PackedVector2Array(-3000, -800, 3000, -800, 3000, 500, -3000, 500)
@@ -316,7 +203,7 @@ color = Color(0.9, 0.3, 0.7, 0.33)
 [node name="Halo4" parent="Decor/HalosFond" unique_id=845069038 instance=ExtResource("9_halo")]
 position = Vector2(-80, -50)
 scale = Vector2(3.2, 3.2)
-color = Color(1.1, 0.6, 0.3, 0.30)
+color = Color(1.1, 0.6, 0.3, 0.3)
 
 [node name="Halo5" parent="Decor/HalosFond" unique_id=1283433228 instance=ExtResource("9_halo")]
 position = Vector2(160, 80)
@@ -331,7 +218,7 @@ color = Color(1, 0.4, 0.85, 0.36)
 [node name="Halo7" parent="Decor/HalosFond" unique_id=106850088 instance=ExtResource("9_halo")]
 position = Vector2(660, 60)
 scale = Vector2(3.6, 3.6)
-color = Color(0.4, 1, 0.85, 0.30)
+color = Color(0.4, 1, 0.85, 0.3)
 
 [node name="Halo8" parent="Decor/HalosFond" unique_id=645095329 instance=ExtResource("9_halo")]
 position = Vector2(900, -40)
@@ -341,49 +228,49 @@ color = Color(1.1, 0.85, 0.4, 0.33)
 [node name="Halo9" parent="Decor/HalosFond" unique_id=1860872417 instance=ExtResource("9_halo")]
 position = Vector2(-200, 200)
 scale = Vector2(2.4, 2.4)
-color = Color(1.2, 0.5, 0.3, 0.30)
+color = Color(1.2, 0.5, 0.3, 0.3)
 
 [node name="Halo10" parent="Decor/HalosFond" unique_id=782564410 instance=ExtResource("9_halo")]
 position = Vector2(540, 220)
 scale = Vector2(2.6, 2.6)
-color = Color(0.4, 0.7, 1.2, 0.30)
+color = Color(0.4, 0.7, 1.2, 0.3)
 
-[node name="Halo11" parent="Decor/HalosFond" instance=ExtResource("9_halo")]
+[node name="Halo11" parent="Decor/HalosFond" unique_id=931514271 instance=ExtResource("9_halo")]
 position = Vector2(-1180, 60)
 scale = Vector2(3.4, 3.4)
 color = Color(0.7, 0.3, 1.1, 0.32)
 
-[node name="Halo12" parent="Decor/HalosFond" instance=ExtResource("9_halo")]
+[node name="Halo12" parent="Decor/HalosFond" unique_id=1231638542 instance=ExtResource("9_halo")]
 position = Vector2(-1520, -80)
-scale = Vector2(3.0, 3.0)
+scale = Vector2(3, 3)
 color = Color(1, 0.5, 0.4, 0.32)
 
-[node name="Halo13" parent="Decor/HalosFond" instance=ExtResource("9_halo")]
+[node name="Halo13" parent="Decor/HalosFond" unique_id=1413400181 instance=ExtResource("9_halo")]
 position = Vector2(-1880, 120)
 scale = Vector2(3.6, 3.6)
-color = Color(0.3, 0.7, 1.1, 0.30)
+color = Color(0.3, 0.7, 1.1, 0.3)
 
-[node name="Halo14" parent="Decor/HalosFond" instance=ExtResource("9_halo")]
+[node name="Halo14" parent="Decor/HalosFond" unique_id=1929520264 instance=ExtResource("9_halo")]
 position = Vector2(-2280, -30)
 scale = Vector2(3.2, 3.2)
 color = Color(1, 0.4, 0.9, 0.28)
 
-[node name="Halo15" parent="Decor/HalosFond" instance=ExtResource("9_halo")]
+[node name="Halo15" parent="Decor/HalosFond" unique_id=1639015393 instance=ExtResource("9_halo")]
 position = Vector2(1220, 90)
 scale = Vector2(3.5, 3.5)
 color = Color(0.4, 1, 0.8, 0.32)
 
-[node name="Halo16" parent="Decor/HalosFond" instance=ExtResource("9_halo")]
+[node name="Halo16" parent="Decor/HalosFond" unique_id=66797482 instance=ExtResource("9_halo")]
 position = Vector2(1580, -60)
-scale = Vector2(3.0, 3.0)
+scale = Vector2(3, 3)
 color = Color(1.1, 0.85, 0.4, 0.32)
 
-[node name="Halo17" parent="Decor/HalosFond" instance=ExtResource("9_halo")]
+[node name="Halo17" parent="Decor/HalosFond" unique_id=2078723499 instance=ExtResource("9_halo")]
 position = Vector2(1940, 150)
 scale = Vector2(3.6, 3.6)
-color = Color(0.6, 0.4, 1.1, 0.30)
+color = Color(0.6, 0.4, 1.1, 0.3)
 
-[node name="Halo18" parent="Decor/HalosFond" instance=ExtResource("9_halo")]
+[node name="Halo18" parent="Decor/HalosFond" unique_id=1044027393 instance=ExtResource("9_halo")]
 position = Vector2(2300, -10)
 scale = Vector2(3.2, 3.2)
 color = Color(1.1, 0.55, 0.3, 0.28)
@@ -477,42 +364,42 @@ position = Vector2(870, -260)
 scale = Vector2(0.7, 0.7)
 color = Color(0.85, 0.6, 1, 1)
 
-[node name="R18" parent="Decor/RosasLointain" instance=ExtResource("3_etoile")]
+[node name="R18" parent="Decor/RosasLointain" unique_id=2045218985 instance=ExtResource("3_etoile")]
 position = Vector2(-1280, 50)
 scale = Vector2(0.65, 0.65)
 color = Color(1, 0.9, 0.55, 1)
 
-[node name="R19" parent="Decor/RosasLointain" instance=ExtResource("4_rosa2")]
+[node name="R19" parent="Decor/RosasLointain" unique_id=2041578653 instance=ExtResource("4_rosa2")]
 position = Vector2(-1650, -120)
 scale = Vector2(0.6, 0.6)
 color = Color(0.7, 0.85, 1, 1)
 
-[node name="R20" parent="Decor/RosasLointain" instance=ExtResource("7_rosa5")]
+[node name="R20" parent="Decor/RosasLointain" unique_id=1257656972 instance=ExtResource("7_rosa5")]
 position = Vector2(-2100, 80)
 scale = Vector2(0.75, 0.75)
 color = Color(0.85, 0.55, 1, 1)
 
-[node name="R21" parent="Decor/RosasLointain" instance=ExtResource("8_rosa6")]
+[node name="R21" parent="Decor/RosasLointain" unique_id=1860431980 instance=ExtResource("8_rosa6")]
 position = Vector2(-2500, -180)
 scale = Vector2(0.7, 0.7)
 color = Color(1, 0.7, 0.95, 1)
 
-[node name="R22" parent="Decor/RosasLointain" instance=ExtResource("5_rosa3")]
+[node name="R22" parent="Decor/RosasLointain" unique_id=1331595527 instance=ExtResource("5_rosa3")]
 position = Vector2(1290, -60)
 scale = Vector2(0.7, 0.7)
 color = Color(1, 0.85, 0.55, 1)
 
-[node name="R23" parent="Decor/RosasLointain" instance=ExtResource("6_rosa4")]
+[node name="R23" parent="Decor/RosasLointain" unique_id=1102180361 instance=ExtResource("6_rosa4")]
 position = Vector2(1680, 100)
 scale = Vector2(0.65, 0.65)
 color = Color(0.6, 1, 0.85, 1)
 
-[node name="R24" parent="Decor/RosasLointain" instance=ExtResource("3_etoile")]
+[node name="R24" parent="Decor/RosasLointain" unique_id=9090892 instance=ExtResource("3_etoile")]
 position = Vector2(2080, -150)
 scale = Vector2(0.75, 0.75)
 color = Color(1, 0.9, 0.6, 1)
 
-[node name="R25" parent="Decor/RosasLointain" instance=ExtResource("7_rosa5")]
+[node name="R25" parent="Decor/RosasLointain" unique_id=2009586756 instance=ExtResource("7_rosa5")]
 position = Vector2(2480, 30)
 scale = Vector2(0.7, 0.7)
 color = Color(0.85, 0.6, 1, 1)
@@ -592,32 +479,31 @@ position = Vector2(820, -160)
 scale = Vector2(0.95, 0.95)
 color = Color(1.3, 1.1, 0.6, 1)
 
-[node name="R16" parent="Decor/RosasMilieu" instance=ExtResource("3_etoile")]
+[node name="R16" parent="Decor/RosasMilieu" unique_id=1622532581 instance=ExtResource("3_etoile")]
 position = Vector2(-1200, 80)
 scale = Vector2(0.95, 0.95)
 color = Color(1.25, 1.05, 0.55, 1)
 
-[node name="R17" parent="Decor/RosasMilieu" instance=ExtResource("8_rosa6")]
+[node name="R17" parent="Decor/RosasMilieu" unique_id=1040717220 instance=ExtResource("8_rosa6")]
 position = Vector2(-1600, -30)
 scale = Vector2(0.9, 0.9)
 color = Color(1.1, 0.65, 1.25, 1)
 
-[node name="R18" parent="Decor/RosasMilieu" instance=ExtResource("4_rosa2")]
+[node name="R18" parent="Decor/RosasMilieu" unique_id=1982288424 instance=ExtResource("4_rosa2")]
 position = Vector2(-2000, 140)
 scale = Vector2(0.85, 0.85)
 color = Color(0.65, 1.15, 0.9, 1)
 
-[node name="R19" parent="Decor/RosasMilieu" instance=ExtResource("5_rosa3")]
+[node name="R19" parent="Decor/RosasMilieu" unique_id=1375510624 instance=ExtResource("5_rosa3")]
 position = Vector2(1240, 60)
-scale = Vector2(1, 1)
 color = Color(1.3, 0.85, 0.55, 1)
 
-[node name="R20" parent="Decor/RosasMilieu" instance=ExtResource("7_rosa5")]
+[node name="R20" parent="Decor/RosasMilieu" unique_id=593540857 instance=ExtResource("7_rosa5")]
 position = Vector2(1620, -40)
 scale = Vector2(0.95, 0.95)
 color = Color(0.7, 1.25, 0.8, 1)
 
-[node name="R21" parent="Decor/RosasMilieu" instance=ExtResource("6_rosa4")]
+[node name="R21" parent="Decor/RosasMilieu" unique_id=580970207 instance=ExtResource("6_rosa4")]
 position = Vector2(2050, 130)
 scale = Vector2(0.9, 0.9)
 color = Color(1.2, 0.7, 1.35, 1)
@@ -686,32 +572,32 @@ position = Vector2(700, -30)
 scale = Vector2(1.35, 1.35)
 color = Color(1.5, 1.25, 0.6, 1)
 
-[node name="R13" parent="Decor/RosasProches" instance=ExtResource("8_rosa6")]
+[node name="R13" parent="Decor/RosasProches" unique_id=995280795 instance=ExtResource("8_rosa6")]
 position = Vector2(-980, 200)
 scale = Vector2(1.3, 1.3)
 color = Color(1.4, 0.85, 0.55, 1)
 
-[node name="R14" parent="Decor/RosasProches" instance=ExtResource("7_rosa5")]
+[node name="R14" parent="Decor/RosasProches" unique_id=348267877 instance=ExtResource("7_rosa5")]
 position = Vector2(-1350, 50)
 scale = Vector2(1.2, 1.2)
 color = Color(1.3, 0.7, 1.4, 1)
 
-[node name="R15" parent="Decor/RosasProches" instance=ExtResource("3_etoile")]
+[node name="R15" parent="Decor/RosasProches" unique_id=1893851223 instance=ExtResource("3_etoile")]
 position = Vector2(-1750, 180)
 scale = Vector2(1.4, 1.4)
 color = Color(1.55, 1.25, 0.6, 1)
 
-[node name="R16" parent="Decor/RosasProches" instance=ExtResource("5_rosa3")]
+[node name="R16" parent="Decor/RosasProches" unique_id=1078602868 instance=ExtResource("5_rosa3")]
 position = Vector2(1020, 220)
 scale = Vector2(1.3, 1.3)
 color = Color(0.65, 1.4, 1.25, 1)
 
-[node name="R17" parent="Decor/RosasProches" instance=ExtResource("4_rosa2")]
+[node name="R17" parent="Decor/RosasProches" unique_id=1416861758 instance=ExtResource("4_rosa2")]
 position = Vector2(1400, 70)
 scale = Vector2(1.25, 1.25)
 color = Color(1.5, 0.85, 1.05, 1)
 
-[node name="R18" parent="Decor/RosasProches" instance=ExtResource("6_rosa4")]
+[node name="R18" parent="Decor/RosasProches" unique_id=477798258 instance=ExtResource("6_rosa4")]
 position = Vector2(1780, 200)
 scale = Vector2(1.2, 1.2)
 color = Color(1.35, 0.75, 1.45, 1)
@@ -752,25 +638,25 @@ material = SubResource("ShaderMaterial_plafond_tunnel")
 polygon = PackedVector2Array(-2500, -280, 2500, -280, 2500, 16, -2500, 16)
 uv = PackedVector2Array(0, 0, 1, 0, 1, 1, 0, 1)
 
-[node name="GrassSol" type="Polygon2D" parent="."]
+[node name="Cils" type="Node2D" parent="."]
 z_index = -1
+
+[node name="CilsSol" type="Polygon2D" parent="Cils"]
 position = Vector2(0, 324)
 material = SubResource("ShaderMaterial_grass_sol")
-polygon = PackedVector2Array(-2800, -160, 2800, -160, 2800, 10, -2800, 10)
-uv = PackedVector2Array(0, 0, 1, 0, 1, 1, 0, 1)
+polygon = PackedVector2Array(-2500, 0, 2500, 0, 2500, -160, -2500, -160)
+script = ExtResource("25_igrass")
+player_path = NodePath("../../Player")
 
-[node name="GrassPlafond" type="Polygon2D" parent="."]
-z_index = -1
-position = Vector2(0, -104)
+[node name="CilsPlafond" type="Polygon2D" parent="Cils"]
+position = Vector2(0, -384)
 material = SubResource("ShaderMaterial_grass_plafond")
-polygon = PackedVector2Array(-2800, -10, 2800, -10, 2800, 180, -2800, 180)
-uv = PackedVector2Array(0, 0, 1, 0, 1, 1, 0, 1)
+polygon = PackedVector2Array(-2500, 0, 2500, 0, 2500, 150, -2500, 150)
+script = ExtResource("25_igrass")
+player_path = NodePath("../../Player")
 
 [node name="Player" parent="." unique_id=1252304022 instance=ExtResource("1_player")]
 position = Vector2(-2, 100)
 
 [node name="Neurone" parent="." unique_id=1214431455 instance=ExtResource("13_k7qnh")]
 position = Vector2(270, 263)
-
-[node name="Dummy" parent="." unique_id=293793926 instance=ExtResource("14_y7hj5")]
-position = Vector2(23, 283)

@@ -13,6 +13,15 @@ uniform float zone_height = 140.0;
 uniform float wind_speed : hint_range(0.0, 3.0) = 0.5;
 uniform float wind_amount : hint_range(0.0, 30.0) = 8.0;
 
+// --- Interaction joueur (Tâche 4) ---
+// player_pos est fourni en COORDONNÉES LOCALES de ce nœud par InteractiveGrass.gd
+// (via to_local). Valeur par défaut très loin => aucun effet tant que le script
+// n'a pas tourné. La base de l'herbe est en y local = 0.
+uniform vec2 player_pos = vec2(99999.0, 99999.0);
+uniform float push_radius : hint_range(0.0, 600.0) = 130.0;    // portée horizontale
+uniform float push_radius_v : hint_range(0.0, 600.0) = 220.0;  // portée verticale
+uniform float push_strength : hint_range(0.0, 200.0) = 40.0;   // amplitude de la courbure
+
 // Couche dense (brins courts/moyens)
 uniform float blade_spacing = 14.0;
 uniform float blade_thickness = 4.5;
@@ -47,6 +56,13 @@ float blade_alpha(float x, float y_norm, float spacing, float thickness,
 		float wind = sin(TIME * wind_speed + wind_phase) * wind_amount * wind_mul;
 		// Le vent décale la pointe quadratiquement (la base ne bouge pas)
 		blade_x += wind * y_norm * y_norm;
+
+		// Réaction au joueur : les pointes s'écartent de Zell quand il passe près.
+		// Comme le vent, l'effet est quadratique en y_norm => base fixe, pointes mobiles.
+		float to_player = blade_x - player_pos.x;
+		float infl = smoothstep(push_radius, 0.0, abs(to_player))
+				   * smoothstep(push_radius_v, 0.0, abs(player_pos.y));
+		blade_x += sign(to_player) * push_strength * infl * y_norm * y_norm;
 
 		float seed_h = hash11(cell * 7.71 + wind_phase_mul * 2.3);
 		float h_ratio = mix(h_min, h_max, seed_h);
