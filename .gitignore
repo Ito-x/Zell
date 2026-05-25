@@ -2,11 +2,16 @@
 .godot/
 *.import
 
-# Claude Code (memoire locale, non partageable)
-.claude/
+# Claude Code — local non partagé (réglages, sessions),
+# SAUF .claude/skills/ qui contient les skills d'équipe partagés via git.
+.claude/*
+!.claude/skills/
 
 # Fichiers d'export
 export_presets.cfg
+
+# Captures temporaires (skill lancer-godot)
+.capture.png
 
 # Fichiers de traduction compiles
 *.translation
