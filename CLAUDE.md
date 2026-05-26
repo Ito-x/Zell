@@ -96,14 +96,17 @@ ajouter/scoper plutôt que supprimer.
 
 ## Skills d'équipe (`.claude/skills/`)
 
-Le dossier est vide pour l'instant — on reconstruira au fur et à mesure des
-besoins Unity. Skills probables à venir :
+Skills partagés via git, à utiliser dans le workflow normal :
 
-- `lancer-unity` — Play Mode + capture pour vérification visuelle (équivalent
-  du F5 de Claude)
-- `verif-avant-commit` — build Unity headless / `Editor.exe -batchmode
-  -nographics -quit` pour attraper les erreurs de compile C# et de ressources
-- `kra-vers-png` — exporter Krita vers PNG et le déposer dans `Assets/Art/`
+| Skill | Quand l'utiliser |
+|---|---|
+| **`lancer-unity`** | Compile check headless, capture d'écran via SceneCapture, ou lancement interactif. Le « F5 » de Claude. |
+| **`montrer-capture`** | Règle de workflow : **après chaque capture** d'écran de vérification, lire le PNG immédiatement avec Read pour qu'il apparaisse inline dans la conversation. Pour que Paul voie ce que Claude voit. |
+| **`relance-unity-fin-feature`** | Règle de workflow : **après chaque batch** de modifs qui change le rendu/gameplay (et après commit + push), lancer Unity interactif automatiquement. Pour que Paul puisse tester immédiatement sans manipuler Unity Hub. Pas pour les changements purement doc / skills / refactor. |
+
+### Skills à venir (probablement)
+- `verif-avant-commit` — compile check + capture en un seul appel
+- `kra-vers-png` — exporter Krita vers PNG et déposer dans `Assets/Art/`
 - `shader-unity` — créer un ShaderGraph propre ou un `.shader` HLSL
 
 Au moment où on crée un skill : `.claude/skills/<nom>/SKILL.md`, puis commit
