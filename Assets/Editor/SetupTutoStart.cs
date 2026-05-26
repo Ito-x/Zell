@@ -92,11 +92,18 @@ public static class SetupTutoStart
             new Color(0.20f, 0.16f, 0.18f), squareSprite, withCollider: true);
 
         // === Player ===
-        var player = CreatePlayer(circleSprite);
+        var player = CreatePlayer(circleSprite, squareSprite);
 
-        // Caméra enfant du player avec offset léger
-        camGO.transform.SetParent(player.transform, worldPositionStays: false);
-        camGO.transform.localPosition = new Vector3(0, 1, -10);
+        // Caméra LIBRE qui suit le Player via FollowCamera2D (damping + dead zone + lookahead)
+        camGO.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + 1f, -10f);
+        var follow = camGO.AddComponent<FollowCamera2D>();
+        follow.target = player.transform;
+        follow.offset = new Vector2(0f, 1f);
+        follow.deadZone = new Vector2(2.0f, 1.5f);
+        follow.dampingX = 0.20f;
+        follow.dampingY = 0.35f;
+        follow.lookAheadDistance = 3f;
+        follow.lookAheadSmooth = 0.30f;
 
         EditorSceneManager.SaveScene(scene, SceneAssetPath);
         AssetDatabase.SaveAssets();
@@ -130,7 +137,7 @@ public static class SetupTutoStart
     }
 
     // ── Player boule d'énergie warm (ambre/or) ────────────────────────
-    private static GameObject CreatePlayer(Sprite circle)
+    private static GameObject CreatePlayer(Sprite circle, Sprite square)
     {
         var player = new GameObject("Player");
         player.transform.position = new Vector2(0, 2f);
@@ -146,7 +153,10 @@ public static class SetupTutoStart
         col.radius = 0.45f;
         col.sharedMaterial = _noFriction;
 
-        player.AddComponent<PlayerController>();
+        // PlayerController + passe les sprites pour les visuels du dash
+        var ctrl = player.AddComponent<PlayerController>();
+        ctrl.circleSpriteRef = circle;
+        ctrl.squareSpriteRef = square;
 
         // === Visual : 4 couches warm + Light 2D + TrailRenderer ===
         var visual = new GameObject("Visual");
