@@ -1,27 +1,63 @@
-# Godot 4 - fichiers generes automatiquement
-.godot/
-*.import
+# ─── Unity ────────────────────────────────────────────────
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
 
-# Claude Code — local non partagé (réglages, sessions),
-# SAUF .claude/skills/ qui contient les skills d'équipe partagés via git.
+# Crash & co
+sysinfo.txt
+crashlytics-build.properties
+
+# IDE & C# build artifacts
+.vs/
+.idea/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity meta de fichiers générés (les vrais .meta des assets SONT commités)
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Builds finaux
+*.apk
+*.aab
+*.ipa
+*.unitypackage
+
+# Addressables temporaires
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+/[Aa]ssets/[Ss]treamingAssets/aa.meta
+/[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# ─── Claude Code ──────────────────────────────────────────
+# Settings/sessions locaux, SAUF .claude/skills/ qui contient les
+# skills d'équipe partagés via git.
 .claude/*
 !.claude/skills/
 
-# Fichiers d'export
-export_presets.cfg
-
-# Captures temporaires (skill lancer-godot)
-.capture.png
-.zell_crop.png
-
-# Sources Krita (lourdes) — on partage les PNG exportés, pas les .kra
+# ─── Krita ────────────────────────────────────────────────
+# On partage les PNG exportés, pas les .kra (lourds).
 *.kra
 *.kra~
 
-# Fichiers de traduction compiles
-*.translation
-
-# Mono / C#
-.mono/
-data_*/
-mono_crash.*.json
+# ─── Divers ───────────────────────────────────────────────
+.commit_msg.txt
+.capture.png
