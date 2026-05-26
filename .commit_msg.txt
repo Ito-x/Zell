@@ -1,0 +1,12 @@
+refactor(LesYeux): scene vide a zero + sauvegarde du couloir dans test.tscn
+
+Paul va rebuild la map directement dans Godot. On lui prepare une
+scene LesYeux.tscn completement vide pour qu'il parte de zero, et
+on sauvegarde le couloir spawn actuel (rosaces, brume, herbes,
+neurone) dans test.tscn comme reference visuelle/technique.
+
+- LesYeux.tscn : reset complet, juste un Node2D racine vide
+- test.tscn (nouveau) : contenu du couloir spawn propre (sans
+  l'extension porte/plateformes qui avait ete branchee)
+- Porte.gd / Porte.tscn : supprimes (etaient lies a l'extension
+  abandonnee, peuvent etre recrees si besoin)
