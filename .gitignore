@@ -62,5 +62,4 @@ crashlytics-build.properties
 # ─── Divers ───────────────────────────────────────────────
 .commit_msg.txt
 .capture.png
-.unity_compile.log
-.unity_capture.log
+.unity_*.log
