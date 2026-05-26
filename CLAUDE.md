@@ -53,6 +53,12 @@ Design détaillé dans `CAHIER_DES_CHARGES.md` (37 Objectifs) et
 
 ## Règles & pièges à se rappeler
 
+- **NE JAMAIS mettre le projet Unity dans OneDrive / Google Drive / Dropbox.**
+  Le projet vit dans `C:\Projects\zell\`, PAS dans `OneDrive\Documents\`.
+  Raison : sync continue de `Library/`, conflits de casse Windows
+  (`assets/` vs `Assets/`), file locks pendant compilation, risques de
+  corruption. Git (via GitHub) suffit comme backup du code. Les `.kra`
+  source sont sauvegardés séparément dans `OneDrive\Backup_Zell_Sources\`.
 - Création projet : Unity Hub → **2D Universal Project** (pas 2D Built-in,
   pas 3D).
 - Import PNG : Texture Type = **Sprite (2D and UI)**, ajuster
