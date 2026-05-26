@@ -1,3 +1,11 @@
 [gd_scene format=3 uid="uid://de2yq6uqt4q41"]
 
 [node name="LesYeux" type="Node2D"]
+
+[node name="WhiteBg" type="ColorRect" parent="."]
+z_index = -100
+offset_left = -10000.0
+offset_top = -10000.0
+offset_right = 10000.0
+offset_bottom = 10000.0
+color = Color(1, 1, 1, 1)

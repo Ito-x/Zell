@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://btestl3syx9p0"]
+[gd_scene format=3 uid="uid://btestl3syyap0"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_player"]
 [ext_resource type="Texture2D" path="res://assets/raw_art/prem_graph.png" id="2_art"]
