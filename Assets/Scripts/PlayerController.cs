@@ -34,9 +34,9 @@ public class PlayerController : MonoBehaviour
         var hit = Physics2D.Raycast(transform.position, Vector2.down, groundRayLength, groundLayer);
         _isGrounded = hit.collider != null;
 
-        // Mouvement horizontal (legacy Input — A/D, flèches)
+        // Mouvement horizontal (AZERTY — Q/D, flèches)
         float h = 0f;
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) h = -1f;
+        if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.LeftArrow)) h = -1f;
         else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) h = 1f;
         _rb.linearVelocity = new Vector2(h * moveSpeed, _rb.linearVelocity.y);
 

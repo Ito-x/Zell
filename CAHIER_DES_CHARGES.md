@@ -1,1386 +1,1296 @@
-# ZELL — Cahier des Charges
+# CAHIER DES CHARGES — ZELL
 
-*Document de consignes par système. Pas de planning, pas de code. Chaque **Objectif** décrit un système à mettre en place : ce que le joueur doit ressentir, les contrôles, les graphismes, le son, les comportements attendus. Le détail narratif (zones, lore, boss spécifiques) vit dans `Structure_et_idées.md`.*
+**Version 2 — Refonte complète (mai 2026)**
+**Engine : Unity 6.3 LTS, 2D URP**
 
----
-
-## Vision générale
-
-Metroidvania 2D onirique sur Godot 4. Le joueur incarne **Zell**, une conscience née dans l'esprit de **Veilae**, une jeune femme (~18 ans) plongée dans le coma après un accident de voiture involontaire. Le jeu se passe à l'intérieur de son cerveau. Tout est ressenti, jamais expliqué. Ambiance onirique, lumière, particules, mystère. Plateformes visées : PC et console. Graphismes faits à la main, avec aide IA.
+*Document maître. Source de vérité unique. Mis à jour à chaque décision tranchée.*
+*Pour le détail narratif (lore, dialogues exemples, voix des PNJ), voir `Structure_et_idées.md`.*
 
 ---
 
-# ➜ PROCHAINE SESSION — Apprentissage design & carte du monde
+## Table des matières
 
-Bascule du code à la production visuelle. Les systèmes prototypes (1-4, 7, 8, 10) sont en place ; il faut maintenant commencer à fabriquer les assets, en démarrant par la **carte du monde** (Objectif 25 — scan cérébral).
-
-## Outils à installer / tester
-- **Krita** (gratuit) ou **Affinity Photo/Designer** (one-time) pour les visuels peints / scans
-- **Aseprite** (~20€) si exploration pixel art / sprites
-- **Tiled** (gratuit) pour les tilesets de zones — utile une fois les premiers sprites prêts
-
-## Workflow IA-assisté
-1. **Griffonner à la main** (tablette ou papier) la forme générale de la map : anatomie cérébrale stylisée, emplacements des zones (cf. géographie ci-dessous)
-2. Utiliser l'IA (**Midjourney**, **Stable Diffusion**, **Nano Banana**) pour explorer des **directions stylistiques** à partir des croquis
-3. **Retoucher manuellement** dans Krita / Affinity avant import Godot
-
-## Carte du monde — point de départ
-- Référence à mater : la carte de **Hollow Knight** (lignes lumineuses, nœuds, minimalisme), et des **IRM cérébrales** stylisées
-- Géographie déjà tranchée dans le CDC (cf. Objectif 25) :
-  - Oreilles → côtés gauche / droit
-  - Nez → en bas (zone optionnelle)
-  - Cerveau / Mémoire → en haut
-  - Cœur → centre, accessible uniquement en Phase 3
-  - Les Sinus → centre-bas, hub de transition
-  - Zone de Rêve → très haut
-- Style : "imagerie médicale poétique" — lignes lumineuses, fond très sombre, légers reflets, nœuds qui pulsent, lignes qui respirent
-
-## Première étape concrète demain
-1. Ouvrir un canvas vide dans Krita (ou autre outil choisi)
-2. Tracer un **rough** de la carte : positions approximatives des zones, connexions
-3. Ne pas chercher la propreté — juste poser la **structure spatiale**
-
----
-
-# OBJECTIF 1 — Système de mouvement de Zell
-
-> **État : ✅ implémenté** (mouvement, sauts, sons de marche / saut / atterrissage branchés)
-
-## Ressenti joueur
-Léger, flottant, mais réactif. Zell n'est pas une masse — elle est une boule d'énergie. Le déplacement doit donner l'impression d'une bougie animée par sa propre volonté, pas d'un sac à patate qui tombe. Le saut doit être *satisfaisant à répéter* : on doit avoir envie de sauter pour rien.
-
-## Contrôles
-- Déplacement horizontal (clavier flèches ou ZQSD / stick gauche manette)
-- Saut (touche dédiée)
-- Saut maintenu = saut plus haut
-- **Pas de double saut** (idée abandonnée). La verticalité supplémentaire passe par le **dash vertical** débloqué en Phase 1 (cf. Objectif 7).
-- Le déplacement reste **toujours** disponible, même en combat, même en chargeant une attaque
-
-## Comportement physique
-- Accélération douce au sol (pas de démarrage instantané, mais pas de patinage exagéré)
-- Friction nette quand on relâche
-- En l'air : contrôle horizontal légèrement réduit (entre Mario et Hollow Knight)
-- **Coyote time** : 0.1-0.15s après avoir quitté une plateforme, le saut reste possible
-- **Jump buffering** : si la touche saut est pressée 0.1-0.15s avant de toucher le sol, le saut s'enchaîne au contact
-- Gravité asymétrique : tombe légèrement plus vite qu'elle ne monte (sensation de poids)
-
-## Graphismes
-- Sprite stable, pas de vibration / palpitation d'idle (décision prise — l'effet n'est pas voulu)
-- Trainée de particules très discrète à la marche / sprint
-- À l'atterrissage : petit éclat de particules au point de contact
-- Au dash : signature visuelle dédiée (cf. Objectif 7)
-
-## Son
-- Pas de bruit de pas — Zell n'a pas de pieds
-- Bourdonnement très doux et continu en mouvement
-- Saut : souffle court
-- Atterrissage : pulse grave très bref
+0. [Vue d'ensemble](#0-vue-densemble)
+1. [Univers — résumé narratif](#1-univers--résumé-narratif)
+2. [Personnage joueur — Zell](#2-personnage-joueur--zell)
+3. [Mouvement et contrôles](#3-mouvement-et-contrôles)
+4. [Skills et capacités](#4-skills-et-capacités)
+5. [Système de combat](#5-système-de-combat)
+6. [Mécaniques diffuses](#6-mécaniques-diffuses)
+7. [Zone tuto — Les Yeux](#7-zone-tuto--les-yeux)
+8. [Phase 1 — autres zones](#8-phase-1--autres-zones)
+9. [Phase 2](#9-phase-2)
+10. [Phase 3 — Le Cœur](#10-phase-3--le-cœur)
+11. [PNJ](#11-pnj)
+12. [Bestiaire](#12-bestiaire)
+13. [Boss](#13-boss)
+14. [HUD et interface](#14-hud-et-interface)
+15. [Carte du monde](#15-carte-du-monde)
+16. [Mort et sauvegarde](#16-mort-et-sauvegarde)
+17. [Monnaie — Synapses](#17-monnaie--synapses)
+18. [Audio](#18-audio)
+19. [Direction artistique](#19-direction-artistique)
+20. [Cinématiques](#20-cinématiques)
+21. [Accessibilité](#21-accessibilité)
+22. [Tech stack Unity](#22-tech-stack-unity)
+23. [Architecture du projet](#23-architecture-du-projet)
+24. [Workflow de production](#24-workflow-de-production)
+25. [État actuel du projet](#25-état-actuel-du-projet)
+26. [Roadmap immédiate](#26-roadmap-immédiate)
+27. [Points reportés](#27-points-reportés)
 
 ---
 
-# OBJECTIF 2 — Caméra
+## 0. Vue d'ensemble
 
-> **État : ✅ implémenté** côté logique (suivi lissé, look-ahead horizontal, zone morte verticale, méthode `shake()` prête). La parallaxe attend les assets de zone.
+**Genre :** Metroidvania 2D onirique narratif.
+**Plateformes cible :** PC d'abord (Windows IL2CPP), console plus tard.
+**Engine :** Unity 6.3 LTS avec pipeline Universal 2D (URP 2D Renderer).
+**Équipe :** Paul (Itonauwu), solo, débutant. Aide Claude (IA) pour code, design, doc.
+**Workflow art :** Krita pour les sources, export PNG, import Unity. Aide IA pour passes initiales.
 
-## Ressenti joueur
-La caméra doit se faire oublier. Elle anticipe légèrement les intentions du joueur sans jamais le surprendre. Elle donne de l'espace en plateforme, et resserre en combat / cinématique.
+### Philosophie de design
 
-## Comportement
-- Suivi avec un léger délai (lerp doux, pas de snap dur)
-- **Look-ahead** horizontal : la caméra se décale dans le sens du déplacement quand Zell court
-- Zone morte verticale : la caméra ne suit pas les petits sauts, seulement les gros changements d'altitude
-- Limites de zone définies scène par scène
-- **Camera shake** très mesurée : impacts forts uniquement (mort d'un ennemi gros, dégâts boss, atterrissage de haut)
-- Option d'accessibilité : réduction / désactivation du shake
-
-## Graphismes
-- Parallaxe sur les arrière-plans : 2 à 4 couches selon la zone
-- Effet de profondeur via blur léger sur le fond le plus lointain (cohérent avec le "dessin animé flou")
+- **Narration entièrement environnementale.** Aucune cinématique explicative. Tout est ressenti, jamais expliqué.
+- **UI minimale.** Pas de barres criardes. Tout intégré au monde quand possible.
+- **Pas de pixel art.** Style peint lisse type Hollow Knight Silksong / Ori, mais avec son propre univers (intérieur d'un cerveau).
+- **Beau avant tout.** Profondeur, lumière, parallaxe, glow. Immersion prioritaire sur la performance pure.
+- **Une seule fin pour tous.** Pas de "true ending" caché, pas de variantes selon collectibles. Le mystère est partagé.
+- **Cohérence stricte du langage visuel.** Le vert est proscrit de tout le jeu sauf zones glitchées (Oubli).
 
 ---
 
-# OBJECTIF 3 — Système de vie et de cohérence
+## 1. Univers — résumé narratif
 
-> **État : ✅ implémenté** (5 flammèches orbitales, iframes 0.7s avec clignotement, debug F1/F2). Les sons attendent les assets audio. La dégradation détaillée du sprite (table ci-dessous) est représentée pour l'instant uniquement par la perte de flammèches — les états visuels du Core viendront avec les sprites finaux faits main.
+**Pitch :** Veilae, jeune femme d'environ 18 ans, est dans le coma après un accident de voiture involontaire. Le joueur explore l'intérieur de sa conscience sous la forme de Zell — d'abord boule d'énergie, puis forme humanoïde, puis pure poussée. Le jeu se déroule entièrement à l'intérieur, on ne voit jamais le monde réel directement.
 
-## Ressenti joueur
-Zell est pure conscience. Sa santé est sa **cohérence**. Plus elle est blessée, plus elle se désintègre visuellement. Pas de barre de vie criarde — l'information vit dans le sprite.
+### Trois phases narratives
 
-## Comportement
-- **5 PV de base** (5 paliers visibles)
-- À chaque coup pris : iframes courtes (0.7s) avec clignotement du sprite
-- HP de base augmentables via upgrades dans le jeu : chaque upgrade ajoute **un satellite supplémentaire** (1 satellite = 1 PV, lecture toujours nette)
+| Phase | Forme de Zell | Thème | Conclusion |
+|---|---|---|---|
+| **Phase 1** | Boule d'énergie | Qui elle était (identité, sens, souvenirs) | Transformation, flash blanc |
+| **Phase 2** | Humanoïde d'énergie | Ce qu'elle traverse (zones modifiées + nouvelles) | Veilae affronte sa volonté de continuer |
+| **Phase 3** | Élan pur | Le Cœur — choisir de vivre | Yeux qui s'ouvrent |
 
-## Graphismes — l'état du sprite EST l'UI
-| Santé | Apparence de Zell |
+### La fin
+
+À la fin, les yeux de Veilae s'ouvrent et une voix d'un proche dit **"Veilae..."** — première fois que le joueur entend son vrai nom clairement. Indices "V." disséminés tout au long du jeu (lettres, voix distordues, fragments de l'Oubli) pour ceux qui regardent.
+
+Plus de détail narratif dans **`Structure_et_idées.md`**.
+
+---
+
+## 2. Personnage joueur — Zell
+
+### Apparence
+
+Phase 1 : **boule d'énergie** multi-couches concentriques.
+
+| Couche | Rôle visuel |
+|---|---|
+| **Halo extérieur (OrbOuter)** | Très large, alpha faible, bleu-violet diffus |
+| **Mid (OrbMid)** | Moyen, plus saturé, cyan-blanc |
+| **Inner (OrbInner)** | Proche cœur, blanc lumineux |
+| **Cœur (OrbCore)** | Tout petit, blanc pur, le plus dense |
+| **Light 2D ponctuelle** | Glow réel sur l'environnement (URP 2D) |
+
+Le tout pulse doucement et **chaque couche dérive légèrement avec sa propre phase** (sinus décalés) pour donner l'effet "fluide vivant", pas figé. Implémenté dans `EnergyOrbVisual.cs`.
+
+**Pas de bras ni de jambes en Phase 1.** Tranché mai 2026 : juste la boule qui flotte.
+
+**Question reportée** : pieds ? bâtons ? juste flotte au-dessus du sol style "lune clair-obscur" ? → Pour l'instant **flotte simple**, à retravailler quand on aura l'art final.
+
+### Évolution visuelle par santé
+
+Pas de barre de vie dans l'espace de jeu. Le **sprite lui-même** change avec les PV.
+
+| Santé | Apparence |
 |---|---|
 | 100% | Sphère nette, gradient blanc-or-ambré, glow stable |
-| 75% | Bords plus dispersés, particules flottantes autour |
+| 75% | Bords plus dispersés, particules flottantes |
 | 50% | Forme moins définie, plus ambrée que blanche, particules qui dérivent |
 | 25% | Centre minuscule, presque entièrement particules |
-| Critique | Tremblante, à peine maintenue ensemble, glow vacille |
+| Critique | Tremblante, presque invisible, tenue par un fil |
 
-## Son
-- Coup pris : son sourd et étouffé, comme un cœur qui rate un battement
-- État critique : un souffle bas et continu se superpose à la musique
-- Soin / récupération : tintement cristallin doux
+### Satellites de cohérence (= les PV explicites)
 
-## Indicateur — Satellites en orbite (décision tranchée)
-- 5 petites **flammèches ambrées** gravitent autour de Zell, à courte distance (hors de son aura)
-- Chaque flammèche = 1 PV. À chaque coup pris, la dernière s'éteint et se dissipe
-- Lecture immédiate et non-criarde, cohérente avec "Zell = conscience tenue ensemble par son énergie"
-- Quand une flammèche passe DEVANT Zell (sens du déplacement), sa traînée se réduit pour ne pas empiéter sur le chara design ; elle reprend sa traînée normale dès qu'elle revient derrière
-- En Phase 2 (Zell humanoïde) : les flammèches continuent d'orbiter autour de sa nouvelle forme — pas de refonte visuelle
+**5 petites flammèches ambrées** affichées séparément du sprite, **qui tournent en cercle** dans le HUD (pas autour du perso — décision photo schéma mai 2026 : visuellement plus simple en HUD séparé). Chaque flammèche = 1 PV. À chaque coup pris, la dernière s'éteint. Les upgrades HP ajoutent des flammèches (6, 7, 8…).
 
----
+En Phase 2, les flammèches continuent de tourner autour de la version humanoïde de Zell — pas de refonte du système.
 
-# OBJECTIF 4 — Système de combat à l'épée
+### États visuels selon les pouvoirs
 
-> **État : ✅ prototype implémenté** (attaque, slash arc visible, pogo, contact = dégâts + knockback). L'épée définitive (Excalibur après le Chevalier Cristallin) et les upgrades visuels viendront avec les sprites finaux. Sons d'épée à brancher quand les assets seront prêts.
+- **Refroidissement actif** → Zell passe en **couleurs négatives de son corps**. Le glow chaud (ambre/blanc) devient bleu-violet froid. Possibilité d'une **flamme noir/violette brouillée** comme effet de transition.
+- **Impulsion en charge** → Zell se concentre, devient **bleu** (contours bleus + intérieur bleu plus transparent). Au centre, **un chiffre clignote** indiquant le nombre de charges restantes — style **HxH entraînement de Gon et Kirua** (le chiffre apparaît, change, disparaît, comme un compteur Nen).
+- **Coup d'épée** → flash blanc-or à chaque swing.
+- **Dash (mini-téléportation)** → rayon vertical de foudre au point A (Radagon-like), Zell disparaît, second rayon au point B, afterimage 0.35s.
 
-## Ressenti joueur
-Chaque coup d'épée doit "claquer". Pas un balayage mou. C'est une décharge d'énergie qui sort de Zell, brève et nette. Le rythme du combat est lent au début (1-2 coups, repli), s'intensifie avec les upgrades.
+### L'épée d'énergie (à partir du tuto)
 
-## Contrôles
-- **Clic gauche** = attaque
-- Attaque possible à l'arrêt, en marche, en saut, en chute
-- Direction de l'attaque : par défaut dans le sens du regard ; **W** = frappe en haut, **S** = frappe en bas (maintenu pendant le clic)
-- **Pas de combo enchaîné préfabriqué** : chaque attaque est indépendante, avec un cooldown anti-spam (0.25s)
-- Le mouvement reste libre pendant l'attaque (pas de root)
+Une fois récupérée, **toujours visible à côté de Zell**, reliée à son centre par un **fil d'énergie ambré** (le "bras de lumière"). À l'attaque, elle s'élance vers la direction du coup, un slash arc blanc-or matérialise la zone touchée.
 
-## Comportement
-- L'épée est une hitbox active pendant 0.15s
-- Knockback léger sur les petits ennemis touchés (recul visuel + retour amorti)
-- **Pogo** : tout coup vers le bas qui touche un ennemi rebondit Zell vers le haut. Fonctionne sans contrainte d'altitude (en l'air ou au ras du sol)
-- Une **fenêtre de protection** (0.35s) suit le pogo et le knockback : la gravité boostée + le jump cut sont désactivés pendant ce temps pour préserver l'élan
-- **Contact avec un ennemi = Zell prend 1 dégât** + knockback dans la direction opposée (cf. Objectif 3)
-- PV ennemi visible par leur état visuel (cf. Objectif 12), pas via barre de vie
+### Phase 2 — Humanoïde
 
-## Graphismes — épée toujours visible (décision tranchée)
-- L'épée est **présente en permanence** près de Zell, reliée à son centre par un **fil d'énergie ambré** (Line2D)
-- Pose idle : l'épée flotte légèrement à droite (ou à gauche si Zell regarde à gauche), inclinée vers le bas comme un bras de lumière
-- À l'attaque : l'épée se replace au centre de Zell et balaye via un tween cubique vers la direction du coup. Un **slash arc** (croissant blanc-or) apparaît brièvement pendant le swing pour matérialiser la zone touchée (façon Hollow Knight)
-- Lame **type Guts-light** au démarrage : large, droite, peu pointue → hitbox généreuse, lecture claire
-- Impact : flash **rouge** très bref sur l'ennemi + petits éclats blancs qui retombent (pas de gerbe énergie/feu) + knockback visuel
-- À chaque upgrade, l'épée évolue visuellement (cf. Objectif 14)
-- Le swing change de direction proprement (haut, bas, côté)
-
-## Son
-- Swing : sifflement aérien, court
-- Impact : son cristallin + petit grésillement électrique
-- Coup raté (dans le vide) : son plus mat, plus court — récompense la précision
+Forme humanoïde féminine d'énergie. Les satellites de cohérence continuent d'orbiter autour. L'épée reste reliée par le fil d'énergie. Plus de détail dans `Structure_et_idées.md`.
 
 ---
 
-# OBJECTIF 5 — Coup de Jus (mécanique signature)
+## 3. Mouvement et contrôles
 
-## Ressenti joueur
-Le Coup de Jus est l'arme de contournement. Quand un ennemi devient trop dangereux, on accumule de la pression en le frappant, et au bon moment on lâche un coup qui le **désarme**. L'ennemi désarmé devient pitoyable : il court chercher son arme, vulnérable. Ce moment de tension — "je l'achève ou je fuis ?" — est l'identité du combat.
+### Schéma de touches (clavier AZERTY)
 
-## Contrôles
-- Touche dédiée pour déclencher le Coup de Jus (différente de l'attaque normale)
-- Ne se déclenche que si la **jauge de Jus** est pleine
-
-## La jauge de Jus
-- Se remplit en frappant les ennemis (chaque coup normal = +X% de jauge)
-- Visible discrètement à côté de Zell ou intégrée à son sprite (à valider visuellement)
-- Une fois pleine : Zell pulse différemment, signal clair que c'est disponible
-- Se vide entièrement à l'utilisation
-
-## Comportement contre ennemis ordinaires
-- Désarme : l'arme tombe au sol, l'ennemi cesse d'attaquer et tente de la récupérer
-- Pendant qu'il court : il est vulnérable, ses attaques sont neutralisées
-- L'ennemi désarmé peut redevenir dangereux si on le laisse récupérer son arme
-- Zell ne peut **pas** ramasser l'arme tombée
-
-## Comportement contre les boss
-- Pas de désarmement (les boss n'ont pas "d'arme")
-- Inflige des **dégâts électriques importants**
-- Utilisation tactique : à garder pour les bonnes phases
-
-## Cas spéciaux
-- **Les Braises** (Émotions, Colère) et **Les Bactéries** (Bouche) se divisent en deux au coup d'épée normal. Seul le Coup de Jus les détruit sans division. Logique gameplay forte qui force à choisir entre éliminer vite ou conserver la jauge.
-
-## Graphismes
-- Au déclenchement : flash électrique bleu-blanc autour de Zell, arc d'énergie qui rejoint l'ennemi
-- L'arme désarmée scintille au sol jusqu'à être reprise
-- L'ennemi désarmé a un visuel altéré (postérieur penaud, particules de désorientation)
-
-## Son
-- Charge de jauge : bourdonnement qui monte d'intensité à mesure qu'elle se remplit
-- Pleine : bip cristallin de validation
-- Utilisation : crack électrique sec, court mais marquant
-
----
-
-# OBJECTIF 5 bis — Refroidissement (capacité innée)
-
-## Ressenti joueur
-Zell n'a pas besoin de chercher cette capacité — elle naît avec. **Baisser son émission**, devenir froide et discrète. Le joueur doit sentir que c'est un **compromis** : on disparaît à la vue, mais on consomme une ressource limitée. Pas une furtivité gratuite.
-
-## Déblocage
-- **Innée.** Disponible dès l'éveil de Zell, avant même le premier fragment.
-
-## Contrôles
-- Touche dédiée (toggle ou maintien — à trancher pendant le prototypage)
-- Tant que le Refroidissement est actif, une **jauge** se vide progressivement
-- À l'arrêt complet, la jauge se recharge
-
-## Comportement
-- Zell baisse son glow chaud (ambre / blanc) → transparence bleu-violet froide
-- **Les créatures qui pistent à la vue la perdent.** (Ex. : la Grosse Boule, voir Objectif 12.)
-- **Inutile contre les créatures qui pistent au son** (ex. les Aveugles) : la furtivité visuelle n'a aucun effet sur elles.
-- Pas d'usage offensif, pas d'interaction avec l'environnement (purement défensif / d'évasion)
-- Le déplacement reste disponible pendant l'invisibilité (mais consomme la jauge)
-
-## Graphismes
-- Transition fluide du glow chaud (ambre/or/blanc) vers une transparence bleu-violet froide
-- Le sprite reste visible pour le joueur (semi-transparent) — c'est juste les ennemis qui ne le voient plus
-- Légère vibration / pulsation froide autour de Zell
-
-## Son
-- Activation : souffle froid, descendant
-- Boucle d'ambiance discrète tant qu'actif (drone froid très doux)
-- Désactivation / vidage de jauge : remontée du son chaud habituel
-
----
-
-# OBJECTIF 6 — Impulsion (1er fragment du tuto)
-
-> **État : ✅ prototype implémenté** (onde radiale 1.5s, 3 charges avec cooldown, composant Revealable contextuel persistent/glimpse/proximity, recharge aux Neurones + respawn, HUD 3 points rouges, debug F3/F4). Les sons (gong, cristallin) et les graphismes définitifs du HUD attendent la phase audio/art. La méditation (recharge par immobilité) attend l'Objectif 23.
-
-## Ressenti joueur
-Une expiration de lumière. Zell se concentre, émet une impulsion électrique, et une onde radiale **révèle** ce qu'on ne voyait pas. **Perception pure, zéro dégât.** Le joueur l'utilise comme un sonar — par réflexe d'exploration, jamais comme attaque. Un usage offensif reste envisageable plus tard, mais n'est pas prévu.
-
-## Déblocage
-- **1er fragment de souvenir** récupéré dans Les Yeux (zone tuto). Pas innée.
-
-## Contrôles
-- Touche dédiée
-- **3 charges** disponibles, visibles très discrètement
-- Les charges se rechargent :
-  - En touchant un neurone-checkpoint
-  - En **méditant** (rester immobile quelques secondes, notamment en Zone Paisible — cf. Objectif 23 / mécanique de méditation)
-
-## Comportement
-- Onde circulaire qui s'expand sur ~1.5s puis se dissipe
-- **Aucun dégât, aucun stun.** Effets exclusivement de révélation :
-  - Ennemis cachés ou invisibles (Effacés de La Mémoire, Vide de L'Oubli, etc.)
-  - Fausses parois, salles secrètes
-  - Pièges
-  - Collectibles cachés
-  - Vrai chemin dans les zones d'illusion (Zone de Rêve)
-- Peut activer certains mécanismes contextuels (interrupteurs lumineux qui réagissent à l'onde, à confirmer au cas par cas)
-- Pas d'amélioration prévue dans la progression : capacité stable de bout en bout
-
-## Implication design tuto
-- Le tuto (Les Yeux) doit **semer pièges, fausses parois et salles cachées** pour donner une utilité immédiate à l'Impulsion. Sans contenu à révéler, elle n'a aucun usage.
-
-## Graphismes
-- Anneau bleu-doré qui s'élargit en perdant en opacité
-- Effet de léger ralenti visuel autour de Zell pendant la fraction de seconde du tir
-- Sur les murs cachés / pièges / passages : la matière réagit par un scintillement subtil le temps de l'onde
-
-## Son
-- Pulse profond, comme un gong étouffé
-- Ralenti dans le son ambiant pendant 0.3s après l'utilisation
-- Validation cristalline si quelque chose a été révélé
-
----
-
-# OBJECTIF 7 — Dash (2e fragment, en deux parties)
-
-> **État : ✅ prototype implémenté** (téléportation instantanée horizontale, deux rayons de foudre, afterimage, iframes). Le vertical attend l'unlock de Phase 1. Les sons + le sillage en pointillés viendront avec le polish.
-
-## Ressenti joueur
-**Mini-téléportation électrique** (décision tranchée pendant le prototypage). Pas un dash glissé — un point A → un point B instantané, façon Radagon (Elden Ring) : un rayon de foudre vertical s'abat au point de départ, Zell disparaît dedans, un second rayon frappe au point d'arrivée et elle réapparaît dedans. Lecture immédiate, signature électrique forte.
-
-**Le Dash remplace définitivement l'ancienne idée du double saut.** Il se déverrouille en **deux parties** :
-- **Partie horizontale** : 2e fragment du tuto (Les Yeux)
-- **Partie verticale** : déblocage en **Phase 1**, ouvre la verticalité du monde
-
-Conséquence : tant que le joueur n'a pas la verticale, **certaines zones du tuto restent inaccessibles**. Le backtracking est optionnel et ne bloque jamais la progression.
-
-## Contrôles
-- **Clic droit** = dash (mini-téléportation)
-- Direction : sens du regard par défaut. Direction verticale ajoutée plus tard (Phase 1)
-- Cooldown 0.45s
-
-## Comportement
-- Téléportation **instantanée** sur 140px (distance fixe paramétrable)
-- iframes 0.25s pendant la téléportation → traversée sûre des projectiles / ennemis
-- `move_and_collide` clamp la position si un mur solide est sur le trajet → Zell s'arrête au mur, pas de traversée
-- Les hitbox d'ennemis / projectiles ne bloquent pas → traversée libre
-- Sert aussi à **traverser les Filaments** (ennemi-obstacle des Yeux)
-
-## Graphismes (effet Radagon)
-- Deux **rayons verticaux de foudre** apparaissent simultanément : un au point A, un au point B
-- Chaque rayon est une colonne lumineuse blanc-bleu qui s'étend vers le haut, fade en ~0.22s
-- **Afterimage** : silhouette résiduelle de Zell reste 0.35s au point de départ — utilisable pour des puzzles (cf. Objectif 23, Sillage de Conscience)
-- Petit burst électrique en bonus au point A
-- La caméra ne lerp pas la distance dashée (snap propre)
-
-## Son
-- Bzzt court et net au départ
-- Retour de l'air à l'arrivée, plus subtil
-
----
-
-# OBJECTIF 8 — Système de mort et de respawn
-
-> **État : ✅ prototype implémenté** (dispersion, pause 1.5s, respawn au dernier neurone activé ou au spawn). Les Synapses, l'Écho de Mort et le filet 10% attendent leurs systèmes respectifs. DeathZone fonctionnelle (chute dans le vide = mort).
-
-## Ressenti joueur
-La mort n'est pas punitive — elle est narrative. Zell se disperse, se laisse aller, se reforme. Le joueur perd des Synapses au point de mort, peut les récupérer. Pas de Game Over écran rouge, pas d'humiliation. Juste un moment de pause et un nouveau départ.
-
-## Comportement
-- À la mort : Zell éclate en particules au point de mort
-- Ses Synapses restent en un petit amas lumineux au sol
-- Elle se reforme au dernier neurone activé
-- Retourner au point de mort = récupérer les Synapses
-- Mourir à nouveau avant de les récupérer = pertes définitives
-- **Filet de sécurité** : 10% des Synapses sont automatiquement épargnées à chaque neurone activé — plancher garanti
-- Pas de limite de morts, aucune pénalité permanente
-- Les ennemis respawnent à la mort de Zell **ou** uniquement après un repos au neurone (à trancher pendant les tests)
-
-## Écho de Mort
-- À l'endroit de la mort, une silhouette fantôme rejoue brièvement les derniers instants (3-5s en boucle, semi-transparent)
-- Aide le joueur à comprendre ce qui l'a tué
-- S'efface dès que Zell récupère ses Synapses
-
-## Graphismes
-- Désintégration en particules dorées qui montent lentement vers le haut
-- Petit halo permanent au point de mort jusqu'à récupération
-- Recomposition au neurone : particules qui convergent au centre, prennent forme
-
-## Son
-- Mort : grande inspiration suspendue, puis silence
-- Recomposition au neurone : pulse de cœur, doux
-
----
-
-# OBJECTIF 9 — Synapses (monnaie)
-
-## Ressenti joueur
-Les Synapses sont les connexions du cerveau. Les ramasser est satisfaisant — chaque petit cristal qu'on absorbe pulse une fois, comme un mini cœur. Elles ne sont JAMAIS rares au point d'être stressantes ; elles tombent souvent, mais leur valeur croît avec les achats importants.
-
-## Comportement
-- Drop sur ennemi (quantité variable selon difficulté de l'ennemi)
-- Drop dans zones cachées et coffres
-- Récompenses ponctuelles de certains PNJ
-- Dépensables chez :
-  - Marchands (cartes, objets, fragments)
-  - Forgeron Filin (upgrades épée)
-  - Certains passages "neuraux" scellés
-  - Réparation de neurones endommagés (avant activation)
-- Compteur visible discrètement (coin d'écran, désactivable)
-
-## Graphismes
-- Petits cristaux bleu-blanc qui flottent et tournent doucement
-- Magnétisme : à courte distance, elles convergent vers Zell d'elles-mêmes
-- À la collecte : petit flash + son court
-
-## Son
-- Collecte : tintement cristallin, plus aigu pour les petites, plus grave pour les grosses
-
----
-
-# OBJECTIF 10 — Neurones (checkpoints et sauvegarde)
-
-> **État : ✅ prototype implémenté** (visuel pulsant, interaction E, soin + définition du point de respawn, repos répétable). Le design final (interface de repos, services, neurones endommagés) sera repris plus tard.
-
-## Ressenti joueur
-Un point de calme. Un endroit où Zell peut respirer. S'asseoir près d'un neurone, c'est s'ancrer dans un lieu — comme une grâce dans Elden Ring, un banc dans Hollow Knight. La musique change légèrement à proximité, l'écran s'éclaire un peu plus.
-
-## Comportement
-- Activable une fois trouvé : Zell s'approche et appuie sur la touche d'interaction
-- Sauvegarde automatique du jeu à chaque activation
-- Recharge les PV au complet
-- Recharge les 3 charges d'Impulsion
-- Définit le point de respawn
-- Verrouille les 10% de Synapses (filet de sécurité)
-
-## Action "se reposer"
-- Le joueur peut choisir de se reposer (touche dédiée)
-- Le repos respawn tous les ennemis vaincus de la zone
-- Le repos rouvre l'accès aux marchands et services
-- Le repos est nécessaire pour utiliser certains services (forge, archives)
-
-## Neurones endommagés
-- Certains neurones ne sont pas activables immédiatement — il faut d'abord payer en Synapses pour les "réparer"
-- Force le joueur à prioriser et à explorer
-
-## Graphismes
-- Petit nœud lumineux, blanc-bleu, qui pulse au rythme d'un battement de cœur lent
-- Quand activé pour la première fois : le neurone s'allume définitivement, son halo s'étend
-- Filaments d'énergie qui s'étendent vers les neurones connectés (visibles uniquement de près)
-
-## Son
-- Pulse lent et grave, audible uniquement à proximité
-- À l'activation : grand pulse cristallin, puis le pulse de fond s'ancre dans la musique de zone
-
----
-
-# OBJECTIF 11 — Transitions entre zones
-
-## Ressenti joueur
-Passer d'une zone à l'autre doit être un seuil franchi, pas un loading screen. Le joueur doit sentir qu'il a quitté un endroit ET qu'il entre dans un autre. Pas de coupure brutale.
-
-## Comportement
-- Trigger zone à un point précis de la carte (porte, passage, faille)
-- À l'entrée du trigger : fondu doux vers une couleur (généralement noir ou la couleur dominante de la zone d'arrivée)
-- Chargement de la nouvelle scène en arrière-plan
-- Apparition de Zell dans la zone d'arrivée à un point équivalent (sortie symétrique)
-- Fondu de sortie progressif
-- La musique de la zone d'origine se fond dans la musique de la zone d'arrivée (crossfade ~2s)
-
-## Persistance
-- État du joueur (PV, jauge de Jus, Synapses, capacités) : conservé
-- Ennemis vaincus : conservés morts dans la zone qu'on quitte jusqu'à un repos au neurone
-- Objets collectés : permanents
-- Position du joueur dans la zone qu'on quitte : non sauvegardée (on n'y revient pas à la même position, on revient par la porte)
-
-## Cas spécial : Les Sinus
-- Zone de transition centrale (rôle de Dirtmouth)
-- Permet d'accéder à toutes les zones principales
-- Contient au moins un marchand (cartes, objets de base — un Solin)
-- Ambiance sobre, calme, ni triste ni gaie — un sas
-
-## Graphismes
-- Fondu visuel doux, jamais de noir total instantané
-- Légère vibration de l'écran pendant la transition (sensation de seuil)
-
-## Son
-- Aspiration brève, comme un passage de pression
-- Le son ambiant de la zone d'origine se voile, celui de la zone d'arrivée s'ouvre
-
----
-
-# OBJECTIF 12 — Système d'ennemis génériques
-
-## Ressenti joueur
-Chaque ennemi a un comportement lisible. Le joueur doit pouvoir le comprendre en 1-2 rencontres. Aucun ennemi n'est gratuitement frustrant. Tous ont une logique cohérente avec leur design — ils ne sont jamais fondamentalement "mauvais", chacun a une origine narrative implicite.
-
-## Architecture demandée (sans code, juste consigne)
-- Un seul "type d'ennemi" comme template, qui lit ses données depuis une **ressource** (PV, vitesse, dégâts, sprite, comportement, drop)
-- Ajouter un nouvel ennemi = créer une nouvelle ressource, pas écrire de nouveau script
-- Comportements en machine à états : patrouille, détection, attaque, fuite (Coup de Jus), retour
-
-## Comportements de base à supporter
-- **Patrouille** : va-et-vient simple sur une plateforme
-- **Détection** : trigger de vue / proximité / vibration (selon ennemi)
-- **Charge** : fonce sur Zell quand détectée
-- **Ranged** : projectiles à distance
-- **Division au coup** : se divise en deux (Bactéries, Braises) — neutralisable au Coup de Jus
-- **Désarmé** : court chercher son arme (pour les ennemis armés)
-- **Invisible** : ne s'affiche qu'à l'Impulsion ou par contour (Effacés, Vide)
-- **Mort** : animation + drop de Synapses
-
-## Visualisation des PV
-- Pas de barre de vie au-dessus
-- État visuel altéré quand l'ennemi est blessé (fissures, particules qui s'échappent, lumière interne qui faiblit)
-- À 1 coup de la mort : tremblement subtil
-
-## Ennemis exclusifs à leur zone (par défaut)
-- Pas de réutilisation entre zones sauf cas justifié
-- Chaque ennemi a une origine narrative implicite (cohérente avec sa zone)
-
-## Pacification / amitié
-- Pas pacifiables par défaut
-- Si une amitié avec un ennemi est prévue dans le lore, elle est scriptée à l'avance pour cet ennemi en particulier
-
-## Effets de contact spécifiques
-- Certains ennemis ne font pas que des dégâts directs : ils ralentissent (Filaments, Larmes), distordent l'écran (Formes), effacent temporairement la carte (Effacés)
-
-## Ennemis du tuto — pédagogie par opposition
-Les deux archétypes principaux de la zone tuto (Les Yeux) sont conçus en **contraste de sens** : ils enseignent au joueur à lire la détection avant de réagir.
-
-- **La Grosse Boule** — gros mob lent, énormes yeux, bouche béante, **sourd**. Détecte exclusivement à la **vue**. Le bruit ne l'alerte jamais.
-  → **Contrée par le Refroidissement** (cf. Objectif 5 bis) : Zell devient invisible à la vue, peut traverser librement.
-- **Les Aveugles** — petits, ailés, métissage chauve-souris (façon Zubat) / fantôme. Yeux troués, **oreilles exagérément grandes**. Pistent au **son et à la vibration**. **Arrivent en meute.**
-  → **Contrés par l'immobilité ou le déplacement lent.** Le Refroidissement est sans effet sur eux.
-
-Implication design : les deux demandent des **réponses opposées** (devant l'un on se cache, devant l'autre on se fige). Toute salle qui mélange les deux devient un puzzle de gestion de présence.
-
-**Les Filaments** (toujours dans Les Yeux) restent un simple obstacle de traversée — fils de lumière à couper à l'épée ou à franchir au dash.
-
----
-
-# OBJECTIF 13 — Système de boss
-
-## Ressenti joueur
-Chaque boss est un moment. Un boss n'est jamais un sac à PV — il a des phases, une présence visuelle, une intention narrative. Le joueur doit sortir du combat avec une **émotion**, pas avec un sentiment de checklist accomplie.
-
-## Architecture
-- Boss = scène dédiée avec son propre script
-- Phases scénarisées (généralement 3 phases pour les principaux)
-- Transitions de phases marquées : pause visuelle, changement de musique, modification d'arène possible
-- État du boss visible dans son apparence (cf. Objectif 12 mais amplifié)
-
-## Patterns
-- Chaque boss a 3-5 patterns distincts, lisibles à l'œil
-- Les patterns deviennent plus complexes / superposés au fil des phases
-- Toujours une fenêtre d'attaque claire entre les patterns
-- Certains boss ont des **mécaniques uniques** qui ne réapparaissent nulle part ailleurs (le Filtre coupe des sons, le Vide est invisible, le Double retient au lieu de frapper, le Cœur EST l'arène)
-
-## Drops
-- **Boss principal** : un souvenir important (lore + parfois capacité) + spell éventuel
-- **Boss secondaire** : Synapses, fragments mineurs, parfois matériau rare pour l'épée
-- Le drop apparaît au centre de l'arène en lévitation, à collecter en s'approchant
-
-## Coup de Jus sur boss
-- Pas de désarmement
-- Inflige des dégâts électriques importants
-- Utilisation tactique : à garder pour les bonnes phases
-
-## Mini-boss = unlock du fast travel
-- Un mini-boss spécifique (à définir narrativement) débloque la capacité d'utiliser le réseau neuronal (cf. Objectif 17)
-
-## Graphismes
-- Chaque boss a son propre langage visuel (cf. Structure_et_idées pour les détails par boss)
-- Arène thématisée à la zone
-- Transitions de phase = moment cinématique court (1-2s, pas un cutscene complet)
-- Certains boss peuvent **modifier leur arène** entre les phases (couleurs, géométrie, gravité)
-
-## Son
-- Musique dédiée par boss (ou par phase)
-- Sons d'attaque distincts pour chaque pattern
-- Silence absolu sur certains moments-clés (Phase 2 du Cœur — l'Arrêt)
-
-## Boss du tuto — Le Chevalier Cristallin
-*Nom à confirmer. Premier vrai combat du jeu et tuto de maniement de l'épée (attaques + esquive au dash).*
-
-**Ce n'est pas un combat qu'on gagne désarmé.** C'est une **épreuve de valeur** qui arme Zell, puis un duel loyal. Détails narratifs et mise en scène dans `Structure_et_idées.md`.
-
-**Spécification système** :
-- L'arène contient au centre une **Excalibur** plantée dans un rocher de chair (objet interactif), et à droite un **Chevalier sur un trône** (NPC inactif au démarrage).
-- À l'entrée du joueur : déclenche un dialogue / mise en scène où le Chevalier invite Zell à tenter de retirer l'épée.
-- Quand le joueur interagit avec l'épée : animation d'extraction, l'épée devient disponible dans l'inventaire d'arme.
-- Cela déclenche la transition du Chevalier de NPC à boss : il se lève, la musique change, le combat commence.
-- Trois patterns minimum pour entraîner aux fondamentaux : attaques que le joueur doit **bloquer ou esquiver au dash**, et fenêtres claires pour contre-attaquer.
-- **Pas de talk-no-jutsu sur ce boss** (cette mécanique est reportée à un boss de Phase 1).
-
-**Drop / récompense** :
-- L'épée d'énergie est déjà obtenue avant le combat. La récompense est le combat lui-même + une **aura propre** ajoutée à l'épée après la victoire (signature visuelle distinctive).
-- Animation d'obtention finale : le Chevalier s'incline ou se dissout.
-
-**Clé du tuto** : l'épée du Chevalier sert ensuite de **clé** pour la porte scellée du spawn. Pas de clé séparée — l'arme et la clé sont une seule et même chose. L'ouverture de cette porte donne accès à la Phase 1.
-
----
-
-# OBJECTIF 14 — Système d'upgrades de l'épée
-
-## Ressenti joueur
-L'épée doit grandir avec le joueur. Chaque upgrade est visible, audible, **sentie**. Le joueur doit pouvoir dire "ma lame est plus longue maintenant" sans regarder une fiche.
-
-## Comportement
-- 5 niveaux d'upgrade au total
-- Les 4 premiers : améliorations libres (portée ×2, dégâts ×2, dans l'ordre choisi par le joueur)
-- 5ᵉ niveau : **paralysie** — débloque uniquement à la fin, quand toutes les autres upgrades sont prises
-- Chaque upgrade coûte des Synapses + un matériau rare propre à une zone (force l'exploration, cf. Objectif 15)
-- L'upgrade 5 demande **les 4 matériaux des zones** (preuve d'exploration complète)
-
-## Évolution visuelle de la lame
-| Niveau | Apparence |
+| Action | Touche |
 |---|---|
-| Base | Lame courte, blanc-or, propre |
-| Upgrade 1 | Visiblement plus longue |
-| Upgrade 2 | Plus lumineuse, bordure ambré-orange |
-| Upgrade 3 | Très longue, sillage bref à chaque swing |
-| Upgrade 4 | Intense, crépitante, audible avant d'être vue |
-| Upgrade 5 | Pointe bleu électrique, trois couleurs, flash blanc-bleu à chaque swing |
+| Gauche | **Q** ou flèche gauche |
+| Droite | **D** ou flèche droite |
+| Sauter | **Espace** ou flèche haut |
+| Attaquer | **Clic gauche** (souris) |
+| Dash | **Clic droit** (souris) |
+| Impulsion | **F** |
+| Refroidissement | (à définir) |
+| Interagir | **E** |
+| Regarder en haut | **Z** |
+| Regarder en bas | **S** |
 
-## La paralysie (niveau 5)
-- Très courte durée (~1.5s)
-- Énorme consommation d'énergie / cooldown long
-- Visuellement spectaculaire : l'ennemi est figé dans un cristal d'énergie bleu
+Tout reconfigurable plus tard dans les options. Support manette à valider.
 
-## Lieu de l'upgrade
-- **Filin**, le forgeron PNJ, dans la Zone des Câbles
-- Interaction simple : interface qui montre les niveaux, le coût, le matériau requis
-- L'upgrade nécessite un repos au neurone le plus proche
+### Physique de mouvement
 
----
+- **Vitesse horizontale** : ~8 unités/s en marche normale (à ajuster par feel)
+- **Force de saut** : ~14 (à calibrer)
+- **Gravité** : `Rigidbody2D.gravityScale = 3`
+- **Pas de friction au sol** (commande directe via `linearVelocity`)
+- **Détection sol** : `Physics2D.Raycast` vers le bas, longueur 0.7, `queriesStartInColliders = false`
+- **Pas de double saut.** La verticalité s'ouvre avec le **dash vertical** débloqué plus tard en Phase 1.
 
-# OBJECTIF 15 — Matériaux rares
+### Coyote time + Jump buffer
 
-## Ressenti joueur
-Chaque matériau rare est lié à une zone précise. Le joueur ne peut pas tout upgrade en restant dans le même biome — il doit explorer. Trouver un matériau rare est un moment "ah, c'est pour ça". On comprend rétroactivement la valeur d'un détour.
-
-## Comportement
-- 4 matériaux rares, un par zone majeure de Phase 1
-- Chaque matériau correspond à un upgrade épée spécifique (cf. Objectif 14)
-- L'upgrade 5 (paralysie) demande les 4 matériaux à la fois
-- Drop par : ennemis forts spécifiques d'une zone, coffres cachés, récompenses de boss secondaires
-
-## Matériaux prévus
-| Upgrade | Coût Synapses | Matériau | Provenance |
-|---|---|---|---|
-| 1 — Range | 100 | Cristal de Mémoire | La Mémoire (salles cachées) |
-| 2 — Dégâts | 200 | Filament d'Énergie | Zone des Câbles (le long des câbles) |
-| 3 — Range ×2 | 350 | Fragment de Rêve | Zone de Rêve (collectibles éthérés) |
-| 4 — Dégâts ×2 | 500 | Éclat d'Émotion | Les Émotions (ennemis forts) |
-| 5 — Paralysie | 750 | Les 4 matériaux ×1 chacun | Avoir tout exploré |
-
-## Graphismes
-- Chaque matériau a sa signature visuelle (couleur, forme, glow)
-- Visibles dans l'inventaire (cf. Objectif 25)
-- Au ramassage : animation d'absorption plus marquée qu'une Synapse simple
+À ajouter plus tard pour le feel — ~0.1s de tolérance après avoir quitté le sol, ~0.1s de buffer si on appuie sur saut juste avant d'atterrir. Standard metroidvania.
 
 ---
 
-# OBJECTIF 16 — Système de spells
+## 4. Skills et capacités
 
-## Ressenti joueur
-Chaque spell change la façon dont le joueur **lit la map**. Un spell n'est jamais "juste une attaque" — c'est une nouvelle façon de comprendre le monde. Trouver un spell, c'est trouver une nouvelle paire d'yeux.
+### Refroidissement — inné
 
-## Architecture
-- Chaque spell est un module autonome (scène + ressource de données)
-- Le moveset de Zell les déclenche via un système de slots, pas via du code spécifique par spell
-- Ajouter un spell = créer un nouveau module, sans toucher au reste
+Zell baisse son émission. Glow chaud passe à bleu-violet froid transparent. Les créatures qui pistent à la **vue** la perdent. Inutile contre les Aveugles (qui pistent au son).
 
-## Spells prévus
+- **Jauge dédiée** (à styliser sur un côté du HUD, cf section 14)
+- Se vide quand actif, se recharge à l'arrêt
+- Pas une furtivité totale — c'est un compromis
+- Contre-mesure principale contre la Grosse Boule (tuto)
 
-**Tuto (Les Yeux)** — Zell sort de la zone tuto avec **3 capacités max** :
-- **Refroidissement** (inné, cf. Objectif 5 bis) — invisibilité à la vue, jauge qui se vide / se recharge à l'arrêt.
-- **Impulsion** (1er fragment, cf. Objectif 6) — perception pure, zéro dégât.
-- **Dash** (2e fragment, cf. Objectif 7) — partie horizontale au tuto, partie verticale en Phase 1.
+### Impulsion — 1er fragment (zone Pupille en bas de la zone tuto)
 
-**Phase 1 et au-delà** — d'autres capacités viennent enrichir le moveset :
-- **Fusion du Métal** : détruit chaînes, cadenas, obstacles métalliques. Droppé par le boss de La Mémoire. Donne accès à la Salle des Souvenirs.
-- **Réseau Neuronal** : fast travel entre neurones (cf. Objectif 17).
-- **Coup de Jus** (cf. Objectif 5) — disponible quand l'épée est obtenue, monté en jauge par les coups portés.
-- Autres spells à ajouter au fil du développement si des idées émergent.
+**Perception pure, zéro dégât.** Onde radiale révèle pendant quelques secondes :
+- Ennemis cachés ou invisibles
+- Fausses parois (les "murs détectables avec Impulsion" du tuto)
+- Pièges cachés
+- Collectibles
+- Le vrai chemin dans les zones d'illusion (Zone de Rêve, Oubli)
 
-**Capacités abandonnées** : double saut, saut mural, plané, 3e spell un temps envisagé (le dash vertical reprend ce rôle de verticalité supplémentaire).
+- **3 charges**, rechargées aux neurones et en méditant (Zone Paisible)
+- Animation visuelle : Zell devient bleue, chiffre des charges restantes clignote au centre style HxH
+- Pas d'usage offensif prévu
 
-## Contrôles
-- Touche de spell dédiée (ou roue de sélection si plusieurs spells, à voir)
-- Cast instantané ou tenu selon le spell
+### Dash horizontal — 2e fragment (zone Câbles/Nerfs optiques, droite du tuto)
 
-## Graphismes
-- Chaque spell a sa signature visuelle propre
-- Animation de cast brève (~0.3s)
-- Effet visuel sur la cible / l'environnement net et lisible
+**Mini-téléportation électrique instantanée** sur distance fixe. Pas un dash glissé.
 
----
+- Signature visuelle Radagon-like (rayon vertical de foudre point A → réapparition point B)
+- I-frames pendant l'opération
+- Burst électrique + afterimage 0.35s au point de départ
+- Cooldown court
+- Distance courte (pas pour traverser des grandes zones)
 
-# OBJECTIF 17 — Fast travel (Réseau Neuronal)
+### Dash vertical — débloqué plus tard en Phase 1
 
-## Ressenti joueur
-Le réseau neuronal est l'autoroute du cerveau. Une fois compris, il transforme l'exploration. Mais il ne se donne pas : il se mérite.
+Remplace définitivement l'idée du double saut. Ouvre la verticalité du monde et le backtracking vers les zones du tuto laissées de côté (gauche infranchissable au début, etc.).
 
-## Déblocage en deux temps
-1. **Premier déblocage** : battre un mini-boss spécifique (à définir narrativement) — débloque la capacité d'utiliser le réseau
-2. **Extension** : chaque neurone activé devient un point d'entrée/sortie du réseau
+### Coup de Jus — mécanique signature
 
-## Comportement
-- Depuis n'importe quel neurone activé, accès à une carte du réseau
-- Sélection d'un autre neurone activé = téléportation
-- Le voyage prend ~2-3 secondes (animation visuelle, pas un cut sec)
-- Zell apparaît au neurone de destination, ses PV et charges sont rechargés
+**Jauge qui se remplit en frappant les ennemis.** Une fois pleine :
+- Sur **mob normal** : l'ennemi est **désarmé**, son arme tombe au sol. Il court la chercher, vulnérable pendant. **Zell ne peut pas la ramasser.**
+- Sur **boss** : pas de désarmement → **dégâts électriques importants**
 
-## Zones non desservies
-- La Bouche, les Oreilles, les zones de chair pures : pas dans le réseau
-- Ces zones ont quand même des neurones-checkpoints, mais pas le fast travel
+Crée des moments tactiques : achever pendant la vulnérabilité ? Fuir ?
 
-## Nœuds Neuronaux Cachés
-- Neurones secrets disséminés dans le jeu
-- Activés, ils étendent le réseau au-delà du chemin standard
-- Récompense d'exploration approfondie
+**Affichage HUD** : jauge qui se remplit dans la **couleur courante de Zell** (chaude par défaut, bleue en Refroidissement / Impulsion).
 
-## Graphismes
-- Pendant le voyage : Zell devient un éclair qui voyage le long de filaments lumineux
-- Vue stylisée du réseau (carte semi-abstraite)
-- Arrivée : pulse de lumière, recomposition
+### Épée d'énergie
 
-## Son
-- Au départ : grand vrombissement électrique
-- Pendant : sifflement continu en hauteur
-- Arrivée : décélération, silence, ambiance de la nouvelle zone
+Récupérée lors de l'épreuve du Chevalier Cristallin (boss tuto). **Plantée dans la porte du spawn** au début → c'est la **clé du tuto** : insérée dans la porte, elle ouvre l'accès à la Phase 1. Pas de clé séparée, arme et clé sont une seule chose.
 
----
+Améliorable 5 fois chez **Filin** (Zone des Câbles, Phase 1) :
 
-# OBJECTIF 18 — PNJ et dialogues
-
-## Ressenti joueur
-Les PNJ savent qui est Veilae. Mais ils ne le lui disent jamais. Ils parlent par énigmes, sous-entendus, fragments. Certains agissent comme s'ils la connaissaient depuis toujours. Le joueur sent qu'il manque des pièces — c'est normal, c'est le sujet du jeu.
-
-## Comportement général
-- Tous les PNJ sont stationnaires (sauf Écho qui erre aléatoirement)
-- Interaction par touche dédiée à proximité
-- Dialogue en boîte de texte simple, **pas de voix humaine**
-- Chaque PNJ a un son de voix abstrait (bourdonnement, cliquetis, réverbération...)
-- **Non tuables** sauf si leur mort est scriptée dans le lore
-
-## PNJ récurrents (à étendre au fil du développement)
-| PNJ | Rôle | Lieu | Signature sonore |
-|---|---|---|---|
-| Solin | Gardien des neurones, marchand | Plusieurs zones, dont Les Sinus | Bourdonnement grave et calme |
-| Mémo | Archiviste, accès aux souvenirs | La Mémoire | Cliquetis staccato, frénétique |
-| Écho | Errant fragmenté, indices cryptiques | Aléatoire | Réverbération longue |
-| Filin | Forgeron, upgrades épée | Zone des Câbles | Grondement mécanique |
-| Gardiens silencieux | Dons de soin/Synapses si Zell s'arrête | Zone Paisible | Silence — ils ne parlent pas |
-| Veille | Révélation tardive sur Veilae | L'Oubli | Voix lente, similaire à Zell |
-
-## Dialogues
-- Externalisés dans des fichiers (JSON ou ressources Godot) — réécriture sans toucher au code
-- Branches simples possibles (réponse A / réponse B), pas un système RPG complexe
-- Préparer le système pour la traduction multi-langues
-
-## Graphismes
-- Chaque PNJ a une identité visuelle forte et distincte
-- Animations idle douces (respiration, oscillation)
-- Pendant le dialogue : un léger zoom de caméra, le reste du décor s'assombrit légèrement
-
-## Réactions par phase
-- Certains PNJ changent leurs dialogues entre Phase 1 et Phase 2
-- L'évolution de Veilae (boule → humanoïde) modifie subtilement leur ton, parfois leur attitude
-
----
-
-# OBJECTIF 19 — Marchands
-
-## Ressenti joueur
-Acheter quelque chose à un marchand de ce monde doit ressembler à un troc avec un esprit étrange. Pas un supermarché. Le marchand est un PNJ avant d'être une boutique.
-
-## Comportement
-- Interface d'achat sobre : liste d'objets disponibles, prix en Synapses, description courte
-- Un objet acheté disparaît du stock (sauf consommables qui peuvent revenir après un repos au neurone)
-- Possibilité d'avoir des objets "débloqués par progression" qui apparaissent au fil du jeu
-
-## Marchand minimum requis
-- **Au moins un Solin dans Les Sinus** : vend des fragments de carte (révèle des zones voisines) et des objets de soin basiques
-
-## Graphismes
-- Pas d'écran de boutique style RPG classique
-- Interface intégrée à l'environnement (un comptoir, des cristaux flottants, le marchand qui montre l'objet)
-- Hover sur un objet = il s'illumine, son nom apparaît
-
-## Son
-- Cliquetis cristallin à chaque sélection d'objet
-- Validation d'achat : pulse satisfait
-- Annulation / pas assez de Synapses : son mat, court
-
----
-
-# OBJECTIF 20 — Souvenirs et progression de Zell
-
-## Ressenti joueur
-Chaque souvenir trouvé est un petit moment de vertige. Zell touche quelque chose qui appartient à Veilae, l'absorbe, et **devient un peu plus**. Visuellement, son corps change : un bras apparaît, des jambes se forment. Mécaniquement, une nouvelle capacité s'ouvre.
-
-## Structure des souvenirs
-- Chaque souvenir est une **ressource** contenant : texte, image / scène mémoire jouable, son, qui le drop, ce qu'il débloque
-- 4 souvenirs structurants dans Les Yeux (cf. ci-dessous)
-- D'autres souvenirs disséminés dans toutes les zones, **importance variable selon les boss qui les drop**
-
-## Les 4 souvenirs des Yeux (tutoriel)
-| Souvenir | Manifestation | Capacité |
+| Upgrade | Effet | Apparence |
 |---|---|---|
-| Souvenir de frapper | Bras droit doré | Épée d'énergie |
-| Souvenir de marche | Jambes de lumière | Dash / mini-téléportation |
-| Souvenir de tomber | Jambes renforcées | Double saut |
-| Souvenir d'atteindre | Bras gauche | Grimper / interagir |
+| Base | - | Lame courte blanc-or |
+| 1 | Portée +1 | Plus longue |
+| 2 | Portée +2 ou Dégâts +1 (libre) | Bordure ambré-orange |
+| 3 | Variante choix | Très longue, sillage bref |
+| 4 | Variante choix | Crépitante, audible avant d'être vue |
+| 5 | **Paralysie** | Pointe bleu électrique, 3 couleurs, flash blanc-bleu à chaque swing |
 
-## Micro-cinématique d'absorption
-- Zell s'approche du souvenir suspendu
-- Le souvenir l'entoure, des particules convergent
-- La partie du corps correspondante se matérialise sur Zell (3-4 secondes)
-- Petit flash blanc, retour au gameplay
+**Upgrade 5 — paralysie** : déblocable **uniquement à la toute fin** quand toutes les autres sont prises. Stun ennemi court, coût énergie énorme. Demande **les 4 matériaux des zones** (un de chaque), prouvant exploration complète.
 
-## Souvenirs des autres zones
-- Souvenirs **majeurs** (boss principaux) : lore important + parfois capacité
-- Souvenirs **mineurs** (boss secondaires, exploration) : lore uniquement
-- Tous consultables depuis la Salle des Souvenirs (cf. Objectif 21)
-- Contenu narratif : moments de la vie de Veilae — pas forcément liés à l'accident. Heureux, douloureux, simples, complexes. Mystérieux par accumulation.
+### Spell de Fusion du Métal — Boss de La Mémoire
 
-## Évolution vers Phase 2
-- Quand tous les souvenirs majeurs de Phase 1 sont collectés : grand flash blanc, transition cinématique courte
-- Zell prend sa forme humanoïde — progression visuelle progressive, pas un changement instantané
+Fait fondre chaînes, cadenas, obstacles métalliques. Débloque zones et passages inaccessibles avant.
+
+### Spell du Réseau Neuronal — fast travel
+
+Déblocage en deux temps :
+1. **Battre un mini-boss spécifique** → capacité de base
+2. **Activer les neurones** dans le monde → étend le réseau de téléportation
 
 ---
 
-# OBJECTIF 21 — Salle des Souvenirs (Mémoire)
+## 5. Système de combat
 
-## Ressenti joueur
-Un sanctuaire. Un endroit calme, presque muséal, où Zell peut revoir tout ce qu'elle a retrouvé. Le joueur s'y arrête comme on s'arrête dans une bibliothèque. Pas obligatoire, mais profondément satisfaisant.
+### Hitbox / hurtbox
 
-## Comportement
-- Pièce située dans la zone La Mémoire
-- Accessible une fois le spell de Fusion du Métal débloqué (chaînes à briser)
-- À l'intérieur : des cristaux flottants représentent chaque souvenir collecté
-- Interaction sur un cristal = rejoue le souvenir (texte, scène, son)
+Pattern composants Unity :
+- `HealthComponent` sur ennemi/joueur (PV courants, max, mort)
+- `HurtboxComponent` (zone qui prend les dégâts, lié à health)
+- `HitboxComponent` (zone qui inflige des dégâts, lié à direction / dégâts)
 
-## Une mécanique pour y revenir
-- À définir : une raison gameplay régulière de revisiter cette salle
-- Piste possible : certains souvenirs ne révèlent leur lore complet qu'avec d'autres (combos de souvenirs adjacents qui dévoilent une histoire commune)
+Collision Hitbox → Hurtbox via Physics2D layers + tags.
 
-## Phase 2 — Le Double
-- En Phase 2, les souvenirs apparaissent en mode "Error" rouge, brouillés
-- Le combat contre le Double restaure (ou pas — à voir) les souvenirs
-- Le Double habite cette salle en Phase 2
+### Esquive
 
-## Graphismes
-- Salle baignée d'une lumière dorée douce
-- Cristaux qui flottent et tournent lentement
-- Sélectionné, un cristal grandit, projette son contenu autour de la salle
+- **Au sol** : pas d'esquive dédiée (le saut sert d'esquive verticale)
+- **En l'air** : pas non plus, on évite par positionnement
+- **Dash** : i-frames pendant l'opération (~0.2s)
 
-## Son
-- Silence presque total, juste un hum très bas
-- Pendant la lecture : la musique du souvenir (différente par souvenir)
+### Knockback
+
+Léger recul à l'impact (Zell + ennemi), avec un délai d'invincibilité court (~0.4s) pour pas perdre plusieurs PV en une frame.
+
+### Slash visuel
+
+À chaque attaque épée, **arc blanc-or** matérialise la zone touchée façon Hollow Knight. Direction selon la direction d'attaque (8 directions possibles plus tard, basique horizontal au début).
 
 ---
 
-# OBJECTIF 22 — Puzzles environnementaux
+## 6. Mécaniques diffuses
 
-## Ressenti joueur
-Les puzzles ne sont jamais des "puzzles de jeu" — ce sont des **moments d'interaction avec le monde**. Chaque type de puzzle est lié à une zone et à son ambiance. Le joueur n'a pas l'impression de résoudre quelque chose : il a l'impression d'écouter, de comprendre, de s'aligner.
+### Traces de Conscience
 
-## Types de puzzles prévus
+Empreintes lumineuses qui durent ~60 s sur le sol où Zell est passée. Aide à ne pas se perdre dans les labyrinthes (Yeux, Oubli).
 
-**Connexion Neuronale**
-Relier des nœuds neuronaux flottants en traçant un chemin d'énergie. Compléter un circuit ouvre un passage. Présent dans plusieurs zones.
+### L'Écho de Mort
 
-**Séquence de Mémoire**
-Des Rosas s'allument dans un ordre. Le joueur doit les toucher dans le même ordre. Rater 3 fois enfonce le fragment plus profond, ouvrant un chemin alternatif. Présent dans Les Yeux et La Mémoire.
+À l'endroit de la mort, une silhouette fantôme rejoue brièvement les derniers instants de Zell. Aide à comprendre comment elle est morte. S'efface quand elle récupère ses Synapses.
 
-**Écho Sonore** *(Oreilles)*
-Écouter un pattern sonore puis activer les bonnes sources dans l'environnement dans le même ordre. **Aucun indice visuel** — pure mémoire auditive.
+### La Résonance des Fragments
 
-**La Patience** *(Zone Paisible)*
-Rester complètement immobile pendant 10 secondes près d'un passage bloqué. Aucun ennemi, aucun danger. Pure épreuve de calme. Le joueur doit poser la manette.
+Près d'un collectible caché, le sprite de Zell vibre, émet un son doux. Plus fort en approchant. Boussole incarnée, pas d'indicateur sur la carte.
 
-**L'Illusion** *(Zone de Rêve)*
-Le "bon" chemin ressemble à un mur. Il faut marcher dedans. Logique de rêve : faire confiance à l'impossible. Récompense la curiosité.
+### Surcharge Émotionnelle (Phase 2 uniquement)
 
-**Le Classement** *(Zone de Tri)*
-Glisser des dossiers lumineux dans les bons conteneurs selon couleur et forme. Mauvais placement = légère décharge électrique.
+Prendre 5+ coups consécutifs sans repos → état de surcharge. Bords d'écran pulsent de la couleur émotionnelle de la zone. Zell ralentie. Image vibre. Se dissipe après quelques secondes près d'un espace sûr.
 
-**Redirection de Courant** *(Zone des Câbles)*
-Tourner des nœuds-disjoncteurs pour rediriger l'électricité vers les bons mécanismes. Combinable avec la mécanique de Conductivité (cf. Objectif 23).
+### La Réminiscence
 
-## Comportement général
-- Pas de timer agressif (sauf cas explicite)
-- Pas d'échec brutal : un raté ouvre généralement un chemin alternatif ou réinitialise doucement
-- Signaux visuels clairs quand un puzzle est en cours de résolution
+À certains endroits, Zell active un souvenir du lieu. Voit brièvement ce qu'il était avant corruption. Lit des inscriptions effacées, révèle des passages, comprend l'origine d'ennemis.
 
-## Graphismes
-- Chaque type de puzzle a son langage visuel
-- Les éléments interactifs pulsent légèrement pour signaler qu'ils sont activables
+### La Conductivité (Zone des Câbles)
+
+Zell sert de pont électrique. Tenir position entre deux contacts pendant que l'épée est chargée → circuit. Alimente mécanismes, ouvre portes.
+
+### Sillage de Conscience
+
+Dash laisse un afterimage 0.5s. Cet afterimage peut activer des switchs qui "voient" Zell passer. Puzzles de timing.
+
+### Fragmentation Volontaire (Phase 2, tard)
+
+Zell se disperse en particules pour traverser passages étroits. Court, risqué — si touchée pendant, se recoagule endommagée.
 
 ---
 
-# OBJECTIF 23 — Mécaniques contextuelles
+## 7. Zone tuto — Les Yeux
 
-*Capacités qui ne sont pas des "spells" mais des interactions situées dans le monde. Discrètes, à découvrir, parfois optionnelles.*
+### Vue d'ensemble
 
-## Traces de Conscience
-- Zell laisse des empreintes lumineuses très discrètes pendant 60 secondes
-- Aide à ne pas se perdre dans les labyrinthes (notamment Les Yeux)
-- Discret, présent pour qui regarde
-- Toujours actif, pas de touche dédiée
+Première zone du jeu. Sombre, décorée de **Rosas** (formes circulaires géométriques violettes, dorées, roses, bordeaux — phosphènes vus les yeux fermés). Musique douce piano + flûte.
 
-## Résonance des Fragments
-- Quand Zell est proche d'un collectible caché (souvenir, lettre, portrait), son corps vibre
-- Émet un son doux qui s'intensifie avec la proximité
-- Boussole incarnée — pas d'indicateur sur la carte
-- Toujours active
+### Trois sous-zones
 
-## Sillage de Conscience
-- Quand Zell dash (ou se mini-téléporte), elle laisse un afterimage 0.3-0.5s
-- Cet afterimage peut activer certains switchs qui "voient" Zell passer
-- Permet des puzzles de timing (deux switchs à activer simultanément)
+| Sous-zone | Position relative au spawn | Pouvoir / récompense |
+|---|---|---|
+| **Cristalin** | Haut-gauche | Fin de tuto, accès au mini-boss Dragon de Cristal puis Chevalier Cristallin |
+| **Pupille** (zone aveugle/noire) | En bas | **Impulsion** (1er fragment) |
+| **Câbles / Nerfs optiques** | À droite | **Dash horizontal** (2e fragment, déblocage par énigmes) |
 
-## Réminiscence
-- Dans certains lieux marqués, Zell peut activer un souvenir du lieu
-- Touche d'interaction dédiée à proximité d'un point de Réminiscence
-- Elle voit brièvement (5-10s) ce que cet endroit était avant d'être corrompu
-- Usages : lire des inscriptions détruites, révéler des passages disparus, comprendre l'origine d'un ennemi
+Le **boss principal du tuto** (Chevalier Cristallin) est dans une arène séparée accessible après avoir résolu le Cristalin. Le **Dragon de Cristal** est un mini-boss dans la zone Cristalin qui drop le **1er fragment de souvenir lié au lore**.
 
-## Conductivité *(Zone des Câbles)*
-- Zell peut servir de pont électrique
-- Tenir une position entre deux contacts pendant que l'épée est chargée (Coup de Jus prêt ?) crée un circuit
-- Alimente des mécanismes, ouvre des portes
-- Mécanique exclusive à la Zone des Câbles
+### Layout détaillé du spawn
 
-## Fragmentation Volontaire *(Phase 2, tard dans le jeu)*
-- Zell peut se disperser brièvement en particules
-- Permet de traverser des passages étroits ou certaines barrières spécifiques
-- Court délai (~1s)
-- Risqué : si touchée pendant la fragmentation, elle se recoagule en état endommagé
-- Touche dédiée, débloquée par un souvenir tardif
+```
+                    PLAFOND (continu, gros couloir)
+   ┌──────────────────────────────────────────────────────┐
+   │  ↑ vers Cristalin              ↑ vers ?              │
+   │ ←                                                  → │
+   │  ┌────────┐  (trou infranchissable)  ┌────────┐      │
+   │  │ LEFT   │                          │SPAWN   │      │
+   │  │ (gros  │                          │(plus   │      │
+   │  │ bloc)  │                          │ petit) │      │
+   │  └────────┘                          └────────┘      │
+   │                  ↓ chute mortelle ↓                  │
+   │                                                      │
+   │  PICS MORTELS (mmmm tout en bas)  - SOL CASSABLE -   │
+   │                                                      │
+   │  ┌──────────────────[PORTE]──────────────────────┐   │
+   │  │              ÉPÉE ENFONCÉE                    │   │
+   │  │           (1ère arme du jeu)                  │   │
+   │  └───────────────────────────────────────────────┘   │
+   └──────────────────────────────────────────────────────┘
+                                                    ↓ Pupille
+```
 
----
+À droite du SPAWN : **2-3 mini-plateformes flottantes** (stepping stones) qui mènent à la zone RIGHT, puis vers les Câbles.
 
-# OBJECTIF 24 — Surcharge Émotionnelle (Phase 2)
+### Éléments interactifs détaillés
 
-## Ressenti joueur
-En Phase 2, le monde est plus lourd. Si le joueur enchaîne trop de coups pris sans repos, Zell est submergée — émotionnellement, pas physiquement. L'écran réagit. Le joueur ressent la fatigue de Veilae.
+- **Plateforme cassable** (`---- sol qui va cassé`) : on marche dessus une fois, elle craque, **reste cassée tout le reste du jeu**. Pas de réapparition.
+- **Pics mortels** (ligne ondulée en bas du schéma) : si Zell tombe dessus, **mort instantanée** (retour au dernier neurone).
+- **Mur invisible révélable par Impulsion** : certains murs ressemblent à du sol normal mais sont traversables après usage d'Impulsion (révélés temporairement). C'est l'usage clé d'Impulsion dans le tuto.
+- **Coffres** : posés à divers endroits, contiennent Synapses ou un fragment de carte / objet de soin. Visibles, ouverts une fois.
+- **Porte du spawn** : visuel doré, **épée enfoncée dedans** sous forme de pickup. Quand Zell récupère l'épée (après le boss), la porte devient interactable et s'ouvre vers la Phase 1.
+- **Mur invisible côté gauche** : empêche Zell d'aller à gauche du spawn au début. Levé tard (probablement après le dash vertical de Phase 1, ouverture du Cristalin).
 
-## Comportement
-- Trigger : 5 coups consécutifs pris dans une fenêtre courte (~20s) sans repos
-- Effet :
-  - Bords de l'écran pulsent avec la couleur émotionnelle dominante de la zone
-  - Zell est ralentie de ~20%
-  - L'image vibre subtilement
-  - La musique devient plus dissonante
-- Se dissipe : rester quelques secondes (5-10s) sans prendre de dégâts dans un espace sûr
-- Disponible uniquement en Phase 2 et au-delà (pas en Phase 1)
+### Ennemis du tuto
 
-## Graphismes
-- Pulse périphérique de couleur (bleu pour Tristesse, rouge pour Colère, jaune pour Joie selon la zone)
-- Petit tremblement de l'image, comme une larme au coin de l'œil
+Pensés **en contraste de sens** — apprendre à lire l'ennemi avant de réagir.
 
-## Son
-- Souffle profond qui se superpose à la musique
-- Acouphène léger
-- Disparition : grande inspiration, retour au calme
+| Ennemi | Sens utilisé | Contre-mesure |
+|---|---|---|
+| **La Grosse Boule** | Voit, n'entend pas | **Refroidissement** (devient invisible à la vue) |
+| **Les Aveugles** (meute) | Entendent, ne voient pas | **Rester immobile** ou se déplacer très lentement |
+| **Les Filaments** | Obstacle de traversée | Couper à l'épée ou franchir au dash |
 
----
+### Mini-boss Cristalin — Dragon de Cristal
 
-# OBJECTIF 25 — Carte du monde
+Drop le **1er fragment de souvenir lié au lore** (probablement un bijou — à valider). Cristal, démarqué visuellement du reste (chair / cils). Pas de combat impossible — accessible quand on a Dash + Impulsion.
 
-## Ressenti joueur
-La carte de Zell n'est pas une grille. C'est un **scan cérébral**. Le joueur lit son propre cerveau pendant qu'il l'explore. Magnifique, immédiatement reconnaissable.
+### Boss du tuto — Le Chevalier Cristallin
 
-## Comportement
-- Carte représentée comme un **diagramme de réseau neuronal** (nœuds + lignes)
-- Chaque salle = un nœud
-- Chaque couloir = une ligne
-- Zones découvertes : illuminées, colorées de la couleur de leur zone
-- Zones non découvertes : à peine visibles, contours fantômes
-- Neurones-checkpoints : nœuds qui pulsent
-- Passages secrets découverts : lignes pointillées
-- L'Oubli : section volontairement corrompue, parties manquantes — par design
+**Premier vrai combat du jeu + tuto épée.**
 
-## Géographie logique
-- Oreilles → sur les côtés gauche / droit de la carte
-- Nez → en bas (zone optionnelle)
-- Cerveau / Mémoire → en haut
-- Cœur → centre, accessible uniquement en Phase 3
-- Les Sinus → centre-bas, hub de transition
-- Zone de Rêve → très haut
+Mise en scène :
+1. Zell entre dans la salle. **Excalibur** plantée dans un **rocher de chair** au centre.
+2. Le Chevalier assis sur un **trône à droite**.
+3. Il invite Zell à tenter de retirer l'épée. Elle y parvient (seule une porteuse digne).
+4. Il se lève, la combat **loyalement**.
+5. On gagne. L'épée devient pleinement sienne, animation d'obtention.
+6. Le Chevalier s'incline ou se dissout.
 
-## Fragments de carte
-- Achetables chez Solin et certains marchands
-- Chaque fragment révèle une partie de carte non encore explorée (une zone voisine)
-- Pas obligatoires : on peut aussi tout dévoiler par exploration
+L'**épée comme clé du tuto** : on revient au spawn, on l'insère dans la **porte scellée**, elle s'ouvre → accès à la Phase 1.
 
-## Contrôles
-- Touche dédiée pour ouvrir / fermer la carte
-- Zoom et pan possibles
-- Marqueurs ajoutables par le joueur (au moins 2-3 types : "à revenir", "pas encore exploré", libre) — à valider
+### Flow complet du tuto
 
-## Graphismes
-- Style "imagerie médicale poétique" : lignes lumineuses, fond très sombre, légers reflets
-- Animation discrète : les nœuds pulsent, les lignes "respirent"
+1. **Réveil** au spawn avec uniquement le Refroidissement (inné)
+2. Exploration : trous, mur invisible gauche, pics. Zell apprend la prudence en mourant peut-être.
+3. Découverte de la **Pupille** (zone aveugle en bas) → **1er fragment = Impulsion**
+4. Retour, utilisation d'Impulsion pour révéler des passages cachés / faux murs
+5. Découverte des **Câbles / Nerfs optiques** (à droite) → énigmes → **2e fragment = Dash horizontal**
+6. Accès au **Cristalin** (haut-gauche, demande Dash + Impulsion)
+7. Mini-boss **Dragon de Cristal** → 1er fragment souvenir
+8. Arène du **Chevalier Cristallin** → épée
+9. Retour spawn → porte + épée → **Phase 1**
+
+### Mécaniques de furtivité opposée
+
+Le tuto enseigne deux modes de discrétion antagonistes :
+- **Devant la Grosse Boule** : se cacher (invisible mais en mouvement)
+- **Devant les Aveugles** : se figer (visible mais silencieuse)
+
+Le joueur doit lire l'ennemi avant de réagir.
 
 ---
 
-# OBJECTIF 26 — Audio et musique
+## 8. Phase 1 — autres zones
 
-## Ressenti joueur
-La musique de Zell est un personnage. Elle accompagne, elle parle, elle change avec l'état de Zell. Le joueur ne doit jamais avoir envie de couper le son.
+### Les Sinus — zone de transition (hub social)
 
-## Musique par zone
-- Une mélodie unique par zone, instruments dédiés (cf. Structure_et_idées pour le tableau complet par zone)
-- Crossfade doux entre zones (cf. Objectif 11)
+Rôle de Dirtmouth dans Hollow Knight. Sas calme entre Les Yeux et le reste. Au moins **un Solin marchand** (fragments de carte, objets de soin). Atmosphère sobre. Un seuil.
 
-## Musique réactive
-- La même mélodie de zone joue différemment selon l'état de Zell :
-  - Pleine santé : version propre, mélodique
-  - Endommagée : dissonances introduites
-  - En combat : rythme intensifié, percussions ajoutées
-  - Critique : la mélodie se fragmente, devient minimaliste
+### Oreille Gauche
 
-## Battement de cœur méta
-- Un battement très lent et très grave court **sous toute la musique du jeu**
-- Quasi-imperceptible en Phase 1
-- Plus présent en Phase 2
-- Devient la musique en Phase 3 (Le Cœur)
-- Le joueur ressent une reconnaissance viscérale en Phase 3 sans pouvoir l'expliquer
+Tapissée d'**herbe noire** (cils auditifs). Bribes de l'extérieur — gens qui parlent, flou comme derrière une porte. Jamais intelligible. Boss : **Le Filtre**.
 
-## Voix des PNJ
-- Pas de voix humaines
-- Chaque PNJ a un son abstrait personnel (cf. Objectif 18)
+### Zone de Rêve — très haut sur la map
 
-## Pas de leitmotiv particulier
-- Aucune mélodie centrale de Veilae à transformer à travers le jeu
-- Chaque zone a sa propre identité musicale, autonome
-- Décision révisable plus tard si besoin
+**Pas féerique mignon. Psychédélique et perturbante.** Saturée. Géométrie impossible, gravité qui s'inverse. Plateformes qui obéissent à la logique du rêve — une plateforme "solide" peut s'effondrer si on y croit trop fort. Un souvenir où Veilae rêvait de voler est caché ici. Musique : harpe + célesta, sans rythme fixe.
 
-## Direction
-- Composition originale envisagée à terme
-- Pour les premiers protos : libre de droits acceptable, à remplacer plus tard
-- Sons additionnels (sirène, bip d'hôpital) : freesound.org
+### La Mémoire — zone majeure
 
----
+Zone avec des chaînes. **Composée comme un réseau de neurones** (gros couloirs interconnectés).
 
-# OBJECTIF 27 — Sons du monde extérieur
+**Salles spécifiques** (cf. photo schéma) :
+- **Salle des Souvenirs** : pièce bloquée par chaînes (Spell de Fusion du Métal requis). Stocke les souvenirs collectés, rejouables individuellement.
+- **Salle du Codex** : grande pièce où **toutes les espèces sont répertoriées**. Pour qu'une espèce apparaisse dans le Codex : soit une **action spécifique sur le mob**, soit l'**avoir tué N fois** (à trancher : 5 ? 10 ?). NPC associé.
 
-## Ressenti joueur
-Le cerveau filtre tout. Le monde réel existe, juste derrière, mais Veilae ne l'entend pas vraiment. Le joueur l'entend de mieux en mieux à mesure que le jeu progresse — comme si quelque chose s'éveillait.
+Sous-zones possibles : bons souvenirs / mauvais souvenirs / archives. À concevoir en cours de prod.
 
-## Comportement
-- Sons du monde extérieur **toujours étouffés**, filtrés, comme entendus du fond d'un bain
-- Présents dans des zones spécifiques :
-  - **Oreille Gauche** (Phase 1) : voix lointaines, TV dans une autre pièce, klaxon, pluie. Jamais intelligible.
-  - **Oreille Droite** (Phase 2) : presque clair. On croit entendre un prénom.
-  - **La Peau** (zone secrète) : éclats de lumière + sons par les cracks
-  - **En arrière-plan général** : très bas, presque subliminal
+Boss principal : **L'Oubli Voulu** → drop Spell de Fusion du Métal + souvenir majeur. En Phase 2, accueille le **Double**.
 
-## Évolution par phase
-- **Phase 1** : sons totalement filtrés, incompréhensibles
-- **Phase 2** : sons plus présents, syllabes parfois reconnaissables
-- **Phase 3** : sons presque clairs, on entend des mots, des prénoms
-- **Fin** : la voix qui dit "Veilae..." est complètement claire
+### Zone de Tri — boss secondaire
 
-## Sources sonores à prévoir
-- Sirène d'ambulance (lointaine, étouffée) — cinématique d'ouverture
-- Bip respiratoire d'hôpital — cinématique d'ouverture, puis en arrière-plan
-- Voix humaines filtrées — Oreilles, Peau
-- Sons d'environnement hospitalier (chariots, portes, pas) — La Peau
-- Voix finale qui dit "Veilae..." — cinématique finale
+Archives du cerveau. Rayonnages infinis de dossiers lumineux. Clinique, blanc-gris froid. Bureaucratie de l'inconscient. Puzzles de classement. Ennemis : **Les Classeurs** (automates hostiles si on perturbe l'ordre). Boss secondaire : **Le Réviseur**. Musique : drone minimal.
 
-## Direction
-- Effets de filtre passe-bas pour étouffer
-- Réverbération longue pour la distance
-- Volume très bas, mais audible si le joueur tend l'oreille
+### Zone des Câbles — boss secondaire + Filin
+
+Faisceaux massifs de câbles enchevêtrés. Couleurs chaudes (orange, jaune, blanc). Système nerveux moteur/sensoriel. Certains câbles "live" infligent dégâts électriques. Mécanique : rediriger des courants. **Filin** le forgeron y vit (améliore l'épée). Ennemis : **Les Courts-Circuits**. Boss secondaire : **La Surcharge**.
+
+### Zone Paisible — boss secondaire
+
+Vaste, lumière ambrée douce, plateformes flottantes comme des nénuphars. Presque aucun ennemi. **Mécanique de méditation** : rester immobile quelques secondes restaure charges d'Impulsion + soigne légèrement. Inscriptions environnementales (Synapses si lues). Boss secondaire : **Le Gardien Paisible** (teste Zell mais ne veut pas se battre). Musique : vent, cordes douces.
 
 ---
 
-# OBJECTIF 28 — Direction artistique générale
+## 9. Phase 2
 
-## Ressenti joueur
-Un monde **flou et lumineux**. Tout vibre légèrement, rien n'est figé. Les contours ne sont jamais durs. Le joueur a l'impression de jouer **dans un rêve qu'il regarde à travers un voile**.
+Toutes les zones de Phase 1 sont **modifiées** :
+- Visuels assombris
+- Dialogues PNJ qui évoluent
+- Parfois nouveaux ennemis
+- Les Rosas pâlissent
 
-## Palette
-- **Phase 1** : violet, doré, rose, bordeaux, noir profond
-- **Phase 2** : palette qui s'assombrit, ajout de bleus froids et de rouges
-- **Phase 3** : rouge et or dominants
-- **Le vert est absent** de tout l'univers, sauf dans les zones glitchées / corrompues (L'Oubli) — règle de cohérence stricte
+À cela s'ajoutent des zones inédites.
 
-## Effets globaux
-- **Glow / Bloom** omniprésent mais maîtrisé
-- **Particules** lumineuses partout : poussière, vapeur, éclats
-- **Flou directionnel** léger en mouvement
-- **Vibration** subtile sur les éléments importants (Rosas, neurones, souvenirs)
+### Les Émotions
 
-## Méthode de production
-- Sprites et arrière-plans faits **à la main**
-- Aide IA possible pour les passes initiales (génération, exploration de directions)
-- Retouche manuelle obligatoire avant import dans Godot
-- Workflow à formaliser au fil du temps
+Trois sous-zones qui saignent les unes dans les autres :
+- **Tristesse** : corridors inondés, plateformes à ras d'eau, bleu-gris atténué
+- **Colère** : terrain qui s'effrite, murs qui craquent, rouge intense, particules de feu
+- **Joie** : aveuglement lumineux jaune-blanc, le plus grand danger est caché là
 
-## Cohérence
-- Chaque zone a son sous-univers visuel (cf. Structure_et_idées pour le détail par zone)
-- Les ennemis d'une zone partagent un langage visuel commun
-- Les UI sont minimales, intégrées au monde quand possible
+Boss : **Le Nœud Émotionnel** (3 phases, une par émotion).
 
----
+### Oreille Droite
 
-# OBJECTIF 29 — Rosas et éléments réactifs d'ambiance
+Même esthétique que la Gauche, plus intense. Sons presque clairs. On croit entendre un prénom. **Révélation narrative majeure** ici.
 
-## Ressenti joueur
-Le monde est vivant. Les Rosas pulsent, les neurones battent, les Rosas répondent au boss qu'on combat. Le joueur n'a pas besoin de comprendre pourquoi — il sent que tout réagit.
+### La Bouche
 
-## Rosas (Les Yeux, et présentes ailleurs en signature)
-- Formes circulaires géométriques violettes, dorées, roses, bordeaux
-- Référence aux phosphènes (formes vues les yeux fermés)
-- Servent de **repères visuels** dans les couloirs sombres
-- Pulsent en rythme avec un battement lent
-- **Baromètre du coma de Veilae** : vives en début de jeu, ternes en Phase 2, clignotent parfois
-- Pendant le mini-boss : les Rosas sur les murs pulsent en sync avec le boss
+Couleurs de bonbons (rose, bleu, vert menthe) avec sous-couche de pourriture. Plateformes en sucre qui se dissolvent. Terrain collant (chewing-gum, ralentit). Ennemis : **Les Bactéries** (se divisent au coup d'épée, max 3 générations — seul le Coup de Jus les détruit sans division) et **Les Caries** (mi-boss récurrents). Boss : **Le Festin**.
 
-## Éléments réactifs ailleurs
-- **Neurones** : pulsent en permanence (cf. Objectif 10)
-- **Câbles** : vibrent, certains "live" sont visibles à l'œil
-- **Murs cachés** : scintillent à l'Impulsion
-- **Plateformes de Rêve** : s'effondrent ou tiennent selon la "croyance" du joueur (Illusion)
+### L'Oubli
 
-## Direction
-- Les éléments d'environnement ne sont jamais 100% statiques
-- Tout respire, oscille, vibre
+Zone instable, littéralement **incomplète**. Tuiles manquantes, salles arrêtées net. Terrain disparaît derrière Zell parfois. **Carte ne s'enregistre pas correctement** ici, par design. Contient les indices "V." disséminés. Ennemis : **Les Glitches** (mal chargés, hitbox imprévisibles, texture manquante). Boss : **Le Vide**.
+
+### Ennemi spécial transversal — L'Ombre
+
+Silhouette humanoïde de Zell (Phase 2), apparaît parfois dans le fond des couloirs juste pour observer. Pas hostile. Disparaît si Zell s'approche. Devient boss dans La Mémoire en Phase 2 (= **Le Double**).
 
 ---
 
-# OBJECTIF 30 — UI minimale
+## 10. Phase 3 — Le Cœur
 
-## Ressenti joueur
-L'écran de jeu doit être **vide** au maximum. Tout doit être dans le monde. Pas de barres, pas de minimap permanente, pas de notifications agressives.
+Une **seule zone**, accessible uniquement à ce moment. **Élan pur vers l'avant.** Le battement de cœur devient la musique : irrégulier, lent, puis régulier. Tout pulse à chaque battement. Rouge et or.
 
-## Éléments à l'écran (en permanence)
-- Rien, sauf si nécessaire
+Boss final en 3 sous-phases :
+1. **Arythmie** : attaques irrégulières, patterns imprévisibles
+2. **Arrêt** : silence total, tout gèle, puis un seul battement massif qui fait d'énormes dégâts
+3. **Renaissance** : le cœur bat régulièrement pour la première fois, devient beau, Veilae choisit de vivre
 
-## Éléments à l'écran (contextuels)
-- Synapses : compteur discret, apparaît brièvement quand le total change, sinon caché
-- Jauge de Coup de Jus : très petite, à proximité de Zell ou intégrée à son sprite
-- Charges d'Impulsion : indicateur ultra-minimal (3 points qui s'éteignent)
-- Notification d'objet ramassé : nom de l'objet en bas d'écran pendant 2s
-- Boîte de dialogue PNJ : bas d'écran, sobre, fond légèrement opaque
+**Coup final** : Zell ne frappe pas. Elle se place au centre. Le cœur bat une dernière fois autour. Fondu blanc. Des yeux qui s'ouvrent.
 
-## Menu pause
-- Touche dédiée
-- Sections : Carte, Inventaire, Codex, Options, Quitter
-- Le jeu se fige sans flou
-- Musique légèrement atténuée
+### Zone secrète — La Peau
 
-## Graphismes UI
+Idée gardée en réserve, pas obligatoire dans le scope initial. Frontière du monde. Quasi-blanche. Pas d'ennemis, pas de collectibles. Cracks par moments → éclats du réel. Plus de cracks à mesure que le jeu avance.
+
+---
+
+## 11. PNJ
+
+Les PNJ savent qui est Veilae. **Ils ne le lui disent jamais.** Énigmes, silences, familiarité étrange. **Non tuables** sauf si mort scriptée dans le lore.
+
+### Profils principaux
+
+| PNJ | Rôle | Voix abstraite |
+|---|---|---|
+| **Solin** | Gardien des Neurones, marchand de base (Sinus) | Bourdonnement grave calme |
+| **Mémo** | Archiviste (Mémoire), gère souvenirs et Codex | Cliquetis staccato frénétique |
+| **Écho** | Errant, indices cryptiques sur Veilae | Réverbération longue |
+| **Filin** | Réparateur (Câbles), upgrade l'épée | Grondement mécanique |
+| **Gardiens Silencieux** | Zone Paisible, offrent dons si Zell s'arrête | Aucun son |
+| **Veille** | Conscience fragmentée (Oubli, très tard) | Voix exacte de Zell mais légèrement plus lente |
+
+### Voix des PNJ
+
+**Pas de voix humaines.** Sons abstraits. Sous-titres pour tout dialogue.
+
+Plus de détail (citations exemple, comportement) dans `Structure_et_idées.md`.
+
+---
+
+## 12. Bestiaire
+
+### Architecture ennemi
+
+Pattern Unity composants :
+- Préfab `EnemyBase` avec : Rigidbody2D, Collider2D, `HealthComponent`, `HurtboxComponent`, `HitboxComponent` (pour ses attaques), `StateMachineComponent`, `DropComponent` (ce qu'il drop à la mort)
+- **Données dans ScriptableObject** : `EnemyData.asset` avec stats, sprites, AI patterns
+- Spawn via prefab + data → un même squelette pour de nombreux ennemis
+
+### Ennemis par zone (résumé)
+
+| Zone | Ennemis principaux |
+|---|---|
+| Yeux (tuto) | Grosse Boule, Aveugles (meute), Filaments |
+| Sinus | Aucun (zone safe) |
+| Oreille Gauche | À définir |
+| Mémoire | Engrammés (souvenirs cristallisés, repoussables), Effacés (effacent partie de la carte) |
+| Zone de Tri | Les Classeurs (automates) |
+| Câbles | Les Courts-Circuits |
+| Paisible | Quasi aucun ennemi |
+| Rêve | À définir, ennemis psychédéliques |
+| Émotions (P2) | Larmes (Tristesse), Braises (Colère), Éclats de Joie |
+| Oreille Droite | À définir |
+| Bouche (P2) | Bactéries, Caries |
+| Oubli (P2) | Glitches |
+| Tout (P2) | L'Ombre (transversal) |
+
+### Caractéristiques générales
+
+- **Comportements scriptés**, pas d'IA dynamique complexe au début
+- **Ennemis exclusifs à leur zone** par défaut (peut évoluer)
+- Tous ont une **origine narrative** — ils ne sont pas là par hasard. Combattre dans Zell = combattre une partie de soi. Jamais dit.
+
+---
+
+## 13. Boss
+
+### Pattern technique
+
+- Préfab `BossBase` : composants similaires à ennemi + `BossPhaseManager` (gère phases multiples)
+- Données dans ScriptableObject `BossData.asset`
+- Salle d'arène = scène ou zone dédiée
+- Lock-in : Zell ne peut pas sortir tant que le boss n'est pas vaincu
+- Cinématique d'intro courte (entrée dans l'arène) + cinématique de fin (drop souvenir / capacité)
+
+### Liste des boss principaux
+
+| Boss | Zone | Drop |
+|---|---|---|
+| **Dragon de Cristal** (mini-boss) | Cristalin (tuto) | 1er fragment de souvenir |
+| **Chevalier Cristallin** | Arène tuto | Épée d'énergie |
+| **Filtre** | Oreille Gauche | Souvenir + ouverture du flux |
+| **L'Oubli Voulu** | La Mémoire | Spell de Fusion du Métal + souvenir |
+| **Nœud Émotionnel** (3 phases) | Émotions | Souvenir + ? |
+| **Le Double** | Mémoire (P2) | Révélation narrative |
+| **Le Festin** | Bouche (P2) | Souvenir |
+| **Le Vide** | Oubli (P2) | Lettre "V." |
+| **Le Cœur** (3 sous-phases) | Phase 3 | Fin du jeu |
+
+### Boss secondaires
+
+| Boss | Zone | Drop |
+|---|---|---|
+| **Le Réviseur** | Zone de Tri | Matériau rare + Synapses |
+| **La Surcharge** | Câbles | Matériau rare + Synapses |
+| **Le Gardien Paisible** | Paisible | Matériau rare + Synapses + sagesse |
+| **Mini-boss Réseau Neuronal** | À définir | Spell Réseau Neuronal (de base) |
+
+Détails de mise en scène dans `Structure_et_idées.md`.
+
+---
+
+## 14. HUD et interface
+
+### Philosophie
+
+L'écran de jeu doit être **vide au maximum**. Tout dans le monde. Pas de barres criardes. Pas de minimap permanente. Pas de notifications agressives.
+
+### Éléments à l'écran (en permanence)
+
+```
+┌──────────────────────────────────────────────────┐
+│  ●●●●●  ← flammèches HP en cercle (HUD séparé)   │
+│  ────── ← jauge Coup de Jus (couleur de Zell)    │
+│                                                  │
+│                                                  │
+│                       Zell                       │
+│                        ●                         │
+│                                                  │
+│                                                  │
+│ ███████ ← jauge Refroidissement (à styliser,    │
+│           sur un côté de l'écran, à trancher)    │
+└──────────────────────────────────────────────────┘
+```
+
+| Élément | Comportement |
+|---|---|
+| **HP — flammèches en cercle** | Cinq petites flammèches ambrées qui tournent en cercle dans un coin du HUD (pas autour de Zell — décision schéma mai 2026). Chaque flammèche = 1 PV. La dernière s'éteint à chaque coup. Les upgrades ajoutent des flammèches (6, 7, 8…). |
+| **Jauge Coup de Jus** | Petite, près des flammèches HP. Se remplit dans la **couleur courante de Zell** (chaude par défaut, bleue en Refroidissement, etc.) |
+| **Jauge Refroidissement** | Style à trancher. Probablement **sur un côté** du HUD (gauche ou droite). Se vide quand actif, se recharge à l'arrêt. |
+| **Charges d'Impulsion** | **Pas dans le HUD permanent.** Apparaissent **au milieu de Zell** sous forme de **chiffres clignotants** uniquement quand Impulsion est en charge ou en cours — style **entraînement Nen HxH (Gon/Kirua)**. 3 charges max. |
+
+### Éléments contextuels
+
+- **Synapses** : compteur **apparaît brièvement à la récolte** (2-3s) puis disparaît. **Pas permanent** dans le HUD — c'est intentionnellement discret. (Décision schéma mai 2026.)
+- **Sauvegarde auto** : petite icône (boîte de sauvegarde) **apparaît brièvement** quand une sauvegarde se déclenche (activation de neurone, transition de phase, etc.).
+- **Item obtenu** : nom de l'objet + petit visuel apparaît en bas d'écran ~2s.
+- **Dialogue PNJ** : boîte sobre en bas, fond légèrement opaque.
+
+### Menu pause
+
+Touche dédiée (Échap). Le jeu se fige sans flou. Musique légèrement atténuée.
+
+Sections :
+- **Carte** (réseau neuronal)
+- **Inventaire** (sac où sont rangés les objets, les fragments de souvenirs, matériaux, etc.)
+- **Spells** (capacités débloquées avec petite description)
+- **Codex** *(préférence à trancher : in-menu ou exclusivement in-world dans la Salle Codex de la Mémoire — décision actuelle penchant pour in-world)*
+- **Options**
+- **Quitter**
+
+### Codex — choix de design
+
+**Décision tendance :** le Codex est principalement **in-world dans la Salle Codex** de la Mémoire — une vraie pièce du jeu, pas un onglet de menu. Donne une raison de revenir à la Mémoire, et renforce le "tout est dans le monde". À valider.
+
+Une copie consultable dans le menu pause peut exister, mais avec moins de détails / présentation moins riche. À trancher.
+
+### Style graphique du HUD
+
 - Typographie unique au jeu, lisible mais discrète
 - Cadres très fins, transparences importantes
-- Animations d'apparition / disparition douces (~0.3s)
+- Animations apparition/disparition douces (~0.3s)
+- Aucun élément qui ne **scintille pas légèrement** (cohérence avec l'univers vivant)
 
 ---
 
-# OBJECTIF 31 — Codex et journal
+## 15. Carte du monde
 
-## Ressenti joueur
-Le Codex est le sanctuaire du joueur attentif. Tout ce qu'il a trouvé est conservé là, accessible, rejouable. Pas de quête forcée à le consulter — mais ceux qui y vont y restent longtemps.
+**Pas une grille.** Un **diagramme de réseau neuronal** / scan synaptique.
 
-## Contenu
-- **Souvenirs** : liste des souvenirs collectés, rejouables individuellement (cf. Objectif 21 pour la Salle des Souvenirs in-game)
-- **Lettres déchirées** : fragments de messages collectés
-- **Pensées Fugaces** : textes/images vus quelques secondes en jeu, archivés ici une fois lus
-- **Portrait de Veilae** : puzzle collectible — chaque fragment trouvé ajoute un élément (visage, cheveux, expression). Visible à mesure qu'il s'assemble. Complet uniquement à la fin.
-- **Bestiaire** (à valider) : entrées d'ennemis vaincus
+- **Salles = nœuds**
+- **Couloirs = lignes**
+- **Zones découvertes : illuminées, colorées**
+- **Zones non découvertes : contours fantômes**
+- **Neurones-checkpoints : nœuds qui pulsent**
+- **Passages secrets : lignes pointillées**
+- **L'Oubli : section volontairement corrompue / incomplète**
 
-## Comportement
-- Accessible depuis le menu pause
-- Navigation par catégorie
-- Souvenirs : sélection = relecture (texte / scène / son)
-- Lettres et pensées : affichage simple, recherchables
-- Portrait : zone d'affichage avec les fragments en place
+### Gros couloirs
 
-## Graphismes
-- Style "carnet onirique" : pages translucides, lumière douce
-- Le Portrait évolue visuellement : on voit les pièces s'ajouter
-- Animations discrètes au survol
+Décision schéma mai 2026 (post-tuto) : **"Je veux des gros couloirs UwU"** — donc on dimensionne large à partir de la Phase 1.
+
+### Fragments de carte
+
+Achetables chez Solin (Sinus). Chaque fragment révèle une zone voisine non explorée.
 
 ---
 
-# OBJECTIF 32 — Cinématiques (ouverture et fin)
+## 16. Mort et sauvegarde
 
-## Ressenti joueur
-Les cinématiques sont rares, courtes, précieuses. Elles ne racontent pas — elles **suggèrent**. Le joueur sort de chaque cinématique avec une question, pas une réponse.
+### Mort
 
-## Cinématique d'ouverture
-- Écran noir total
-- Sons : sirène d'ambulance lointaine → bip respiratoire d'hôpital → silence
-- 3 secondes de silence absolu
-- Zell s'allume comme une flamme dans le noir
-- La musique des Yeux monte doucement
-- Aucun texte, aucune explication
-- Enchaîne directement sur le gameplay
+À chaque mort :
+1. Zell éclate en particules au point de mort
+2. **Synapses** restent sur place en petit amas lumineux
+3. Zell se reforme au **dernier neurone activé**
+4. Retourner au point de mort = récupérer les Synapses
+5. Mourir avant = **perte définitive** des Synapses laissées
+6. **Filet de sécurité** : 10% des Synapses sont **automatiquement épargnées** à chaque neurone activé (préservées même si on perd le tas)
 
-## Cinématique de fin
+**Pas de limite de morts**, pas de pénalité permanente. La mort n'est pas punitive — elle est narrative.
+
+### Sauvegarde
+
+**Auto** à chaque :
+- Activation de neurone
+- Boss vaincu
+- Capacité débloquée
+- Transition de phase
+
+**Pas d'action joueur pour sauvegarder** — c'est transparent. Petit icône "boîte de sauvegarde" apparaît brièvement.
+
+**Variables persistées** :
+- Position du dernier neurone activé
+- PV max et courants
+- Synapses (total + 10% verrouillé)
+- Capacités débloquées
+- Souvenirs collectés
+- Neurones activés
+- Neurones cachés découverts
+- Ennemis morts dans la zone courante (réinitialisés à chaque repos)
+- Phase courante
+- Progression PNJ
+- Collectibles trouvés (lettres, pensées, fragments de portrait)
+- Matériaux rares en inventaire
+- Options joueur
+
+**Implémentation Unity :**
+- Sérialisation JSON dans `Application.persistentDataPath`
+- Double fichier (principal + backup) pour résistance corruption
+- Un slot par profil (3 max si multi-joueurs sur la même machine — à valider)
+
+---
+
+## 17. Monnaie — Synapses
+
+Les **Synapses** sont les connexions biologiques entre neurones. Monnaie cohérente, immédiatement lisible.
+
+### Gain
+
+- Ennemis vaincus (drop variable selon difficulté)
+- Zones cachées et coffres lumineux
+- Récompenses de certains PNJ
+- Lecture d'inscriptions dans la Zone Paisible
+
+### Dépense
+
+- Marchands (Solin → cartes, soins ; autres ?)
+- Réparation de neurones endommagés
+- Passages neuraux scellés (déblocage)
+- Upgrades chez Filin
+
+### Apparence visuelle de la Synapse
+
+**À trancher.** Pas un dollar ni un euro. Doit ressembler à **une connexion neurale** :
+- Petite **volute lumineuse en spirale** ?
+- Symbole synaptique stylisé (genre `ψ` ou variante) ?
+- Petit point lumineux avec arborescence ?
+
+Décision à prendre à l'art pass.
+
+### Affichage HUD
+
+**Pas de compteur permanent.** Le total des Synapses **n'apparaît que** :
+- Brièvement quand on en récupère (animation chiffre qui monte)
+- En permanence dans le menu pause (Inventaire / Spells)
+- Chez les marchands (négociation)
+
+---
+
+## 18. Audio
+
+### Musique par zone
+
+| Zone | Instruments | Ambiance |
+|---|---|---|
+| Les Yeux (tuto) | Piano + flûte, doux | Éveil, curiosité fragile |
+| Sinus | Cordes calmes, hum doux | Seuil, transition |
+| Oreille Gauche | Ambient pur, voix filtrées | Mystère, distance |
+| Zone de Rêve | Harpe, célesta, arythmique | Irréel, perturbant |
+| La Mémoire | Piano seul, dissonances rares | Mélancolie, poids |
+| Zone de Tri | Drone minimal, hum électrique | Froid, clinique |
+| Zone des Câbles | Électronique chaud, groove | Énergie, tension |
+| Zone Paisible | Vent, cordes douces | Paix, respiration |
+| Les Émotions (P2) | Change par sous-zone | Tristesse / Colère / Joie |
+| Oreille Droite (P2) | Comme gauche, plus intense | Révélation, urgence |
+| La Bouche (P2) | Jazz léger, légèrement faux | Faux-joyeux, uncanny |
+| L'Oubli (P2) | Musique qui glitche et s'efface | Instabilité, angoisse |
+| Le Cœur (P3) | Battement de cœur = musique | Intensité pure |
+
+### Pas de leitmotiv central
+
+Pas de mélodie de Veilae à transformer à travers le jeu. Chaque zone a sa propre identité musicale.
+
+### Battement de cœur méta
+
+Battement très lent et grave sous **toute** la musique du jeu, quasi-imperceptible. En Phase 3 il devient explicite — le joueur ressent une reconnaissance sans savoir pourquoi.
+
+### Sons du monde extérieur
+
+Toujours **étouffés, filtrés** comme entendus du fond d'un bain. Jamais intelligibles en Phase 1. Presque clairs en Phase 2. Plus présents en Phase 3. La voix finale **"Veilae..."** est complètement claire.
+
+### Musique réactive
+
+La mélodie de zone joue différemment selon l'état de Zell :
+- Version propre à pleine santé
+- Dissonances quand endommagée
+- Intensification en combat
+- Fragmentation en état critique
+
+### Sources audio
+
+Pour les premières versions : libre de droits acceptable (freesound.org). À remplacer par compositions originales avant release.
+
+---
+
+## 19. Direction artistique
+
+### Style général
+
+- **Onirique, lisse, peint** — type Hollow Knight Silksong / Ori and the Blind Forest
+- **PAS de pixel art**
+- **Style personnel** : pas une copie servile de Silksong, ZELL a son univers (chair, neurones, Rosas, brume noire). Référence pour le rendu, pas pour le contenu.
+
+### Palette
+
+- **Phase 1** : violet, doré, rose, bordeaux, noir profond
+- **Phase 2** : palette qui s'assombrit, bleus froids, rouges ajoutés
+- **Phase 3** : rouge et or dominants
+- **VERT INTERDIT** dans tout le jeu **sauf zones glitchées / corrompues** (Oubli). Règle stricte.
+
+### Effets globaux
+
+- **Glow / Bloom** omniprésent mais maîtrisé (URP Volume Bloom)
+- **Light 2D** (URP 2D) pour l'éclairage local (la boule de Zell projette de la lumière sur les murs)
+- **Particules** lumineuses partout (poussière, vapeur, éclats)
+- **Flou directionnel léger** en mouvement
+- **Vibration subtile** sur les éléments importants (Rosas, neurones, souvenirs)
+
+### Composition par couches (parallaxe profonde)
+
+Inspiré du dispositif déjà testé en Godot (3 plans rosaces + brume + chair). Tradition Silksong / Ori. Structure standard pour chaque zone :
+
+```
+PREMIER PLAN (devant Zell)         ← brume, herbes, particules
+  ↓
+COUCHE GAMEPLAY (sol, plafond)     ← collisions + Sprite Shape (chair organique)
+  ↓
+ARRIÈRE-PLAN PROCHE (×0.7)         ← formes proches, détails
+  ↓
+ARRIÈRE-PLAN LOINTAIN (×0.4)       ← grandes formes, silhouettes
+  ↓
+CIEL / FOND ULTIME (×0.1)          ← couleur, brouillard
+```
+
+### Méthode de production
+
+- **Sprites et arrière-plans faits à la main** dans Krita
+- **Aide IA** possible pour passes initiales (génération, exploration de directions)
+- **Retouche manuelle obligatoire** avant import Unity
+- **Sprite Shape** Unity pour le sol/plafond organique (chair onduleuse) — texture de bord (cils + chair) + fill (chair intérieure)
+
+### Cohérence
+
+Chaque zone a son sous-univers visuel. Les ennemis d'une zone partagent un langage visuel commun. L'UI est minimale et intégrée au monde quand possible.
+
+### Inspirations
+
+- **Hollow Knight: Silksong** (lissé, parallaxe, light 2D, brume)
+- **Ori and the Blind Forest** (couleur, fluidité, particules)
+- **NineSols** (style BD différent, à NE PAS imiter)
+- **HxH** pour les chiffres clignotants des charges d'Impulsion (Gon/Kirua training Nen)
+
+---
+
+## 20. Cinématiques
+
+### Cinématique d'ouverture
+
+Écran noir total.
+```
+Sirène d'ambulance lointaine     → fade out progressif
+Bip respiratoire d'hôpital       → fade out progressif
+Silence total                    → 3 secondes
+Zell s'allume                    → apparition douce, flamme dans le noir
+Fondu musique des Yeux           → monte doucement
+```
+**Aucun texte. Aucune explication.** Enchaîne directement sur le gameplay.
+
+### Cinématique de fin
+
 - Le Cœur bat pour la première fois régulièrement
 - Fondu au blanc total
-- Les yeux de Veilae s'ouvrent (vue extérieure brève — hôpital ?)
-- Une voix dit "Veilae..." — voix d'un membre de la famille proche
+- Vue extérieure brève (hôpital ?) — les yeux de Veilae s'ouvrent
+- Voix d'un membre de la famille proche : **"Veilae..."**
 - Fondu au blanc à nouveau
 - Crédits
 
-## Transitions de phase (mini-cinématiques)
-- Phase 1 → 2 : flash blanc, transformation de Zell visible, pause d'écran ~3s
-- Phase 2 → 3 : entrée dans Le Cœur, l'arène se révèle, battement de cœur devient la musique
+### Transitions de phase (mini-cinématiques ~3s)
 
-## Direction
-- Pas d'animations complexes
-- Composition par tableaux fixes + transitions
-- Le son fait 80% du travail émotionnel
+- **Phase 1 → 2** : flash blanc, transformation de Zell (boule → humanoïde), pause d'écran
+- **Phase 2 → 3** : entrée dans Le Cœur, l'arène se révèle, battement de cœur devient la musique
 
----
+### Direction
 
-# OBJECTIF 33 — Système de sauvegarde
-
-## Ressenti joueur
-Le joueur ne pense jamais à la sauvegarde. Elle se fait toute seule, partout, tout le temps. S'il ferme le jeu, il sait qu'il retrouvera tout.
-
-## Comportement
-- Sauvegarde automatique à chaque activation de neurone
-- Sauvegarde automatique aux moments-clés (boss vaincu, capacité débloquée, transition de phase)
-- Un seul slot de sauvegarde par profil (à valider — possible 3 slots pour multi-joueurs sur la même machine)
-- Format : JSON ou ressource Godot
-- Variables à persister :
-  - Position du dernier neurone
-  - PV max et PV courants
-  - Synapses (compte total + 10% verrouillés)
-  - Capacités débloquées
-  - Souvenirs collectés
-  - Neurones activés
-  - Neurones cachés découverts
-  - Ennemis morts dans la zone courante (réinitialisés à chaque repos)
-  - Phase courante (1, 2, 3)
-  - Progression PNJ
-  - Collectibles trouvés (lettres, pensées, fragments de portrait)
-  - Matériaux rares en inventaire
-  - Options du joueur
-
-## Sécurité
-- Sauvegarde dans 2 fichiers en parallèle (un principal, un backup)
-- En cas de corruption du principal, fallback automatique sur le backup
+- **Pas d'animations complexes**
+- **Composition par tableaux fixes + transitions**
+- Le **son fait 80% du travail émotionnel**
 
 ---
 
-# OBJECTIF 34 — Modes d'accessibilité
+## 21. Accessibilité
 
-## Ressenti joueur
-Le jeu doit être accessible à des joueurs de niveaux et de capacités différents. Personne ne doit être exclu de l'histoire à cause d'un défi mécanique.
+### Modes de difficulté
 
-## Modes de difficulté
-- **Mode Narration** : combat allégé, checkpoints plus fréquents, peu de Synapses perdues à la mort. Pour ceux qui veulent l'histoire.
-- **Mode Standard** : l'expérience telle qu'elle est conçue.
-- **Mode Épreuve** : ennemis plus durs, checkpoints plus rares, pertes accrues, aucune aide à la carte.
+- **Mode Narration** : combat allégé, checkpoints fréquents, peu de Synapses perdues à la mort. Pour ceux qui veulent l'histoire.
+- **Mode Standard** : l'expérience telle que conçue.
+- **Mode Épreuve** : ennemis plus durs, checkpoints rares, pertes accrues, aucune aide carte.
 
-## Options détaillées
-- Daltonisme : alternatives visuelles pour les codes couleur émotionnels
-- Réduction / désactivation du screen shake
-- Vitesse de texte ajustable
-- Maintien automatique de touches (pour éviter le crampage)
-- Sous-titres pour tous les sons importants
-- Contraste élevé optionnel
+### Options
 
-## Mappage des touches
+- **Daltonisme** : alternatives visuelles pour les codes couleur émotionnels
+- **Réduction / désactivation du screen shake**
+- **Vitesse de texte** ajustable
+- **Maintien automatique** de touches (pour éviter le crampage)
+- **Sous-titres** pour tous les sons importants
+- **Contraste élevé** optionnel
+
+### Mappage des touches
+
 - Reconfigurable sur clavier et manette
 - Présets prédéfinis (gaucher, mains réduites, etc.)
 
 ---
 
-# OBJECTIF 35 — Mécaniques narratives diffuses
+## 22. Tech stack Unity
 
-## Ressenti joueur
-Le jeu raconte sans le dire. Des dizaines de petits détails environnementaux que le joueur observe ou pas, mais qui s'accumulent en lui. Le sens vient à la fin, ou jamais.
+| Couche | Choix |
+|---|---|
+| **Engine** | Unity 6.3 LTS (`6000.3.16f1`) |
+| **Pipeline** | Universal 2D (URP 2D Renderer) |
+| **Langage** | C# (Visual Studio Community 2026) |
+| **Input** | New Input System (legacy `Input` fallback OK pour itérations rapides) |
+| **Caméra** | Cinemachine (à intégrer plus tard pour le feel pro) |
+| **Terrain** | Sprite Shape (sol/plafond organique) + Tilemap si besoin pour zones plus géométriques |
+| **Lumière** | Light 2D (URP 2D) + Global Light |
+| **Post-process** | Volume + Bloom (URP) |
+| **Shaders** | ShaderGraph en priorité, `.hlsl` brut si besoin spécifique (brume FBM…) |
+| **Particules** | Built-in Particle System Unity (suffit pour 2D) |
+| **Audio** | AudioMixer Unity + AudioListener spatialisé |
+| **UI** | UI Toolkit (UI moderne basée sur USS/UXML) ou uGUI classique — **à trancher**, probablement uGUI pour simplicité au début |
+| **Texte** | TextMeshPro |
+| **Animation** | Animator + Animation Clips ; tweens via DOTween si nécessaire (à installer si besoin) |
 
-## Pensées Fugaces
-- Textes ou images qui clignotent 1-2 secondes quand Zell passe à certains endroits
-- Trop rapides pour tout lire d'un coup
-- Le joueur doit revenir, s'arrêter, attendre
-- Archivées dans le Codex une fois lues (cf. Objectif 31)
+### Build
 
-## Lettres déchirées
-- Fragments de messages, pages de carnet
-- Reconstituent les relations de Veilae (famille, amis, moments du quotidien)
-- Stockées et lisibles depuis le Codex
-- Contiennent des indices "V." pour le joueur attentif
-
-## L'Ombre
-- Silhouette humanoïde de Zell (forme Phase 2) qui apparaît parfois dans le fond des couloirs
-- Juste pour observer
-- Disparaît si Zell s'approche
-- Elle seule peut la voir
-- Devient boss dans La Mémoire en Phase 2 (Le Double)
-
-## Indices "V."
-- Lettres "V" isolées disséminées dans L'Oubli et ailleurs
-- Préfiguration du vrai nom (Veilae) révélé à la fin
-- Jamais souligné par le jeu, jamais expliqué
-
-## La Peau (zone secrète, optionnelle)
-- Idée gardée en réserve, scope incertain
-- Quasi-blanche, minimaliste, sans ennemis, sans collectibles
-- Des cracks apparaissent par moments — la chambre d'hôpital, brièvement audible / visible
-- Évolution par phase : cracks rares → nombreux → omniprésents
-- Pas obligatoire, pas indispensable, pour les joueurs qui cherchent
+- **Cible primaire** : Windows IL2CPP (compilation native, plus rapide que Mono)
+- Console plus tard
 
 ---
 
-# OBJECTIF 36 — Système de Phases (1, 2, 3)
+## 23. Architecture du projet
 
-## Ressenti joueur
-Le jeu change. Pas progressivement — d'un coup. Le joueur entre dans un nouveau monde, qui est le même que celui d'avant mais altéré. La sensation doit être celle d'un retour dans un lieu familier qu'on ne reconnaît plus.
+### Structure de dossiers
 
-## Architecture
-- Phase 1, 2, 3 : variable globale dans le GameManager
-- Chaque zone a des **variantes** ou **modifications** selon la phase courante
-- Pas de duplication massive des scènes — les changements se font via swap de visuels, ennemis, sons, dialogues
-
-## Phase 1 — Qui elle était
-- Zell est une boule d'énergie
-- Zones liées à l'identité et aux souvenirs
-- Couleur dominante : doré, ambré, rose
-- PNJ : majoritairement bienveillants, mystérieux
-
-## Phase 2 — Ce qu'elle traverse
-- Zell est une forme humanoïde
-- **Toutes** les zones de Phase 1 sont modifiées (visuels plus sombres, nouveaux ennemis, dialogues qui évoluent)
-- Couleur dominante : bleus froids, gris, ajouts de rouge
-- Nouveaux ennemis, nouveaux boss
-- Le Double apparaît
-- Surcharge Émotionnelle disponible (cf. Objectif 24)
-
-## Phase 3 — Le Cœur
-- Une seule zone, accessible uniquement à ce moment
-- Course finale, intensité maximale
-- Boss final en 3 sous-phases (Arythmie, Arrêt, Renaissance)
-
-## Transitions de phase
-- Mini-cinématique courte (cf. Objectif 32)
-- État du joueur conservé, capacités conservées
-- L'aspect visuel de Zell change visiblement (boule → humanoïde, etc.)
-
-## Conséquences globales
-- La carte évolue (zones de Phase 2 et 3 deviennent visibles)
-- Les Rosas s'assombrissent
-- Le battement de cœur méta gagne en présence
-- Les sons du monde extérieur deviennent plus clairs
-
----
-
-# OBJECTIF 37 — Architecture technique générique
-
-## Principe
-- **Séparer moteur et contenu**
-- Moteur : code GDScript qui fait tourner le jeu (mouvement, combat, dégâts, IA, sauvegarde, dialogues)
-- Contenu : données dans des ressources `.tres` (ennemis, boss, souvenirs, dialogues, upgrades, zones)
-- **Ajouter du contenu ne doit jamais nécessiter d'écrire du nouveau code**
-
-## Organisation de dossiers à respecter
 ```
-res://
-├── scenes/
-│   ├── player/
-│   ├── enemies/
-│   ├── bosses/
-│   ├── world/         (1 sous-dossier par zone)
-│   ├── ui/
-│   └── vfx/
-├── scripts/
-│   ├── player/
-│   ├── enemies/
-│   ├── systems/
-│   ├── spells/
-│   └── autoload/
-├── data/              (ressources de contenu, modifiables sans toucher au code)
-│   ├── enemies/
-│   ├── bosses/
-│   ├── memories/
-│   ├── dialogues/
-│   ├── upgrades/
-│   ├── materials/
-│   └── zones/
-├── assets/
-│   ├── sprites/
-│   ├── audio/
-│   └── fonts/
-└── localization/      (pour traduction future)
+C:\Projects\zell\                  ← racine projet (HORS OneDrive)
+├── .git/                          ← versionnement
+├── .claude/                       ← skills Claude
+│   └── skills/
+│       └── lancer-unity/SKILL.md
+├── Assets/                        ← projet Unity
+│   ├── Art/                       ← sprites, textures (PNG)
+│   │   ├── Sprites/               ← placeholders (WhiteSquare, SoftCircle)
+│   │   └── prem_graph.png         ← BG legacy
+│   ├── Audio/                     ← .wav, .ogg (à venir)
+│   ├── Editor/                    ← scripts éditeur (SetupTutoStart, etc.)
+│   ├── Prefabs/                   ← préfabs réutilisables (à venir)
+│   ├── Scenes/                    ← .unity (TutoStart, SampleScene, etc.)
+│   ├── ScriptableObjects/         ← data assets (EnemyData, BossData, etc.)
+│   ├── Scripts/                   ← code de runtime
+│   │   ├── PlayerController.cs
+│   │   ├── EnergyOrbVisual.cs
+│   │   └── (à venir : Health, Hurtbox, Hitbox, etc.)
+│   ├── Settings/                  ← UniversalRP, Renderer2D, VolumeProfiles
+│   └── Shaders/                   ← .shadergraph, .hlsl (à venir)
+├── Packages/                      ← manifest UPM
+├── ProjectSettings/               ← config projet Unity
+├── Source_Art/                    ← sources Krita (HORS Unity, gitignorée pour .kra)
+│   ├── Prem graph.kra
+│   ├── Noeil.kra
+│   └── Les Rosaces.html
+├── Library/, Logs/, UserSettings/ ← local Unity, gitignorés
+├── CAHIER_DES_CHARGES.md          ← CE document
+├── Structure_et_idées.md          ← lore détaillé
+├── CLAUDE.md                      ← règles pour l'IA
+└── .gitignore
 ```
 
-## Autoloads principaux
-- **GameManager** : état global, phase, sauvegarde, variables persistantes
-- **AudioManager** : musique, sons, transitions audio, battement de cœur méta, sons du monde extérieur
-- **SceneManager** : gestion des transitions de zone
-- **DialogueManager** : lecture des dialogues, branchements
+### Backup .kra externe
 
-## Composition par composants
-- Pas d'héritage complexe
-- Composants réutilisables : `HealthComponent`, `HitboxComponent`, `HurtboxComponent`, `StateMachineComponent`, `DropComponent`
-- Un ennemi = un assemblage de composants + une ressource de données
+Les fichiers Krita sources (.kra, lourds, gitignorés) sont **doublés dans OneDrive** :
+`C:\Users\paulc\OneDrive\Backup_Zell_Sources\`
 
-## Préparer pour la traduction
-- Aucun texte en dur dans le code
-- Tous les textes dans des ressources / JSON / CSV référencés par clés
-- Permet de réécrire et de traduire sans toucher au code
+Cette copie sert de filet de sécurité cloud (OneDrive sync). Mise à jour à chaque grosse session Krita.
+
+### Pattern composants
+
+```
+Player GameObject
+├── Rigidbody2D
+├── CircleCollider2D
+├── PlayerController.cs            ← input + movement
+├── HealthComponent.cs (à créer)   ← PV, mort
+├── HurtboxComponent.cs (à créer)  ← reçoit les dégâts
+├── HitboxComponent.cs (à créer)   ← inflige les dégâts (épée)
+└── Visual (child)
+    ├── EnergyOrbVisual.cs         ← pulse + drift
+    ├── OrbOuter, OrbMid, OrbInner, OrbCore (SpriteRenderer)
+    └── OrbLight (Light 2D)
+```
+
+### Data-Oriented (ScriptableObjects)
+
+Tout ce qui est **contenu** (ennemis, boss, dialogues, items, souvenirs, zones) dans des `ScriptableObject` réutilisables, pas hardcodé.
+
+Exemples (à créer) :
+- `EnemyData.asset` (sprite, PV, dégâts, drop loot, AI pattern key)
+- `BossData.asset` (phases, attaques par phase, drops)
+- `MemoryData.asset` (souvenir : titre, contenu, source boss, lore)
+- `DialogueData.asset` (lignes de dialogue, branchements)
+
+### Autoloads (singletons Unity)
+
+À mettre en place via `DontDestroyOnLoad` ou pattern `Singleton<T>` :
+- **GameManager** : état global, phase courante, sauvegarde
+- **AudioManager** : musique, sons, transitions
+- **SceneManager** custom : chargement zones avec fade
+- **DialogueManager** : lecture dialogues, branchements
+- **InputManager** : abstraction au-dessus du New Input System
+
+### Texte / i18n
+
+**Aucun texte en dur dans le code.** Tous les textes dans des ressources / JSON / CSV référencés par clés. Permet réécriture + traduction sans toucher au code. À mettre en place dès que le premier dialogue arrive.
+
+### Conventions
+
+- **Une scène par zone** (ex : `TutoStart.unity`, `Sinus.unity`, `Memoire.unity`).
+- **Préfabs réutilisables** pour les éléments répétés (porte, neurone, coffre, plateforme cassable, pic, mur invisible).
+- **Layers Unity** :
+  - 0 : Default
+  - 8 : Player
+  - 9 : Ground
+  - 10 : Enemy
+  - 11 : EnemyHurtbox
+  - 12 : PlayerHitbox
+  - 13 : InteractZone
+  - (à finaliser quand on en a besoin)
+- **Tags** : `Player`, `Enemy`, `Boss`, `Interactable`, `Killzone`, `Checkpoint`.
 
 ---
 
-*Pour les détails narratifs (zones spécifiques, boss spécifiques, dialogues exemples, lore), voir `Structure_et_idées.md`.*
+## 24. Workflow de production
+
+### Cycle d'itération
+
+1. **Spec** : design dans le CDC (ce doc) — qu'est-ce qu'on fait, pourquoi
+2. **Blockout** : implémentation rapide dans Unity avec primitives (rectangles, cercles) — valider la mécanique
+3. **Iter** : tester en Play Mode, ajuster les valeurs
+4. **Art** : remplacer les placeholders par les vrais assets Krita
+5. **Polish** : effets, lights, particules, audio
+6. **Verif** : skill `lancer-unity` pour compile check + capture
+7. **Commit + push** : auto après chaque modif validée
+
+### Workflow Krita → Unity
+
+Pour chaque asset :
+1. **Krita** : dessiner sur calques séparés (un canvas 1920×1080 ou plus, selon)
+2. **Export** : `File → Export advanced` ou `Save current layer as image`, format PNG transparent
+3. **Import Unity** : déposer dans `Assets/Art/` (sous-dossier approprié)
+4. **Réglages d'import** : Texture Type = Sprite (2D and UI), Pixels Per Unit = 100 (par défaut), Filter Mode = Bilinear, Compression = High Quality (ou aucune si on veut zéro perte)
+5. **Tileable ?** Si oui, dans Krita activer Wrap Around Mode (W) pendant le dessin, et dans Unity `Wrap Mode = Repeat`.
+
+### Workflow Sprite Shape (pour sol/plafond organique)
+
+1. Dans Krita, dessiner :
+   - **`edge_top.png`** : bande horizontale (2048×512) avec cils noirs en haut + chair en bas. **Tileable horizontal** (mode Wrap dans Krita).
+   - **`fill_chair.png`** : carré de chair pure (1024×1024). **Tileable h+v**.
+2. Dans Unity :
+   - Créer un **Sprite Shape Profile** asset
+   - Assigner `edge_top` à l'angle "horizontal up", `fill_chair` au "fill"
+   - Sur la scène, créer un **Sprite Shape Controller** GameObject
+   - Tracer la courbe avec l'outil plume (clics, points de contrôle)
+   - Le terrain organique se génère automatiquement
+
+### Versionnage git
+
+- **`master`** : branche principale, projet Unity actif
+- **`legacy_godot`** : archive de l'ancienne version Godot (gardée en référence)
+- **`origin`** : `https://github.com/Ito-x/Zell.git`
+
+**Auto-commit + push** après chaque modif validée (cf. règle dans CLAUDE.md).
+
+### Skill Claude `lancer-unity`
+
+Trois usages :
+1. **Compile check** headless (rapide, ~30 s) → valide les scripts C#
+2. **Capture screen** d'une scène via script Editor `SceneCapture.cs` (à créer au 1er besoin, template dans le skill)
+3. **Lancement interactif** de Unity
+
+Détails dans `.claude/skills/lancer-unity/SKILL.md`.
+
+### Règles anti-pièges (cf. CLAUDE.md)
+
+- **NE JAMAIS** mettre le projet dans OneDrive (sync conflicts, lock files). Le projet vit dans `C:\Projects\zell\`.
+- Les `.kra` sont gitignorés (lourds). Backupés à part dans OneDrive.
+- Library/, Temp/, Logs/, UserSettings/, *.slnx → gitignorés.
+- Toujours `Universal 2D` à la création de nouveau projet Unity.
+
+---
+
+## 25. État actuel du projet
+
+**Date de cette refonte : mai 2026.**
+
+### Ce qui est fait
+
+| Élément | Statut |
+|---|---|
+| Bascule Godot → Unity 2D URP | ✅ Faite |
+| Projet Unity créé (`Universal 2D`, 6.3 LTS) | ✅ |
+| Projet déplacé hors OneDrive (`C:\Projects\zell\`) | ✅ |
+| Repo git restructuré, branche `legacy_godot` archive | ✅ |
+| Backup `.kra` dans OneDrive | ✅ |
+| Skill Claude `lancer-unity` (compile check OK testé) | ✅ |
+| Scène `TutoStart.unity` blockout (3 plateformes + sol bas + porte placeholder + murs) | ✅ |
+| Player boule d'énergie multi-couches (placeholder) | ✅ |
+| `PlayerController.cs` : mouvement Q/D + Espace, raycast ground | ✅ |
+| `EnergyOrbVisual.cs` : pulse + drift sinusoidal | ✅ |
+| `SetupTutoStart.cs` (Editor) : génère la scène en code | ✅ |
+| Sprites placeholder auto-générés (WhiteSquare, SoftCircle) | ✅ |
+| Light 2D globale + Light 2D ponctuelle sur Zell | ✅ |
+| Compile clean, scene se charge, scripts compilent | ✅ |
+
+### Ce qui n'est pas encore fait (priorité courante)
+
+| Élément | Priorité | Notes |
+|---|---|---|
+| Tester le blockout en Play Mode | 🔴 **À faire en premier** | Paul doit valider movement, saut, distances, caméra |
+| Cinemachine pour la caméra | 🟠 | Follow + damping, donne le feel pro |
+| Cubes obstacles sur les plateformes (cf. schéma photo) | 🟠 | Petits blocs à grimper, donne du relief |
+| Plateforme cassable | 🟠 | Mécanique scriptée (trigger → destroy after delay) |
+| Pics mortels | 🟠 | Killzone trigger → respawn |
+| Mur invisible révélable par Impulsion | 🟡 | Plus tard, quand on aura Impulsion |
+| Coffres avec récompenses | 🟡 | Préfab `Chest` + ouverture |
+| Porte interactive + pickup épée | 🟡 | Interaction E + check possession épée |
+| Sprite Shape pour sol/plafond organique | 🟡 | Quand on aura les textures Krita |
+| Backgrounds parallaxes Krita | 🟡 | Quand Paul aura dessiné |
+| HUD (flammèches HP, jauge Coup de Jus) | 🟡 | Plus tard, après gameplay validé |
+| Ennemis tuto (Grosse Boule, Aveugles, Filaments) | 🟢 | Plus tard |
+| Boss Chevalier Cristallin | 🟢 | Plus tard |
+| Sinus + zones Phase 1 | 🟢 | Phase production longue |
+
+🔴 Bloquant / urgent — 🟠 Prochain sprint — 🟡 Sprint suivant — 🟢 Plus tard
+
+### Boule d'énergie placeholder vs final
+
+L'implémentation actuelle (4 couches SpriteRenderer + Light 2D) est **fonctionnelle pour itérer le gameplay**. Le rendu final (boule plus belle, animations de Refroidissement / Impulsion / Dash) viendra après validation du movement.
+
+### Décisions tranchées récemment (mai 2026)
+
+| Date | Décision |
+|---|---|
+| mai 2026 | Switch Godot → Unity 2D URP |
+| mai 2026 | Pas de bras / jambes pour la boule d'énergie en Phase 1 (juste la boule) |
+| mai 2026 | Mouvement AZERTY Q/D (pas A/D) |
+| mai 2026 | Projet hors OneDrive obligatoire (`C:\Projects\zell\`) |
+| mai 2026 | HP affichés en **flammèches qui tournent en cercle dans le HUD** (séparé du player, plus simple) |
+| mai 2026 | Charges d'Impulsion = **chiffres clignotants au milieu de Zell** style HxH Nen |
+| mai 2026 | Synapses **pas en compteur permanent**, apparaissent à la récolte |
+| mai 2026 | Codex tendance **in-world dans Salle Codex de la Mémoire** |
+| mai 2026 | Carte = **réseau neuronal**, gros couloirs post-tuto |
+| mai 2026 | Sprite Shape pour sol/plafond organique (pas tilemap) |
+
+---
+
+## 26. Roadmap immédiate
+
+### Sprint actuel — Valider le blockout
+
+1. **Paul ouvre Unity sur `TutoStart.unity`, appuie Play**
+2. Valide : Q/D bouge la boule, Espace saute, trou gauche infranchissable, trou droit franchissable via stepping stones, caméra suit
+3. Si OK → on continue. Si bugs → on debug.
+
+### Sprint suivant — Détails gameplay du tuto
+
+1. **Cinemachine** pour la caméra (smooth follow + damping + lookahead)
+2. **Cubes obstacles** sur les plateformes (jumping puzzles intra-plateforme)
+3. **Pics mortels** + killzone + respawn au spawn (système de checkpoint basique)
+4. **Plateforme cassable** : préfab `BreakablePlatform`, trigger sur step, destroy after delay + state global "déjà cassée"
+
+### Sprint suivant — Mécaniques avancées du tuto
+
+1. **Porte interactive** : trigger E + check possession épée → ouvre
+2. **Épée pickup** sur la porte : visuel + interaction E → ajoute épée à l'inventaire + active combat
+3. **Coffres** : préfab `Chest` + ouverture animation + drop Synapses
+4. **Mur invisible révélable** : sprite avec collider + script `RevealableWall` qui devient visible pendant 2-3s quand Impulsion frappe
+
+### Sprint art — Intégration premier asset Krita
+
+1. Paul dessine premier asset : **`edge_top.png`** + **`fill_chair.png`** pour Sprite Shape
+2. Setup Sprite Shape Profile dans Unity
+3. Remplacer les blocs gris du blockout par Sprite Shape
+4. Premier rendu artistique de la zone tuto
+
+### Sprint art — Backgrounds parallaxe
+
+1. Paul dessine `bg_ciel`, `bg_lointain`, `bg_proche` (4096×1080 ou approchant)
+2. Setup parallaxe Unity (script `Parallax2DLayer` à créer)
+3. Volume Bloom URP pour le glow ambiant
+
+### Sprint ennemis — Premier mob
+
+1. Architecture composants : `HealthComponent`, `HurtboxComponent`, `HitboxComponent`, `StateMachineComponent`
+2. Premier ennemi : **La Grosse Boule** (mob lent, voit, sourd, contré par Refroidissement)
+3. Préfab + ScriptableObject `EnemyData`
+
+### Sprint combat — Épée + Coup de Jus
+
+1. **Épée** : préfab arme avec `HitboxComponent`, animation swing, slash visuel arc blanc-or
+2. **Jauge Coup de Jus** : remplissage au hit, déclenchement à pleine, désarmement du mob
+3. HUD jauge dans la couleur de Zell
+
+### Sprint boss — Chevalier Cristallin
+
+1. Arène boss, scène dédiée
+2. Mise en scène (entrée, Excalibur, trône, retrait, duel)
+3. `BossPhaseManager`, 1-2 phases pour ce 1er boss
+4. Drop = épée définitive (`PlayerInventory.UnlockSword()`)
+
+### Suivant — Sinus + Phase 1 zones
+
+Plus loin dans la prod. On verra quand le tuto est complet et jouable.
+
+---
+
+## 27. Points reportés
+
+Ces points ne bloquent pas la production. Ils seront tranchés plus tard, ou laissés ouverts pour évoluer.
+
+### Visuel
+
+- **Pieds / bâtons / juste flotte** pour Zell après le 1er fragment ? → pour l'instant juste flotte
+- **Symbole de Synapse** : volute, ψ, autre ?
+- **Style HUD précis** : maquette à designer avec Claude
+- **Codex in-menu ou exclusivement in-world** ?
+- **Salle des Souvenirs : layout exact**
+- **Le Mémoire = composé comme un réseau de neurones** — concrètement à dessiner
+
+### Mécaniques
+
+- **Système de carte détaillé** (interaction, marqueurs, zoom, etc.)
+- **Système de menu / codex détaillé**
+- **Mécanique de nage** (Tristesse Phase 2)
+- **Sort de La Peau** (idée gardée, scope incertain)
+- **Forme exacte de L'Oubli**
+- **Sous-zones de La Mémoire** (bons/mauvais souvenirs/archives)
+- **Codex : action sur mob ou nombre tués ?** (5 ? 10 ?)
+- **Quêtes secondaires des PNJ**
+- **Réactions des PNJ entre phases**
+
+### Audio
+
+- **Composition originale** (libre de droits acceptable pour le proto)
+- **Voix abstraites par PNJ** : à designer/synthétiser
+
+### Tech
+
+- **UI Toolkit ou uGUI ?** → probablement uGUI pour simplicité, à confirmer
+- **Cinemachine** : intégration et présets
+- **DOTween** : à installer si on a besoin de tweens fluides
+- **Système de localisation** : choisir entre `Unity Localization Package`, JSON maison, ou autre
+- **Slots de sauvegarde** : 1 vs 3 multi-joueurs
+
+### Lore
+
+- **Noms définitifs** de certaines zones secondaires (Câbles, Tri, Paisible…)
+- **Bestiaire détaillé** par zone Phase 1 et 2
+- **Mécanique de retour à la Salle des Souvenirs** : forcée à un moment, ou libre ?
+
+---
+
+*Pour les détails narratifs (zones spécifiques, boss spécifiques, dialogues exemples, voix des PNJ), voir `Structure_et_idées.md`.*
+
+*Pour les règles à respecter par Claude lors du dev, voir `CLAUDE.md`.*
+
+*Pour la chaine de production technique, voir `.claude/skills/lancer-unity/SKILL.md`.*

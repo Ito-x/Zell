@@ -6,7 +6,9 @@
 
 ## Le jeu
 
-**Zell** est un metroidvania 2D onirique sur Godot 4. Le joueur explore l'intérieur du cerveau d'une jeune femme dans le coma. Style dessin animé flou, féerique, lumière et particules omniprésentes, narration entièrement environnementale. Tout est ressenti, jamais expliqué. Prévu pour PC et console. Graphismes faits à la main, avec aide IA.
+**Zell** est un metroidvania 2D onirique développé sur **Unity 2D URP** (Unity 6.3 LTS). Le joueur explore l'intérieur du cerveau d'une jeune femme dans le coma. Style dessin animé flou, féerique, lumière et particules omniprésentes, narration entièrement environnementale. Tout est ressenti, jamais expliqué. Prévu pour PC d'abord, console plus tard. Graphismes faits à la main (Krita), avec aide IA.
+
+> *Document narratif. Pour les spécifications techniques (mécaniques, contrôles, architecture Unity, état du projet, roadmap), voir `CAHIER_DES_CHARGES.md`.*
 
 ---
 
@@ -686,7 +688,7 @@ Dans la chambre, **plusieurs personnes viennent au fil des jours**. Ils parlent 
 - **Inspirations** : Hollow Knight, Ori and the Blind Forest
 
 ### Méthode de production
-Graphismes **faits à la main**, avec aide IA pour des passes initiales (exploration de directions, génération de base). Retouche manuelle obligatoire avant import dans Godot. Le workflow exact reste à formaliser au fil du temps.
+Graphismes **faits à la main** dans Krita, avec aide IA pour des passes initiales (exploration de directions, génération de base). Retouche manuelle obligatoire avant import dans Unity. Le workflow exact est documenté dans `CAHIER_DES_CHARGES.md` (section Workflow de production).
 
 ### Cohérence
 Chaque zone a son sous-univers visuel. Les ennemis d'une zone partagent un langage visuel commun. L'UI est minimale, intégrée au monde quand possible.
