@@ -64,41 +64,47 @@ public static class SetupTutoStart
         // toute petite dans ce grand monde.
         var world = new GameObject("World");
 
-        // PLAFOND (×2)
-        CreateBlock(world.transform, "Plafond", new Vector2(0, 18), new Vector2(160, 4),
+        // SpawnPlatform encore agrandie ×4 de chaque côté (half-width 12 → 48,
+        // donc total 96 vs 24 avant). Les voisins (mini-plats, sols latéraux,
+        // murs, plafond, sol bas) sont décalés vers l'extérieur de 36 unités
+        // pour garder les mêmes écarts proportionnels → pas d'overlap, map
+        // cohérente, encore plus de "gros couloir UwU".
+
+        // PLAFOND — largeur élargie à 240 pour couvrir toute la map étendue
+        CreateBlock(world.transform, "Plafond", new Vector2(0, 18), new Vector2(240, 4),
             new Color(0.18f, 0.14f, 0.18f), squareSprite, withCollider: true);
 
-        // SOL HAUT (×2) — surface walkable à y=0 (= -2 + half_h 2)
-        CreateBlock(world.transform, "SolGauche", new Vector2(-50, -2), new Vector2(28, 4),
+        // SOL HAUT — surface walkable à y=0
+        // SpawnPlatform : x ∈ [-48, 48] (96 wide)
+        // Side platforms : décalées de +36 / -36 vs avant (50→86)
+        CreateBlock(world.transform, "SolGauche", new Vector2(-86, -2), new Vector2(28, 4),
             new Color(0.40f, 0.32f, 0.36f), squareSprite, withCollider: true);
-        CreateBlock(world.transform, "SolSpawn", new Vector2(0, -2), new Vector2(24, 4),
+        CreateBlock(world.transform, "SolSpawn", new Vector2(0, -2), new Vector2(96, 4),
             new Color(0.55f, 0.45f, 0.35f), squareSprite, withCollider: true);
-        CreateBlock(world.transform, "SolDroite", new Vector2(50, -2), new Vector2(28, 4),
+        CreateBlock(world.transform, "SolDroite", new Vector2(86, -2), new Vector2(28, 4),
             new Color(0.40f, 0.32f, 0.36f), squareSprite, withCollider: true);
 
-        // STEPPING STONES (×2)
-        CreateBlock(world.transform, "MiniPlat1", new Vector2(19f, -1), new Vector2(4.4f, 2f),
+        // STEPPING STONES — décalées vers la droite de 36 unités (19→55, 26→62, 33→69)
+        CreateBlock(world.transform, "MiniPlat1", new Vector2(55f, -1), new Vector2(4.4f, 2f),
             new Color(0.50f, 0.40f, 0.40f), squareSprite, withCollider: true);
-        CreateBlock(world.transform, "MiniPlat2", new Vector2(26f, -1), new Vector2(4.4f, 2f),
+        CreateBlock(world.transform, "MiniPlat2", new Vector2(62f, -1), new Vector2(4.4f, 2f),
             new Color(0.50f, 0.40f, 0.40f), squareSprite, withCollider: true);
-        CreateBlock(world.transform, "MiniPlat3", new Vector2(33f, -1), new Vector2(4.4f, 2f),
+        CreateBlock(world.transform, "MiniPlat3", new Vector2(69f, -1), new Vector2(4.4f, 2f),
             new Color(0.50f, 0.40f, 0.40f), squareSprite, withCollider: true);
 
-        // SOL BAS — surface walkable à y=-80 (vs y=-16 avant). Vide ×5 sous sol haut
-        // pour pouvoir ajouter plus tard des plateformes intermédiaires descendantes.
-        CreateBlock(world.transform, "SolBas", new Vector2(0, -84), new Vector2(160, 8),
+        // SOL BAS — surface walkable à y=-80 (gros vide ×5 sous sol haut)
+        // Largeur élargie à 240 pour couvrir toute la map
+        CreateBlock(world.transform, "SolBas", new Vector2(0, -84), new Vector2(240, 8),
             new Color(0.28f, 0.22f, 0.26f), squareSprite, withCollider: true);
 
-        // PORTE — gigantesque, exceptionnelle. Centrée sur sol bas, taille (16 × 24)
-        // sprite seul (pas de collider) → fait partie du background, interaction
-        // sans hitbox à venir.
+        // PORTE — gigantesque, sprite seul (pas de collider)
         CreateBlock(world.transform, "Porte", new Vector2(0, -68), new Vector2(16, 24),
             new Color(0.95f, 0.78f, 0.32f), squareSprite, withCollider: false);
 
-        // MURS LATÉRAUX — couvrent tout le vide vertical (plafond → sous sol bas)
-        CreateBlock(world.transform, "MurGauche", new Vector2(-80, -32), new Vector2(4, 120),
+        // MURS LATÉRAUX — décalés à x=±110 pour s'éloigner du bord du sol étendu
+        CreateBlock(world.transform, "MurGauche", new Vector2(-110, -32), new Vector2(4, 120),
             new Color(0.20f, 0.16f, 0.18f), squareSprite, withCollider: true);
-        CreateBlock(world.transform, "MurDroit", new Vector2(80, -32), new Vector2(4, 120),
+        CreateBlock(world.transform, "MurDroit", new Vector2(110, -32), new Vector2(4, 120),
             new Color(0.20f, 0.16f, 0.18f), squareSprite, withCollider: true);
 
         // === Player ===
