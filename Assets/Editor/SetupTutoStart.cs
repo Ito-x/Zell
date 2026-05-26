@@ -7,8 +7,8 @@ using UnityEngine.Rendering.Universal;
 /// <summary>
 /// Génère la scène TutoStart en code : blockout du spawn de la zone Les Yeux.
 /// 3 plateformes (LEFT inaccessible / SPAWN center / RIGHT via stepping stones),
-/// plafond, sol bas avec porte, murs latéraux, Player boule d'énergie, caméra,
-/// Light 2D globale.
+/// plafond, sol bas avec porte (visuel seul, sans collider), murs latéraux,
+/// Player boule d'énergie warm (ambre/or), Light 2D, traînée derrière la boule.
 ///
 /// Usage :
 ///   - Menu Unity : ZELL → Setup TutoStart Scene
@@ -19,6 +19,10 @@ public static class SetupTutoStart
     private const string SceneAssetPath = "Assets/Scenes/TutoStart.unity";
     private const string SpriteFolder = "Assets/Art/Sprites";
 
+    // Matériau partagé friction=0 — appliqué à TOUS les colliders pour
+    // éviter le sticking aux murs en saut.
+    private static PhysicsMaterial2D _noFriction;
+
     [MenuItem("ZELL/Setup TutoStart Scene")]
     public static void Run()
     {
@@ -26,71 +30,83 @@ public static class SetupTutoStart
         EnsureFolder("Assets/Art");
         EnsureFolder(SpriteFolder);
 
-        // Pré-générer les sprites carré + cercle si absents
         var squareSprite = GetOrCreateSquareSprite();
         var circleSprite = GetOrCreateCircleSprite();
 
-        // Nouvelle scène vide
+        // Matériau partagé sans friction
+        _noFriction = new PhysicsMaterial2D("NoFriction") { friction = 0f, bounciness = 0f };
+
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
-        // === Caméra (placeholder, sera reparentée sur le Player) ===
+        // === Caméra (sera reparentée sur le Player) ===
         var camGO = new GameObject("Main Camera");
         camGO.tag = "MainCamera";
         var cam = camGO.AddComponent<Camera>();
         cam.orthographic = true;
         cam.orthographicSize = 8f;
         cam.clearFlags = CameraClearFlags.SolidColor;
-        cam.backgroundColor = new Color(0.05f, 0.06f, 0.10f);
+        cam.backgroundColor = new Color(0.06f, 0.04f, 0.08f); // sombre legerement violace
 
-        // === Light 2D globale (ambiante douce) ===
+        // === Light 2D globale (ambiance chaude douce) ===
         var lightGO = new GameObject("Global Light 2D");
         var gLight = lightGO.AddComponent<Light2D>();
         gLight.lightType = Light2D.LightType.Global;
-        gLight.intensity = 0.9f;
-        gLight.color = new Color(0.95f, 0.95f, 1f);
+        gLight.intensity = 0.85f;
+        gLight.color = new Color(1f, 0.92f, 0.85f); // chaud creme
 
         // === World container ===
         var world = new GameObject("World");
 
-        // PLAFOND (toute la largeur, haut de la map)
-        CreateBlock(world.transform, "Plafond", new Vector2(0, 9), new Vector2(80, 2), new Color(0.18f, 0.18f, 0.22f), squareSprite);
+        // PLAFOND
+        CreateBlock(world.transform, "Plafond", new Vector2(0, 9), new Vector2(80, 2),
+            new Color(0.18f, 0.14f, 0.18f), squareSprite, withCollider: true);
 
-        // SOL HAUT (3 plateformes)
-        CreateBlock(world.transform, "SolGauche", new Vector2(-25, -1), new Vector2(14, 2), new Color(0.45f, 0.45f, 0.50f), squareSprite);
-        CreateBlock(world.transform, "SolSpawn", new Vector2(0, -1), new Vector2(12, 2), new Color(0.60f, 0.55f, 0.45f), squareSprite);
-        CreateBlock(world.transform, "SolDroite", new Vector2(25, -1), new Vector2(14, 2), new Color(0.45f, 0.45f, 0.50f), squareSprite);
+        // SOL HAUT
+        CreateBlock(world.transform, "SolGauche", new Vector2(-25, -1), new Vector2(14, 2),
+            new Color(0.40f, 0.32f, 0.36f), squareSprite, withCollider: true);
+        CreateBlock(world.transform, "SolSpawn", new Vector2(0, -1), new Vector2(12, 2),
+            new Color(0.55f, 0.45f, 0.35f), squareSprite, withCollider: true);
+        CreateBlock(world.transform, "SolDroite", new Vector2(25, -1), new Vector2(14, 2),
+            new Color(0.40f, 0.32f, 0.36f), squareSprite, withCollider: true);
 
-        // STEPPING STONES (uniquement à droite — gauche infranchissable)
-        CreateBlock(world.transform, "MiniPlat1", new Vector2(9.5f, -0.5f), new Vector2(2.2f, 1f), new Color(0.55f, 0.55f, 0.60f), squareSprite);
-        CreateBlock(world.transform, "MiniPlat2", new Vector2(13f, -0.5f), new Vector2(2.2f, 1f), new Color(0.55f, 0.55f, 0.60f), squareSprite);
-        CreateBlock(world.transform, "MiniPlat3", new Vector2(16.5f, -0.5f), new Vector2(2.2f, 1f), new Color(0.55f, 0.55f, 0.60f), squareSprite);
+        // STEPPING STONES
+        CreateBlock(world.transform, "MiniPlat1", new Vector2(9.5f, -0.5f), new Vector2(2.2f, 1f),
+            new Color(0.50f, 0.40f, 0.40f), squareSprite, withCollider: true);
+        CreateBlock(world.transform, "MiniPlat2", new Vector2(13f, -0.5f), new Vector2(2.2f, 1f),
+            new Color(0.50f, 0.40f, 0.40f), squareSprite, withCollider: true);
+        CreateBlock(world.transform, "MiniPlat3", new Vector2(16.5f, -0.5f), new Vector2(2.2f, 1f),
+            new Color(0.50f, 0.40f, 0.40f), squareSprite, withCollider: true);
 
-        // SOL BAS (large, accessible en tombant dans les trous)
-        CreateBlock(world.transform, "SolBas", new Vector2(0, -10), new Vector2(80, 4), new Color(0.30f, 0.30f, 0.35f), squareSprite);
+        // SOL BAS
+        CreateBlock(world.transform, "SolBas", new Vector2(0, -10), new Vector2(80, 4),
+            new Color(0.28f, 0.22f, 0.26f), squareSprite, withCollider: true);
 
-        // PORTE (visuel doré, posée sur le sol bas, sans interaction pour l'instant)
-        CreateBlock(world.transform, "Porte", new Vector2(0, -6.5f), new Vector2(2, 3), new Color(0.95f, 0.78f, 0.32f), squareSprite);
+        // PORTE — VISUEL SEULEMENT, PAS DE COLLIDER (fait partie du background)
+        CreateBlock(world.transform, "Porte", new Vector2(0, -6.5f), new Vector2(2, 3),
+            new Color(0.95f, 0.78f, 0.32f), squareSprite, withCollider: false);
 
-        // MURS LATÉRAUX (containment — empêchent Zell de sortir de la map)
-        CreateBlock(world.transform, "MurGauche", new Vector2(-40, 0), new Vector2(2, 24), new Color(0.25f, 0.20f, 0.20f), squareSprite);
-        CreateBlock(world.transform, "MurDroit", new Vector2(40, 0), new Vector2(2, 24), new Color(0.25f, 0.20f, 0.20f), squareSprite);
+        // MURS LATÉRAUX
+        CreateBlock(world.transform, "MurGauche", new Vector2(-40, 0), new Vector2(2, 24),
+            new Color(0.20f, 0.16f, 0.18f), squareSprite, withCollider: true);
+        CreateBlock(world.transform, "MurDroit", new Vector2(40, 0), new Vector2(2, 24),
+            new Color(0.20f, 0.16f, 0.18f), squareSprite, withCollider: true);
 
         // === Player ===
         var player = CreatePlayer(circleSprite);
 
-        // Reparent caméra sur le Player et offset léger
+        // Caméra enfant du player avec offset léger
         camGO.transform.SetParent(player.transform, worldPositionStays: false);
         camGO.transform.localPosition = new Vector3(0, 1, -10);
 
-        // Sauvegarde de la scène
         EditorSceneManager.SaveScene(scene, SceneAssetPath);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("[SetupTutoStart] Scene cree : " + SceneAssetPath);
+        Debug.Log("[SetupTutoStart] Scene generee : " + SceneAssetPath);
     }
 
-    // ── Création d'un bloc statique (sol/mur/plafond) ───────────────────
-    private static GameObject CreateBlock(Transform parent, string name, Vector2 pos, Vector2 size, Color color, Sprite sprite)
+    // ── Création d'un bloc statique ───────────────────────────────────
+    private static GameObject CreateBlock(Transform parent, string name, Vector2 pos, Vector2 size,
+                                          Color color, Sprite sprite, bool withCollider)
     {
         var go = new GameObject(name);
         go.transform.SetParent(parent, false);
@@ -103,13 +119,17 @@ public static class SetupTutoStart
         sr.size = size;
         sr.sortingOrder = -1;
 
-        var col = go.AddComponent<BoxCollider2D>();
-        col.size = size;
+        if (withCollider)
+        {
+            var col = go.AddComponent<BoxCollider2D>();
+            col.size = size;
+            col.sharedMaterial = _noFriction;
+        }
 
         return go;
     }
 
-    // ── Création du Player boule d'énergie ──────────────────────────────
+    // ── Player boule d'énergie warm (ambre/or) ────────────────────────
     private static GameObject CreatePlayer(Sprite circle)
     {
         var player = new GameObject("Player");
@@ -124,28 +144,33 @@ public static class SetupTutoStart
 
         var col = player.AddComponent<CircleCollider2D>();
         col.radius = 0.45f;
+        col.sharedMaterial = _noFriction;
 
         player.AddComponent<PlayerController>();
 
-        // Visual : conteneur + 4 couches concentriques (du plus large/dim au cœur)
+        // === Visual : 4 couches warm + Light 2D + TrailRenderer ===
         var visual = new GameObject("Visual");
         visual.transform.SetParent(player.transform, false);
         visual.AddComponent<EnergyOrbVisual>();
 
-        CreateOrbLayer(visual.transform, "OrbOuter", 3.0f, new Color(0.30f, 0.50f, 1.00f, 0.15f), 0, circle);
-        CreateOrbLayer(visual.transform, "OrbMid", 2.0f, new Color(0.45f, 0.75f, 1.00f, 0.30f), 1, circle);
-        CreateOrbLayer(visual.transform, "OrbInner", 1.1f, new Color(0.80f, 0.95f, 1.00f, 0.70f), 2, circle);
-        CreateOrbLayer(visual.transform, "OrbCore", 0.45f, new Color(1.00f, 1.00f, 1.00f, 1.00f), 3, circle);
+        // Couches concentriques chaudes (orange → ambre → or → blanc-chaud)
+        CreateOrbLayer(visual.transform, "OrbOuter", 3.0f, new Color(1.00f, 0.45f, 0.15f, 0.14f), 0, circle);
+        CreateOrbLayer(visual.transform, "OrbMid",   2.0f, new Color(1.00f, 0.65f, 0.25f, 0.30f), 1, circle);
+        CreateOrbLayer(visual.transform, "OrbInner", 1.1f, new Color(1.00f, 0.85f, 0.45f, 0.75f), 2, circle);
+        CreateOrbLayer(visual.transform, "OrbCore",  0.45f, new Color(1.00f, 0.96f, 0.85f, 1.00f), 3, circle);
 
-        // Light 2D ponctuelle (le glow réel autour de la boule)
+        // Light 2D ponctuelle warm
         var lightGO = new GameObject("OrbLight");
         lightGO.transform.SetParent(visual.transform, false);
         var pl = lightGO.AddComponent<Light2D>();
         pl.lightType = Light2D.LightType.Point;
-        pl.color = new Color(0.6f, 0.85f, 1.0f);
+        pl.color = new Color(1.0f, 0.75f, 0.40f);
         pl.intensity = 2.5f;
         pl.pointLightOuterRadius = 5f;
         pl.pointLightInnerRadius = 0.6f;
+
+        // === Traînée subtile derrière la boule ===
+        AddTrail(player);
 
         return player;
     }
@@ -164,7 +189,41 @@ public static class SetupTutoStart
         return go;
     }
 
-    // ── Génération paresseuse des sprites placeholder (carré + cercle doux) ──
+    private static void AddTrail(GameObject player)
+    {
+        var trailGO = new GameObject("Trail");
+        trailGO.transform.SetParent(player.transform, false);
+        trailGO.transform.localPosition = Vector3.zero;
+
+        var trail = trailGO.AddComponent<TrailRenderer>();
+        trail.time = 0.30f;
+        trail.startWidth = 0.55f;
+        trail.endWidth = 0.05f;
+        trail.minVertexDistance = 0.05f;
+        trail.sortingOrder = -1; // derriere les couches visuelles
+
+        // Matériau additif basique via le shader Sprites/Default
+        // (assez bon pour un proto, on raffinera plus tard avec un shader perso)
+        trail.material = new Material(Shader.Find("Sprites/Default"));
+
+        // Gradient chaud qui fade en transparence
+        var grad = new Gradient();
+        grad.SetKeys(
+            new GradientColorKey[]
+            {
+                new GradientColorKey(new Color(1f, 0.7f, 0.25f), 0f),
+                new GradientColorKey(new Color(1f, 0.4f, 0.10f), 1f)
+            },
+            new GradientAlphaKey[]
+            {
+                new GradientAlphaKey(0.55f, 0f),
+                new GradientAlphaKey(0f, 1f)
+            }
+        );
+        trail.colorGradient = grad;
+    }
+
+    // ── Sprites placeholder ──────────────────────────────────────────
     private static Sprite GetOrCreateSquareSprite()
     {
         var path = SpriteFolder + "/WhiteSquare.png";
