@@ -55,40 +55,50 @@ public static class SetupTutoStart
         gLight.color = new Color(1f, 0.92f, 0.85f); // chaud creme
 
         // === World container ===
+        // Toutes les plateformes / murs / plafond × 2 par rapport au layout initial.
+        // EXCEPTIONS :
+        //  - Sol bas : × 5 plus loin verticalement (gros vide pour placer plus tard
+        //    des plateformes descendantes vers la droite)
+        //  - Porte : taille gigantesque, exceptionnellement présente
+        // Player NON inclus dans World → garde sa taille de référence, Zell paraît
+        // toute petite dans ce grand monde.
         var world = new GameObject("World");
 
-        // PLAFOND
-        CreateBlock(world.transform, "Plafond", new Vector2(0, 9), new Vector2(80, 2),
+        // PLAFOND (×2)
+        CreateBlock(world.transform, "Plafond", new Vector2(0, 18), new Vector2(160, 4),
             new Color(0.18f, 0.14f, 0.18f), squareSprite, withCollider: true);
 
-        // SOL HAUT
-        CreateBlock(world.transform, "SolGauche", new Vector2(-25, -1), new Vector2(14, 2),
+        // SOL HAUT (×2) — surface walkable à y=0 (= -2 + half_h 2)
+        CreateBlock(world.transform, "SolGauche", new Vector2(-50, -2), new Vector2(28, 4),
             new Color(0.40f, 0.32f, 0.36f), squareSprite, withCollider: true);
-        CreateBlock(world.transform, "SolSpawn", new Vector2(0, -1), new Vector2(12, 2),
+        CreateBlock(world.transform, "SolSpawn", new Vector2(0, -2), new Vector2(24, 4),
             new Color(0.55f, 0.45f, 0.35f), squareSprite, withCollider: true);
-        CreateBlock(world.transform, "SolDroite", new Vector2(25, -1), new Vector2(14, 2),
+        CreateBlock(world.transform, "SolDroite", new Vector2(50, -2), new Vector2(28, 4),
             new Color(0.40f, 0.32f, 0.36f), squareSprite, withCollider: true);
 
-        // STEPPING STONES
-        CreateBlock(world.transform, "MiniPlat1", new Vector2(9.5f, -0.5f), new Vector2(2.2f, 1f),
+        // STEPPING STONES (×2)
+        CreateBlock(world.transform, "MiniPlat1", new Vector2(19f, -1), new Vector2(4.4f, 2f),
             new Color(0.50f, 0.40f, 0.40f), squareSprite, withCollider: true);
-        CreateBlock(world.transform, "MiniPlat2", new Vector2(13f, -0.5f), new Vector2(2.2f, 1f),
+        CreateBlock(world.transform, "MiniPlat2", new Vector2(26f, -1), new Vector2(4.4f, 2f),
             new Color(0.50f, 0.40f, 0.40f), squareSprite, withCollider: true);
-        CreateBlock(world.transform, "MiniPlat3", new Vector2(16.5f, -0.5f), new Vector2(2.2f, 1f),
+        CreateBlock(world.transform, "MiniPlat3", new Vector2(33f, -1), new Vector2(4.4f, 2f),
             new Color(0.50f, 0.40f, 0.40f), squareSprite, withCollider: true);
 
-        // SOL BAS
-        CreateBlock(world.transform, "SolBas", new Vector2(0, -10), new Vector2(80, 4),
+        // SOL BAS — surface walkable à y=-80 (vs y=-16 avant). Vide ×5 sous sol haut
+        // pour pouvoir ajouter plus tard des plateformes intermédiaires descendantes.
+        CreateBlock(world.transform, "SolBas", new Vector2(0, -84), new Vector2(160, 8),
             new Color(0.28f, 0.22f, 0.26f), squareSprite, withCollider: true);
 
-        // PORTE — VISUEL SEULEMENT, PAS DE COLLIDER (fait partie du background)
-        CreateBlock(world.transform, "Porte", new Vector2(0, -6.5f), new Vector2(2, 3),
+        // PORTE — gigantesque, exceptionnelle. Centrée sur sol bas, taille (16 × 24)
+        // sprite seul (pas de collider) → fait partie du background, interaction
+        // sans hitbox à venir.
+        CreateBlock(world.transform, "Porte", new Vector2(0, -68), new Vector2(16, 24),
             new Color(0.95f, 0.78f, 0.32f), squareSprite, withCollider: false);
 
-        // MURS LATÉRAUX
-        CreateBlock(world.transform, "MurGauche", new Vector2(-40, 0), new Vector2(2, 24),
+        // MURS LATÉRAUX — couvrent tout le vide vertical (plafond → sous sol bas)
+        CreateBlock(world.transform, "MurGauche", new Vector2(-80, -32), new Vector2(4, 120),
             new Color(0.20f, 0.16f, 0.18f), squareSprite, withCollider: true);
-        CreateBlock(world.transform, "MurDroit", new Vector2(40, 0), new Vector2(2, 24),
+        CreateBlock(world.transform, "MurDroit", new Vector2(80, -32), new Vector2(4, 120),
             new Color(0.20f, 0.16f, 0.18f), squareSprite, withCollider: true);
 
         // === Player ===
