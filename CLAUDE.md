@@ -9,8 +9,12 @@
 Veilae (surnom *Zell*) explore son propre esprit pendant un coma. Style : dessin
 animé flou/féerique, particules, glow/bloom 2D. Zone tuto = **Les Yeux**.
 
-Design détaillé dans `CAHIER_DES_CHARGES.md` (37 Objectifs) et
-`Structure_et_idées.md` (lore + progression).
+Design détaillé dans `CAHIER_DES_CHARGES.md` (27 sections, source de vérité
+pour les specs) et `Structure_et_idées.md` (lore + progression).
+
+**📖 EN DÉBUT DE SESSION : lire `HANDOVER.md`** — état de fin de session
+précédente, dernier sprint fait, roadmap immédiate, pièges connus. Évite
+de redécouvrir le contexte à zéro.
 
 ## Langue & communication
 
